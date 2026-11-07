@@ -141,3 +141,4 @@ When completing a checkout with the live PayPal JavaScript SDK buttons in sandbo
 ## 📜 License
 
 Distributed under the **MIT License**. See `LICENSE` for details.
+

@@ -64,3 +64,4 @@ SplitSmart is an all-in-one agentic social finance application:
 - **PayPal Payouts API & Invoicing**: Expanding beyond single merchant sandbox captures to automate batch 1-to-many Payouts directly to individual group members' sandbox emails.
 - **Voice Commerce**: Integrating the Web Speech API so users can execute their entire expense settlement hands-free via voice while driving or traveling.
 - **Real-Time WebSockets**: Live group settlement syncing across multiple devices simultaneously.
+

@@ -36,6 +36,7 @@ const PORT = process.env.PORT || 3000;
 const routes = {
   '/api/create-order': require('./api/create-order'),
   '/api/capture-order': require('./api/capture-order'),
+  '/api/payouts': require('./api/payouts'),
   '/api/scan-receipt': require('./api/scan-receipt'),
   '/api/settle-agent': require('./api/settle-agent'),
   '/api/state': require('./api/state')

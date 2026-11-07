@@ -54,3 +54,4 @@
   *"SplitSmart bridges multimodal AI reasoning directly with PayPal's developer platform to create genuine agentic commerce.*  
   *Our code is completely open-source under the MIT license on GitHub, with zero-dependency local setup and 1-click Vercel deployment.*  
   *Thank you, and see you on Devpost!"*
+
