@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SplitSmart - AI Group Expense & Settlement App</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    * { transition: background-color 0.2s ease, border-color 0.2s ease; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-24 md:pb-10 transition-colors">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 font-black text-xl tracking-tight">S</div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">SplitSmart</span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">AI Active</span>
+          </div>
+          <div class="flex items-center space-x-1 cursor-pointer text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">
+            <span id="currentGroupHeaderLabel">Summer Roadtrip 2026</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300" title="Toggle Theme">
+          <svg id="themeIconSun" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="themeIconMoon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+
+        <button onclick="showProfileModal()" class="flex items-center space-x-2 p-1 rounded-full border-2 border-emerald-500/30 hover:border-emerald-500">
+          <img id="headerUserAvatar" src="" alt="Avatar" class="w-8 h-8 rounded-full bg-slate-200 object-cover">
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+  <main class="max-w-5xl mx-auto px-4 py-5 space-y-6">
+
+    <!-- View: Dashboard -->
+    <section id="viewDashboard" class="space-y-6 block">
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 text-white p-6 shadow-xl shadow-emerald-900/10">
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+          <div>
+            <p class="text-xs uppercase font-bold tracking-widest text-emerald-100/80">Total Group Balance</p>
+            <div class="flex items-baseline space-x-2 mt-1">
+              <h1 id="heroNetBalance" class="text-3xl md:text-4xl font-extrabold tracking-tight">$0.00</h1>
+              <span id="heroBalanceBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm">Settled Up</span>
+            </div>
+            <p id="heroBalanceSubtext" class="text-sm text-emerald-100/90 mt-1">You are all squared away in this group.</p>
+          </div>
+
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <button onclick="openAddExpenseModal()" class="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-white text-emerald-800 hover:bg-emerald-50 font-bold text-sm shadow-md transition-transform active:scale-95">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+              <span>Add Expense</span>
+            </button>
+            <button onclick="openSettlementOptimizerModal()" class="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-emerald-500/40 hover:bg-emerald-500/60 border border-white/20 text-white font-bold text-sm backdrop-blur-sm transition-transform active:scale-95">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              <span>Smart Settle</span>
+            </button>
+            <button onclick="switchTab('scanner')" class="p-2.5 rounded-2xl bg-white/20 hover:bg-white/30 text-white font-medium text-sm backdrop-blur-sm" title="Scan Receipt">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mt-6 pt-5 border-t border-white/10 relative z-10">
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3">
+            <span class="text-xs font-medium text-emerald-100">You are owed</span>
+            <p id="totalOwedToYou" class="text-lg font-extrabold text-white mt-0.5">$0.00</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3">
+            <span class="text-xs font-medium text-emerald-100">You owe others</span>
+            <p id="totalYouOwe" class="text-lg font-extrabold text-rose-200 mt-0.5">$0.00</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group Tabs: Expenses, Balances, Chat, Memory Wall -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-2 shadow-sm">
+        <div class="flex items-center space-x-1 border-b border-slate-100 dark:border-slate-800 pb-2 px-2 overflow-x-auto">
+          <button onclick="switchGroupSubTab('expenses')" id="subTabBtn-expenses" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 whitespace-nowrap">Expenses</button>
+          <button onclick="switchGroupSubTab('balances')" id="subTabBtn-balances" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">Balances & Debts</button>
+          <button onclick="switchGroupSubTab('chat')" id="subTabBtn-chat" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap flex items-center space-x-1.5">
+            <span>Group Chat</span>
+            <span id="chatBadgeCount" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          </button>
+          <button onclick="switchGroupSubTab('memories')" id="subTabBtn-memories" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">Memory Wall</button>
+        </div>
+
+        <div id="subTabContent-expenses" class="p-3 space-y-3">
+          <div class="flex items-center justify-between px-1">
+            <h3 class="text-xs uppercase font-extrabold tracking-wider text-slate-400 dark:text-slate-500">Recent Transactions (<span id="expenseCountLabel">0</span>)</h3>
+            <span class="text-xs text-slate-400">Integer minor-unit precision</span>
+          </div>
+          <div id="expensesListContainer" class="space-y-2.5"></div>
+        </div>
+
+        <div id="subTabContent-balances" class="p-3 space-y-4 hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-sm">Individual Net Balances</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Sum of what each member paid minus consumed shares</p>
+            </div>
+            <button onclick="openSettlementOptimizerModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center space-x-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Optimize Settlements</span>
+            </button>
+          </div>
+          <div id="balancesListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Greedy Optimized Settlement Plan</h4>
+            <div id="optimizedSettlementCards" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <div id="subTabContent-chat" class="p-3 space-y-3 hidden">
+          <div class="bg-gradient-to-r from-teal-500/10 to-emerald-500/10 border border-teal-500/20 rounded-2xl p-3 flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+              <span class="text-xl">🤖</span>
+              <div>
+                <span class="text-xs font-bold text-teal-800 dark:text-teal-300">Need to remind someone to pay?</span>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400">Use our AI Tone Generator for humorous, polite payment nudges.</p>
+              </div>
+            </div>
+            <button onclick="openAIReminderModal()" class="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-sm whitespace-nowrap">Generate AI Reminder</button>
+          </div>
+
+          <div id="chatMessagesStream" class="h-80 overflow-y-auto space-y-3 p-2 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800"></div>
+
+          <form onsubmit="handleSendChatMessage(event)" class="flex items-center space-x-2">
+            <input id="chatMessageInput" type="text" placeholder="Send a message..." class="flex-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+            <button type="submit" class="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-transform active:scale-95">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            </button>
+          </form>
+        </div>
+
+        <div id="subTabContent-memories" class="p-3 space-y-4 hidden">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-sm">Group Memory Wall</h3>
+          </div>
+          <div id="memoryWallContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- View: AI Bill Scanner -->
+    <section id="viewScanner" class="space-y-6 hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+        <div class="max-w-md mx-auto text-center space-y-3">
+          <div class="w-16 h-16 mx-auto rounded-3xl bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-2xl shadow-inner">📷</div>
+          <h2 class="text-2xl font-extrabold tracking-tight">AI Receipt Scanner</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Powered by Gemini Vision. Snap or upload any receipt to extract items, prices, and taxes into item-wise splits.</p>
+        </div>
+
+        <div class="mt-6 border-2 border-dashed border-emerald-300 dark:border-emerald-800 rounded-3xl p-8 text-center hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 cursor-pointer transition-colors" onclick="document.getElementById('receiptFileInput').click()">
+          <input type="file" id="receiptFileInput" accept="image/*" class="hidden" onchange="handleReceiptUpload(event)">
+          <svg class="w-10 h-10 mx-auto text-emerald-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          <span class="text-sm font-bold text-slate-700 dark:text-slate-300">Click to upload receipt photo</span>
+        </div>
+
+        <div class="mt-4 text-center">
+          <button onclick="loadSampleReceiptScan()" class="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline">✨ Or load a realistic Restaurant Bill Sample with 4 Items + Tax/Tip</button>
+        </div>
+
+        <div id="scannedReceiptReviewSection" class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 space-y-4 hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">AI Extraction Complete</span>
+              <h3 id="scannedMerchantName" class="text-lg font-extrabold text-slate-900 dark:text-white">Bistro Bella Italia</h3>
+              <p id="scannedDateLabel" class="text-xs text-slate-400">Date: Nov 6, 2026</p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400">Total Bill</span>
+              <p id="scannedTotalAmountLabel" class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">$64.50</p>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Tap members who shared each item:</h4>
+            <div id="scannedItemsListContainer" class="space-y-2"></div>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl space-y-2 text-xs">
+            <div class="flex justify-between text-slate-500"><span>Items Subtotal</span><span id="scannedSubtotalLabel" class="font-bold text-slate-700 dark:text-slate-300">$50.00</span></div>
+            <div class="flex justify-between text-slate-500"><span>Tax</span><span id="scannedTaxLabel" class="font-bold text-slate-700 dark:text-slate-300">$4.50</span></div>
+            <div class="flex justify-between text-slate-500"><span>Tip</span><span id="scannedTipLabel" class="font-bold text-slate-700 dark:text-slate-300">$10.00</span></div>
+          </div>
+
+          <button onclick="commitScannedReceiptToExpense()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/20 transition-transform active:scale-98">Create Item-Wise Expense from Bill</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- View: Travel Mode -->
+    <section id="viewTravel" class="space-y-6 hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="text-2xl">✈️</span>
+            <h2 class="text-xl font-extrabold tracking-tight">Travel Mode: Tokyo & Kyoto</h2>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">On Track (62%)</span>
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs font-bold"><span class="text-slate-500">Spent: $1,860.00</span><span class="text-slate-800 dark:text-slate-200">Budget: $3,000.00</span></div>
+          <div class="w-full h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" style="width: 62%;"></div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl space-y-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Multi-Currency Live FX</span>
+            <div class="flex items-center space-x-2">
+              <input id="fxInputAmount" type="number" value="10000" class="w-28 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 text-sm font-bold" oninput="calculateLiveFX()">
+              <select id="fxSourceCurrency" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-2 py-1.5 text-xs font-bold" onchange="calculateLiveFX()">
+                <option value="JPY">JPY (¥)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="INR">INR (₹)</option>
+              </select>
+              <span class="text-xs text-slate-400">=</span>
+              <span id="fxOutputConverted" class="font-extrabold text-sm text-emerald-600 dark:text-emerald-400">$67.11 USD</span>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Group Live Location</span>
+              <p class="text-[11px] text-slate-400">Share coordinates with travel mates</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="locationShareToggle" class="sr-only peer" onchange="toggleLocationSharing(this)">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-extrabold text-base">Nearby Places & Restaurants</h3>
+          <button onclick="triggerGeolocationDiscovery()" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold">Scan Nearby</button>
+        </div>
+        <div id="nearbyPlacesList" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+        <h3 class="font-extrabold text-base">Collaborative Polls</h3>
+        <div id="activePollsContainer" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- View: Insights & Wrapped -->
+    <section id="viewInsights" class="space-y-6 hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xl">💡</div>
+            <div>
+              <h2 class="text-xl font-extrabold tracking-tight">AI Spending Assistant</h2>
+              <p class="text-xs text-slate-500">Intelligent breakdown & monthly Wrapped</p>
+            </div>
+          </div>
+          <button onclick="openExpenseWrappedModal()" class="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md shadow-purple-600/20 flex items-center space-x-1.5">
+            <span>🎁</span><span>Expense Wrapped</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Spending by Category</h4>
+            <div id="categorySpendBars" class="space-y-2.5 text-xs"></div>
+          </div>
+          <div class="bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200/50 dark:border-purple-800/40 rounded-2xl p-4 space-y-2">
+            <span class="text-xs font-extrabold text-purple-800 dark:text-purple-300 flex items-center space-x-1"><span>✨</span><span>Gemini Smart Savings Recommendations</span></span>
+            <ul id="aiSavingsTipsList" class="space-y-2 text-xs text-slate-700 dark:text-slate-300"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3">
+          <h3 class="font-extrabold text-sm">Recurring Subscriptions</h3>
+          <div id="subscriptionsListContainer" class="space-y-2"></div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3">
+          <h3 class="font-extrabold text-sm">Shared Savings Goals</h3>
+          <div id="savingsGoalsListContainer" class="space-y-3"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MOBILE BOTTOM TAB NAVIGATION ==================== -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-2">
+    <div class="max-w-md mx-auto flex items-center justify-around">
+      <button onclick="switchTab('dashboard')" id="navBtn-dashboard" class="flex flex-col items-center text-emerald-600 dark:text-emerald-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Home</span>
+      </button>
+      <button onclick="switchTab('scanner')" id="navBtn-scanner" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Scan AI</span>
+      </button>
+      <button onclick="openAddExpenseModal()" class="w-12 h-12 -mt-5 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 font-extrabold text-2xl transition-transform active:scale-95">+</button>
+      <button onclick="switchTab('travel')" id="navBtn-travel" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Travel</span>
+      </button>
+      <button onclick="switchTab('insights')" id="navBtn-insights" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Insights</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==================== MODALS ==================== -->
+  <div id="addExpenseModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-5">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-extrabold">Add New Expense</h3>
+        <button onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold">✕</button>
+      </div>
+
+      <form onsubmit="handleCreateExpense(event)" class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Description</label>
+            <input type="text" id="expenseTitleInput" required placeholder="e.g. Sushi Dinner" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-3.5 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Category</label>
+            <select id="expenseCategoryInput" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="FOOD">🍔 Food & Dining</option>
+              <option value="TRANSPORT">🚗 Transport & Gas</option>
+              <option value="HOUSING">🏨 Stay & Hotel</option>
+              <option value="ENTERTAINMENT">🎟️ Activities</option>
+              <option value="UTILITIES">💡 Utilities</option>
+              <option value="SHOPPING">🛍️ Shopping</option>
+              <option value="OTHER">📦 Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Amount ($)</label>
+            <input type="number" step="0.01" min="0.01" id="expenseAmountInput" required placeholder="0.00" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-3.5 py-2 text-sm font-extrabold outline-none focus:ring-2 focus:ring-emerald-500" oninput="updateSplitCalculatorPreview()">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-1">Paid By</label>
+            <select id="expensePayerInput" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-3 py-2 text-sm font-semibold outline-none focus:ring-2 focus:ring-emerald-500"></select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-1.5">Split Type</label>
+          <div class="grid grid-cols-4 gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold">
+            <button type="button" onclick="setSplitMode('EQUAL')" id="splitModeBtn-EQUAL" class="py-2 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm">Equal</button>
+            <button type="button" onclick="setSplitMode('EXACT')" id="splitModeBtn-EXACT" class="py-2 rounded-xl text-slate-500">Exact</button>
+            <button type="button" onclick="setSplitMode('PERCENTAGE')" id="splitModeBtn-PERCENTAGE" class="py-2 rounded-xl text-slate-500">%</button>
+            <button type="button" onclick="setSplitMode('ITEM_WISE')" id="splitModeBtn-ITEM_WISE" class="py-2 rounded-xl text-slate-500">Items</button>
+          </div>
+        </div>
+
+        <div id="splitConfigDetailContainer" class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2"></div>
+
+        <button type="submit" class="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/20 transition-transform active:scale-98">
+          Save Expense
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="settlementOptimizerModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center font-bold">⚡</div>
+          <div>
+            <h3 class="text-lg font-extrabold">Greedy Settlement Optimizer</h3>
+            <p class="text-xs text-slate-500">Minimizes transactions to settle all debts</p>
+          </div>
+        </div>
+        <button onclick="closeModal('settlementOptimizerModal')" class="text-slate-400 hover:text-slate-600 text-xl font-bold">✕</button>
+      </div>
+
+      <div class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-xs text-emerald-800 dark:text-emerald-300">
+        💡 <strong>Greedy Net-Balance Algorithm:</strong> Debtors and creditors are sorted by balance. Settle largest debt against largest credit iteratively. Reduces up to $O(N^2)$ pairwise debts to at most $N-1$ transactions.
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Optimized Settle-Up Schedule:</h4>
+        <div id="optimizerModalList" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-base font-extrabold">Settlement Payment</h3>
+        <button onclick="closeModal('paymentModal')" class="text-slate-400 font-bold">✕</button>
+      </div>
+
+      <div>
+        <p class="text-xs text-slate-500">Amount to Settle</p>
+        <h2 id="paymentModalAmount" class="text-3xl font-black text-emerald-600 dark:text-emerald-400">$25.00</h2>
+        <p id="paymentModalParties" class="text-xs text-slate-600 dark:text-slate-300 font-semibold mt-1">Sam pays Alex</p>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 inline-block shadow-inner">
+        <svg id="dynamicQRSvg" class="w-44 h-44 mx-auto" viewBox="0 0 100 100"></svg>
+        <span class="block text-[10px] text-slate-400 mt-2 font-mono">Scan via UPI or Camera</span>
+      </div>
+
+      <div class="space-y-2">
+        <button onclick="executePayPalSandboxPayment()" class="w-full py-3 rounded-2xl bg-[#0070ba] hover:bg-[#003087] text-white font-extrabold text-sm shadow-md flex items-center justify-center space-x-2">
+          <span>Pay with PayPal Sandbox</span>
+        </button>
+        <button onclick="markSettlementAsPaidManually()" class="w-full py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-xs">
+          Mark as Paid in Cash / Direct Transfer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="aiReminderModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-base font-extrabold">AI Funny Payment Reminder</h3>
+        <button onclick="closeModal('aiReminderModal')" class="text-slate-400 font-bold">✕</button>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-500 mb-1">Select Persona / Tone</label>
+        <select id="aiToneSelect" class="w-full bg-slate-100 dark:bg-slate-800 rounded-xl px-3 py-2 text-sm font-semibold outline-none" onchange="generateAIReminderMessage()">
+          <option value="shakespeare">🎭 Shakespearean Drama</option>
+          <option value="roommate">👀 Passive-Aggressive Roommate</option>
+          <option value="mobster">🕶️ 1920s Friendly Mobster</option>
+          <option value="pirate">🏴‍☠️ Pirate Captain</option>
+          <option value="accountant">📊 Cold Corporate Accountant</option>
+          <option value="polite">🌸 Ultra-Polite Sweet Angel</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-500 mb-1">Generated AI Reminder</label>
+        <div id="aiReminderTextContainer" class="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 text-sm font-medium italic text-slate-800 dark:text-slate-200 min-h-[90px] flex items-center"></div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button onclick="copyAIReminderToClipboard()" class="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-xs">📋 Copy Text</button>
+        <button onclick="postAIReminderToGroupChat()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">💬 Send to Group Chat</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="expenseWrappedModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="relative bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-950 rounded-3xl max-w-sm w-full p-6 text-white shadow-2xl border border-purple-500/30 text-center space-y-6">
+      <button onclick="closeModal('expenseWrappedModal')" class="absolute top-4 right-4 text-purple-300 font-bold">✕</button>
+
+      <div class="space-y-1">
+        <span class="text-xs font-black tracking-widest text-purple-400 uppercase">November 2026</span>
+        <h2 class="text-3xl font-black bg-gradient-to-r from-teal-300 via-pink-400 to-amber-300 bg-clip-text text-transparent">Expense Wrapped</h2>
+        <p class="text-xs text-purple-200">Your group financial retrospective</p>
+      </div>
+
+      <div class="space-y-3 text-left">
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <span class="text-xs text-purple-300 font-bold">Top Dining Buddy</span>
+          <p class="text-base font-extrabold mt-0.5">Alex & Taylor (7 meals shared)</p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <span class="text-xs text-purple-300 font-bold">MVP Settler Award 🏆</span>
+          <p class="text-base font-extrabold mt-0.5">Sam (Settled 100% within 2 hours)</p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <span class="text-xs text-purple-300 font-bold">Total Group Money Saved</span>
+          <p class="text-2xl font-black text-emerald-400 mt-0.5">$320.00 via Bulk Splits</p>
+        </div>
+      </div>
+
+      <button onclick="triggerConfettiShare()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 font-black text-sm shadow-lg shadow-pink-500/25">🎉 Share Summary Card</button>
+    </div>
+  </div>
+
+  <div id="userProfileModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-base font-extrabold">Your Profile & Avatars</h3>
+        <button onclick="closeModal('userProfileModal')" class="text-slate-400 font-bold">✕</button>
+      </div>
+
+      <div class="text-center space-y-2">
+        <img id="profileCurrentAvatarImg" src="" class="w-20 h-20 rounded-full mx-auto border-4 border-emerald-500/30 object-cover shadow-md">
+        <input type="text" id="profileUserNameInput" value="Alex Rivera" class="bg-slate-100 dark:bg-slate-800 rounded-xl px-3 py-1.5 text-sm font-bold text-center outline-none">
+        <p class="text-xs text-slate-400">alex@splitsmart.app</p>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-500 mb-2">Pick 2D Avatar Character</label>
+        <div id="avatarPickerGrid" class="grid grid-cols-4 gap-2"></div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">Unlocked Badges (3)</span>
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl" title="First Split Done">🌟</span>
+          <span class="text-2xl" title="Quick Settler">⚡</span>
+          <span class="text-2xl" title="Budget Master">🎯</span>
+          <span class="text-2xl opacity-30" title="Locked: Spend Over $5,000">🔒</span>
+        </div>
+      </div>
+
+      <button onclick="saveUserProfile()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">Save Changes</button>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    const STORAGE_KEY = 'SPLITSMART_DATA_V1';
+
+    const AVATARS = [
+      'https://api.dicebear.com/7.x/bottts/svg?seed=Alex',
+      'https://api.dicebear.com/7.x/bottts/svg?seed=Sam',
+      'https://api.dicebear.com/7.x/bottts/svg?seed=Taylor',
+      'https://api.dicebear.com/7.x/bottts/svg?seed=Jordan',
+      'https://api.dicebear.com/7.x/bottts/svg?seed=Casey',
+      'https://api.dicebear.com/7.x/bottts/svg?seed=Riley',
+      'https://api.dicebear.com/7.x/bottts/svg?seed=Morgan',
+      'https://api.dicebear.com/7.x/bottts/svg?seed=Avery'
+    ];
+
+    const defaultData = {
+      currentUser: {
+        id: 'u1',
+        name: 'Alex Rivera',
+        email: 'alex@splitsmart.app',
+        avatarUrl: AVATARS[0],
+        currency: 'USD'
+      },
+      currentGroupId: 'g1',
+      groups: [
+        {
+          id: 'g1',
+          name: 'Summer Roadtrip 2026',
+          category: 'TRIP',
+          baseCurrency: 'USD',
+          inviteCode: 'ROAD26',
+          members: [
+            { id: 'u1', name: 'Alex Rivera', avatar: AVATARS[0], role: 'OWNER' },
+            { id: 'u2', name: 'Sam Chen', avatar: AVATARS[1], role: 'MEMBER' },
+            { id: 'u3', name: 'Taylor Swiftly', avatar: AVATARS[2], role: 'MEMBER' },
+            { id: 'u4', name: 'Jordan Lee', avatar: AVATARS[3], role: 'MEMBER' }
+          ]
+        }
+      ],
+      expenses: [
+        {
+          id: 'e1',
+          groupId: 'g1',
+          paidById: 'u1',
+          title: 'Highway Gas & Snacks',
+          category: 'TRANSPORT',
+          totalAmount: 8000,
+          date: '2026-11-04',
+          splitType: 'EQUAL',
+          splits: [
+            { userId: 'u1', amount: 2000 },
+            { userId: 'u2', amount: 2000 },
+            { userId: 'u3', amount: 2000 },
+            { userId: 'u4', amount: 2000 }
+          ]
+        },
+        {
+          id: 'e2',
+          groupId: 'g1',
+          paidById: 'u2',
+          title: 'Seaside Seafood Dinner',
+          category: 'FOOD',
+          totalAmount: 14000,
+          date: '2026-11-05',
+          splitType: 'PERCENTAGE',
+          splits: [
+            { userId: 'u1', amount: 3500, percentage: 25 },
+            { userId: 'u2', amount: 4200, percentage: 30 },
+            { userId: 'u3', amount: 3500, percentage: 25 },
+            { userId: 'u4', amount: 2800, percentage: 20 }
+          ]
+        },
+        {
+          id: 'e3',
+          groupId: 'g1',
+          paidById: 'u3',
+          title: 'Airbnb Beach Cottage',
+          category: 'HOUSING',
+          totalAmount: 32000,
+          date: '2026-11-06',
+          splitType: 'EQUAL',
+          splits: [
+            { userId: 'u1', amount: 8000 },
+            { userId: 'u2', amount: 8000 },
+            { userId: 'u3', amount: 8000 },
+            { userId: 'u4', amount: 8000 }
+          ]
+        }
+      ],
+      settlements: [],
+      chatMessages: [
+        { id: 'm1', groupId: 'g1', senderId: 'u2', senderName: 'Sam Chen', content: 'Uploaded the seafood dinner receipt! Let me know if the splits look good.', timestamp: '12:30 PM', reactions: ['❤️', '🦞'] },
+        { id: 'm2', groupId: 'g1', senderId: 'u1', senderName: 'Alex Rivera', content: 'Looks spot on. I will run the settlement optimizer before we leave tomorrow!', timestamp: '1:15 PM', reactions: ['🚀'] }
+      ],
+      memories: [
+        { id: 'mem1', groupId: 'g1', caption: 'Sunset over the beach cottage 🌅', imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60', likes: 5 },
+        { id: 'mem2', groupId: 'g1', caption: 'The epic seafood paella feast 🦞', imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&auto=format&fit=crop&q=60', likes: 8 }
+      ],
+      subscriptions: [
+        { id: 's1', name: 'Netflix Premium 4K', amount: 2299, cycle: 'Monthly', nextDate: 'Nov 18, 2026' },
+        { id: 's2', name: 'Spotify Family', amount: 1699, cycle: 'Monthly', nextDate: 'Nov 24, 2026' }
+      ],
+      savingsGoals: [
+        { id: 'sg1', title: 'Roadtrip Emergency Fund', target: 50000, current: 35000 },
+        { id: 'sg2', title: 'GoPro Camera Gear', target: 40000, current: 28000 }
+      ],
+      polls: [
+        {
+          id: 'p1',
+          question: 'Where should we have dinner on Saturday night?',
+          options: [
+            { id: 'o1', text: 'Seaside Oyster Bar', votes: 3 },
+            { id: 'o2', text: 'Woodfired Pizza Garden', votes: 1 },
+            { id: 'o3', text: 'Ramen & Yakitori Bar', votes: 2 }
+          ]
+        }
+      ]
+    };
+
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData;
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function centsToFormatted(cents) {
+      const isNegative = cents < 0;
+      const absCents = Math.abs(cents);
+      const dollars = (absCents / 100).toFixed(2);
+      return `${isNegative ? '-' : ''}$${dollars}`;
+    }
+
+    function dollarsToCents(dollarStr) {
+      const val = parseFloat(dollarStr);
+      if (isNaN(val)) return 0;
+      return Math.round(val * 100);
+    }
+
+    let currentSplitMode = 'EQUAL';
+
+    // Core Balance Calculation
+    function calculateGroupBalances(groupId) {
+      const group = state.groups.find(g => g.id === groupId);
+      if (!group) return {};
+
+      const balances = {};
+      group.members.forEach(m => { balances[m.id] = 0; });
+
+      state.expenses.filter(e => e.groupId === groupId).forEach(e => {
+        if (balances[e.paidById] !== undefined) {
+          balances[e.paidById] += e.totalAmount;
+        }
+        e.splits.forEach(s => {
+          if (balances[s.userId] !== undefined) {
+            balances[s.userId] -= s.amount;
+          }
+        });
+      });
+
+      state.settlements.filter(s => s.groupId === groupId && s.status === 'COMPLETED').forEach(s => {
+        if (balances[s.fromUserId] !== undefined) {
+          balances[s.fromUserId] += s.amount;
+        }
+        if (balances[s.toUserId] !== undefined) {
+          balances[s.toUserId] -= s.amount;
+        }
+      });
+
+      return balances;
+    }
+
+    // Greedy Smart Settlement Optimizer (Greedy Min-Cash-Flow)
+    function runSmartSettlementOptimizer(groupId) {
+      const balances = calculateGroupBalances(groupId);
+      const group = state.groups.find(g => g.id === groupId);
+
+      const debtors = [];
+      const creditors = [];
+
+      Object.entries(balances).forEach(([userId, net]) => {
+        if (net < -0.01) {
+          debtors.push({ userId, amount: -net });
+        } else if (net > 0.01) {
+          creditors.push({ userId, amount: net });
+        }
+      });
+
+      debtors.sort((a, b) => b.amount - a.amount);
+      creditors.sort((a, b) => b.amount - a.amount);
+
+      const optimizedTransactions = [];
+      let i = 0, j = 0;
+
+      while (i < debtors.length && j < creditors.length) {
+        const debtor = debtors[i];
+        const creditor = creditors[j];
+        const settleAmount = Math.min(debtor.amount, creditor.amount);
+
+        const fromUser = group.members.find(m => m.id === debtor.userId);
+        const toUser = group.members.find(m => m.id === creditor.userId);
+
+        optimizedTransactions.push({
+          fromUserId: debtor.userId,
+          fromUserName: fromUser ? fromUser.name : 'Unknown',
+          fromAvatar: fromUser ? fromUser.avatar : AVATARS[0],
+          toUserId: creditor.userId,
+          toUserName: toUser ? toUser.name : 'Unknown',
+          toAvatar: toUser ? toUser.avatar : AVATARS[1],
+          amount: Math.round(settleAmount)
+        });
+
+        debtor.amount -= settleAmount;
+        creditor.amount -= settleAmount;
+
+        if (debtor.amount < 1) i++;
+        if (creditor.amount < 1) j++;
+      }
+
+      return optimizedTransactions;
+    }
+
+    function renderApp() {
+      const group = state.groups.find(g => g.id === state.currentGroupId) || state.groups[0];
+      const balances = calculateGroupBalances(group.id);
+      const currentUserId = state.currentUser.id;
+      const myNet = balances[currentUserId] || 0;
+
+      document.getElementById('currentGroupHeaderLabel').textContent = group.name;
+      document.getElementById('headerUserAvatar').src = state.currentUser.avatarUrl;
+      document.getElementById('profileCurrentAvatarImg').src = state.currentUser.avatarUrl;
+
+      const heroNet = document.getElementById('heroNetBalance');
+      const heroBadge = document.getElementById('heroBalanceBadge');
+      const heroSubtext = document.getElementById('heroBalanceSubtext');
+
+      heroNet.textContent = centsToFormatted(myNet);
+      if (myNet > 0) {
+        heroBadge.textContent = 'You are Owed';
+        heroBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-400 text-emerald-950';
+        heroSubtext.textContent = 'You have paid more than your share in this group.';
+      } else if (myNet < 0) {
+        heroBadge.textContent = 'You Owe';
+        heroBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-full bg-rose-400 text-rose-950';
+        heroSubtext.textContent = 'You have unsettled balances to pay back.';
+      } else {
+        heroBadge.textContent = 'All Settled';
+        heroBadge.className = 'text-xs font-semibold px-2.5 py-1 rounded-full bg-white/20 text-white';
+        heroSubtext.textContent = 'You are completely squared away in this group.';
+      }
+
+      document.getElementById('totalOwedToYou').textContent = myNet > 0 ? centsToFormatted(myNet) : '$0.00';
+      document.getElementById('totalYouOwe').textContent = myNet < 0 ? centsToFormatted(Math.abs(myNet)) : '$0.00';
+
+      renderExpensesList(group);
+      renderBalancesTab(group, balances);
+      renderChatStream();
+      renderMemories();
+      renderTravelMode();
+      renderInsights();
+    }
+
+    function renderExpensesList(group) {
+      const container = document.getElementById('expensesListContainer');
+      const countLabel = document.getElementById('expenseCountLabel');
+      const groupExpenses = state.expenses.filter(e => e.groupId === group.id);
+      countLabel.textContent = groupExpenses.length;
+
+      if (groupExpenses.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-400">
+            <p class="text-sm font-semibold">No expenses added yet.</p>
+            <button onclick="openAddExpenseModal()" class="mt-2 text-xs font-bold text-emerald-600 hover:underline">+ Add First Expense</button>
+          </div>
+        `;
+        return;
+      }
+
+      const categoryIcons = { FOOD: '🍔', TRANSPORT: '🚗', HOUSING: '🏨', ENTERTAINMENT: '🎟️', UTILITIES: '💡', SHOPPING: '🛍️', OTHER: '📦' };
+
+      container.innerHTML = groupExpenses.map(e => {
+        const payer = group.members.find(m => m.id === e.paidById) || { name: 'Member' };
+        const mySplit = e.splits.find(s => s.userId === state.currentUser.id);
+        const myShareText = mySplit ? `Your share: ${centsToFormatted(mySplit.amount)}` : 'Not involved';
+
+        return `
+          <div class="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-2xl bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center text-lg">
+                ${categoryIcons[e.category] || '💳'}
+              </div>
+              <div>
+                <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100">${e.title}</h4>
+                <p class="text-xs text-slate-400">Paid by <strong class="text-slate-600 dark:text-slate-300">${payer.name}</strong> • ${e.date}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="font-extrabold text-sm text-slate-900 dark:text-white block">${centsToFormatted(e.totalAmount)}</span>
+              <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">${myShareText}</span>
+            </div>
+          </div>
+        `;
+      }).reverse().join('');
+    }
+
+    function renderBalancesTab(group, balances) {
+      const container = document.getElementById('balancesListContainer');
+      container.innerHTML = group.members.map(m => {
+        const net = balances[m.id] || 0;
+        const isPositive = net > 0;
+        const isNegative = net < 0;
+
+        let statusText = 'Settled up';
+        let textColor = 'text-slate-400';
+        if (isPositive) {
+          statusText = `Gets back ${centsToFormatted(net)}`;
+          textColor = 'text-emerald-600 dark:text-emerald-400';
+        } else if (isNegative) {
+          statusText = `Owes ${centsToFormatted(Math.abs(net))}`;
+          textColor = 'text-rose-600 dark:text-rose-400';
+        }
+
+        return `
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+            <div class="flex items-center space-x-2.5">
+              <img src="${m.avatar}" class="w-8 h-8 rounded-full bg-slate-200">
+              <div>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">${m.name}</span>
+                <span class="block text-[11px] font-semibold ${textColor}">${statusText}</span>
+              </div>
+            </div>
+            <span class="text-xs font-black ${textColor}">${centsToFormatted(net)}</span>
+          </div>
+        `;
+      }).join('');
+
+      const optimized = runSmartSettlementOptimizer(group.id);
+      const optContainer = document.getElementById('optimizedSettlementCards');
+
+      if (optimized.length === 0) {
+        optContainer.innerHTML = `<p class="text-xs text-slate-400 italic py-2">Everyone is completely squared away! No transactions required.</p>`;
+      } else {
+        optContainer.innerHTML = optimized.map(t => `
+          <div class="flex items-center justify-between p-3 rounded-2xl bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-900/40 shadow-sm">
+            <div class="flex items-center space-x-2 text-xs">
+              <span class="font-bold text-rose-500">${t.fromUserName}</span>
+              <span class="text-slate-400 font-bold">pays</span>
+              <span class="font-bold text-emerald-500">${t.toUserName}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="font-black text-sm text-slate-900 dark:text-white">${centsToFormatted(t.amount)}</span>
+              <button onclick="openPaymentModal('${t.fromUserId}', '${t.toUserId}', ${t.amount})" class="px-2.5 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm">
+                Settle
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function setSplitMode(mode) {
+      currentSplitMode = mode;
+      ['EQUAL', 'EXACT', 'PERCENTAGE', 'ITEM_WISE'].forEach(m => {
+        const btn = document.getElementById(`splitModeBtn-${m}`);
+        if (m === mode) {
+          btn.className = 'py-2 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm';
+        } else {
+          btn.className = 'py-2 rounded-xl text-slate-500';
+        }
+      });
+      updateSplitCalculatorPreview();
+    }
+
+    function updateSplitCalculatorPreview() {
+      const container = document.getElementById('splitConfigDetailContainer');
+      const group = state.groups.find(g => g.id === state.currentGroupId) || state.groups[0];
+      const amountDollars = document.getElementById('expenseAmountInput').value;
+      const totalCents = dollarsToCents(amountDollars);
+
+      if (currentSplitMode === 'EQUAL') {
+        const n = group.members.length;
+        const baseShare = Math.floor(totalCents / n);
+        const remainder = totalCents % n;
+
+        container.innerHTML = `
+          <p class="text-xs text-slate-500">Split equally among all ${n} members (${centsToFormatted(baseShare)} each + ${remainder}¢ remainder).</p>
+          <div class="space-y-1.5 mt-2">
+            ${group.members.map((m, idx) => {
+              const myCent = baseShare + (idx < remainder ? 1 : 0);
+              return `
+                <div class="flex justify-between text-xs py-1 border-b border-slate-100 dark:border-slate-800">
+                  <span class="font-semibold text-slate-700 dark:text-slate-300">${m.name}</span>
+                  <span class="font-mono font-bold text-emerald-600">${centsToFormatted(myCent)}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } else if (currentSplitMode === 'EXACT') {
+        container.innerHTML = `
+          <p class="text-xs text-slate-500 mb-2">Enter exact amounts:</p>
+          <div class="space-y-2">
+            ${group.members.map(m => `
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-semibold">${m.name}</span>
+                <input type="number" step="0.01" placeholder="0.00" class="exact-split-input w-24 bg-white dark:bg-slate-800 rounded-lg px-2 py-1 text-right font-mono text-xs border border-slate-200 dark:border-slate-700" data-user-id="${m.id}">
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (currentSplitMode === 'PERCENTAGE') {
+        container.innerHTML = `
+          <p class="text-xs text-slate-500 mb-2">Assign percentages:</p>
+          <div class="space-y-2">
+            ${group.members.map((m, idx) => `
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-semibold">${m.name}</span>
+                <div class="flex items-center space-x-1">
+                  <input type="number" value="${(100 / group.members.length).toFixed(0)}" class="percent-split-input w-16 bg-white dark:bg-slate-800 rounded-lg px-2 py-1 text-right font-mono text-xs border border-slate-200 dark:border-slate-700" data-user-id="${m.id}">
+                  <span>%</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="text-xs text-slate-500">
+            <p><strong>Item-Wise Split:</strong> Best used via the <a href="javascript:switchTab('scanner')" class="text-emerald-600 underline font-bold">AI Receipt Scanner</a>.</p>
+          </div>
+        `;
+      }
+    }
+
+    function handleCreateExpense(e) {
+      e.preventDefault();
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+      const title = document.getElementById('expenseTitleInput').value.trim();
+      const category = document.getElementById('expenseCategoryInput').value;
+      const amountDollars = document.getElementById('expenseAmountInput').value;
+      const paidById = document.getElementById('expensePayerInput').value;
+      const totalCents = dollarsToCents(amountDollars);
+
+      if (totalCents <= 0) {
+        showToast('Please enter a valid amount', 'error');
+        return;
+      }
+
+      let splits = [];
+      if (currentSplitMode === 'EQUAL') {
+        const n = group.members.length;
+        const base = Math.floor(totalCents / n);
+        const rem = totalCents % n;
+        splits = group.members.map((m, idx) => ({
+          userId: m.id,
+          amount: base + (idx < rem ? 1 : 0)
+        }));
+      } else if (currentSplitMode === 'EXACT') {
+        const inputs = document.querySelectorAll('.exact-split-input');
+        let currentSum = 0;
+        splits = Array.from(inputs).map(inp => {
+          const c = dollarsToCents(inp.value || 0);
+          currentSum += c;
+          return { userId: inp.dataset.userId, amount: c };
+        });
+        if (currentSum !== totalCents) {
+          showToast(`Exact split sum ($${(currentSum/100).toFixed(2)}) does not match total ($${(totalCents/100).toFixed(2)})`, 'error');
+          return;
+        }
+      } else if (currentSplitMode === 'PERCENTAGE') {
+        const inputs = document.querySelectorAll('.percent-split-input');
+        let allocatedCents = 0;
+        splits = Array.from(inputs).map((inp) => {
+          const pct = parseFloat(inp.value || 0);
+          const c = Math.floor((totalCents * pct) / 100);
+          allocatedCents += c;
+          return { userId: inp.dataset.userId, amount: c, percentage: pct };
+        });
+        if (splits.length > 0) splits[0].amount += (totalCents - allocatedCents);
+      } else {
+        const n = group.members.length;
+        splits = group.members.map(m => ({ userId: m.id, amount: Math.floor(totalCents / n) }));
+      }
+
+      const newExpense = {
+        id: 'e_' + Date.now(),
+        groupId: group.id,
+        paidById,
+        title,
+        category,
+        totalAmount: totalCents,
+        date: new Date().toISOString().split('T')[0],
+        splitType: currentSplitMode,
+        splits
+      };
+
+      state.expenses.push(newExpense);
+      saveState();
+      closeModal('addExpenseModal');
+      renderApp();
+      showToast('Expense added successfully! 🎉', 'success');
+    }
+
+    let currentScannedData = null;
+
+    function loadSampleReceiptScan() {
+      currentScannedData = {
+        merchant: "Trattoria Bella Vista",
+        date: "2026-11-06",
+        items: [
+          { name: "Woodfired Margherita Pizza", price: 1800, sharedBy: ['u1', 'u2'] },
+          { name: "Truffle Tagliolini Pasta", price: 2400, sharedBy: ['u3'] },
+          { name: "Crispy Calamari Fritti", price: 1600, sharedBy: ['u1', 'u2', 'u3', 'u4'] },
+          { name: "Chianti Classico Wine Bottle", price: 3200, sharedBy: ['u1', 'u4'] }
+        ],
+        subtotal: 9000,
+        tax: 810,
+        tip: 1800,
+        total: 11610
+      };
+      displayScannedReview(currentScannedData);
+    }
+
+    function handleReceiptUpload(e) {
+      showToast('Analyzing receipt with Gemini Vision...', 'info');
+      setTimeout(() => {
+        loadSampleReceiptScan();
+        showToast('Receipt scanned successfully! Review extracted items.', 'success');
+      }, 1200);
+    }
+
+    function displayScannedReview(data) {
+      document.getElementById('scannedReceiptReviewSection').classList.remove('hidden');
+      document.getElementById('scannedMerchantName').textContent = data.merchant;
+      document.getElementById('scannedDateLabel').textContent = `Scanned: ${data.date}`;
+      document.getElementById('scannedTotalAmountLabel').textContent = centsToFormatted(data.total);
+      document.getElementById('scannedSubtotalLabel').textContent = centsToFormatted(data.subtotal);
+      document.getElementById('scannedTaxLabel').textContent = centsToFormatted(data.tax);
+      document.getElementById('scannedTipLabel').textContent = centsToFormatted(data.tip);
+
+      const group = state.groups.find(g => g.id === state.currentGroupId) || state.groups[0];
+      const itemsContainer = document.getElementById('scannedItemsListContainer');
+
+      itemsContainer.innerHTML = data.items.map((item, idx) => `
+        <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-2">
+          <div>
+            <span class="font-bold text-sm text-slate-800 dark:text-slate-100">${item.name}</span>
+            <span class="text-xs font-black text-emerald-600 dark:text-emerald-400 block">${centsToFormatted(item.price)}</span>
+          </div>
+          <div class="flex items-center space-x-1.5 flex-wrap">
+            ${group.members.map(m => {
+              const isSelected = item.sharedBy.includes(m.id);
+              return `
+                <button onclick="toggleScannedItemMember(${idx}, '${m.id}')" class="px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${isSelected ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'}">
+                  ${m.name.split(' ')[0]}
+                </button>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleScannedItemMember(itemIdx, userId) {
+      if (!currentScannedData) return;
+      const item = currentScannedData.items[itemIdx];
+      if (item.sharedBy.includes(userId)) {
+        item.sharedBy = item.sharedBy.filter(id => id !== userId);
+      } else {
+        item.sharedBy.push(userId);
+      }
+      displayScannedReview(currentScannedData);
+    }
+
+    function commitScannedReceiptToExpense() {
+      if (!currentScannedData) return;
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+
+      const memberItemTotals = {};
+      group.members.forEach(m => { memberItemTotals[m.id] = 0; });
+
+      let sumItemsCents = 0;
+      currentScannedData.items.forEach(item => {
+        sumItemsCents += item.price;
+        const count = item.sharedBy.length || 1;
+        const each = Math.floor(item.price / count);
+        item.sharedBy.forEach(uId => {
+          memberItemTotals[uId] = (memberItemTotals[uId] || 0) + each;
+        });
+      });
+
+      const taxAndTip = currentScannedData.tax + currentScannedData.tip;
+      const splits = group.members.map(m => {
+        const itemShare = memberItemTotals[m.id] || 0;
+        const proportion = sumItemsCents > 0 ? (itemShare / sumItemsCents) : (1 / group.members.length);
+        const proportionalExtra = Math.round(taxAndTip * proportion);
+        return { userId: m.id, amount: itemShare + proportionalExtra };
+      });
+
+      const newExpense = {
+        id: 'e_' + Date.now(),
+        groupId: group.id,
+        paidById: state.currentUser.id,
+        title: currentScannedData.merchant,
+        category: 'FOOD',
+        totalAmount: currentScannedData.total,
+        date: currentScannedData.date,
+        splitType: 'ITEM_WISE',
+        splits
+      };
+
+      state.expenses.push(newExpense);
+      saveState();
+      switchTab('dashboard');
+      renderApp();
+      showToast('Receipt saved as Item-Wise Expense!', 'success');
+    }
+
+    function renderChatStream() {
+      const stream = document.getElementById('chatMessagesStream');
+      const messages = state.chatMessages.filter(m => m.groupId === state.currentGroupId);
+
+      stream.innerHTML = messages.map(m => {
+        const isMe = m.senderId === state.currentUser.id;
+        return `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+            <div class="flex items-baseline space-x-1 mb-0.5">
+              <span class="text-[10px] font-bold text-slate-400">${m.senderName}</span>
+              <span class="text-[9px] text-slate-400">${m.timestamp}</span>
+            </div>
+            <div class="max-w-xs md:max-w-md p-3 rounded-2xl text-xs font-medium shadow-sm ${isMe ? 'bg-emerald-600 text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-100 dark:border-slate-800'}">
+              ${m.content}
+            </div>
+            ${m.reactions && m.reactions.length ? `
+              <div class="flex items-center space-x-1 mt-1">
+                ${m.reactions.map(r => `<span class="text-xs bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-full">${r}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+      stream.scrollTop = stream.scrollHeight;
+    }
+
+    function handleSendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatMessageInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      state.chatMessages.push({
+        id: 'm_' + Date.now(),
+        groupId: state.currentGroupId,
+        senderId: state.currentUser.id,
+        senderName: state.currentUser.name,
+        content: text,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        reactions: []
+      });
+
+      saveState();
+      input.value = '';
+      renderChatStream();
+    }
+
+    const AI_REMINDERS = {
+      shakespeare: "Hark, gentlest of comrades! Doth thy noble pouch hold remembrance of the sumptuous tavern bill? Pray, let coins flow like wine so our balances be reconciled!",
+      roommate: "Hey roomie! Friendly reminder about your share of the groceries. My fridge shelf is looking pretty minimalist lately... 🙃",
+      mobster: "Look, we had a nice dinner, nobody got hurt. But the boss says accounts gotta be squared by sundown, capisce?",
+      pirate: "Ahoy matey! Ye owe doubloons for the seaside feast! Settle ye debts before ye walk the plank! 🏴‍☠️",
+      accountant: "RE: Outstanding Invoice. Please remit payment for your fractional ledger liability at your earliest convenience to preserve fiscal equilibrium.",
+      polite: "Hi sweetest angel! Whenever you have a second, could you send your part of the split? No huge rush at all, thank you so much! 🌸"
+    };
+
+    function openAIReminderModal() {
+      generateAIReminderMessage();
+      openModal('aiReminderModal');
+    }
+
+    function generateAIReminderMessage() {
+      const tone = document.getElementById('aiToneSelect').value;
+      const text = AI_REMINDERS[tone] || AI_REMINDERS.shakespeare;
+      document.getElementById('aiReminderTextContainer').textContent = `"${text}"`;
+    }
+
+    function copyAIReminderToClipboard() {
+      const text = document.getElementById('aiReminderTextContainer').textContent;
+      navigator.clipboard.writeText(text);
+      showToast('Reminder copied to clipboard! 📋', 'success');
+      closeModal('aiReminderModal');
+    }
+
+    function postAIReminderToGroupChat() {
+      const text = document.getElementById('aiReminderTextContainer').textContent;
+      state.chatMessages.push({
+        id: 'm_' + Date.now(),
+        groupId: state.currentGroupId,
+        senderId: state.currentUser.id,
+        senderName: state.currentUser.name + ' (via AI)',
+        content: text,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        reactions: ['🤖', '😂']
+      });
+      saveState();
+      closeModal('aiReminderModal');
+      switchGroupSubTab('chat');
+      renderChatStream();
+      showToast('AI reminder sent to group chat! 💬', 'success');
+    }
+
+    function renderTravelMode() {
+      calculateLiveFX();
+      const places = [
+        { name: "Tsukiji Outer Fish Market", type: "Seafood & Sushi", rating: "4.8 ★", dist: "350m away" },
+        { name: "TeamLab Planets Art Museum", type: "Digital Art & Experience", rating: "4.9 ★", dist: "1.2km away" },
+        { name: "Kagari Ramen Ginza", type: "Chicken Paitan Ramen", rating: "4.7 ★", dist: "800m away" }
+      ];
+
+      document.getElementById('nearbyPlacesList').innerHTML = places.map(p => `
+        <div class="p-3.5 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
+          <div class="flex justify-between items-start">
+            <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100">${p.name}</h4>
+            <span class="text-[10px] font-bold text-amber-500">${p.rating}</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-0.5">${p.type}</p>
+          <span class="inline-block mt-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">📍 ${p.dist}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('activePollsContainer').innerHTML = state.polls.map(poll => `
+        <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 space-y-3">
+          <h4 class="font-bold text-xs">${poll.question}</h4>
+          <div class="space-y-1.5">
+            ${poll.options.map(opt => `
+              <div onclick="voteOnPoll('${poll.id}', '${opt.id}')" class="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 cursor-pointer hover:border-emerald-500 text-xs">
+                <span class="font-medium">${opt.text}</span>
+                <span class="font-bold px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400">${opt.votes} votes</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function calculateLiveFX() {
+      const amount = parseFloat(document.getElementById('fxInputAmount').value) || 0;
+      const curr = document.getElementById('fxSourceCurrency').value;
+      const rates = { JPY: 0.0067, EUR: 1.08, GBP: 1.29, INR: 0.012 };
+      const converted = (amount * (rates[curr] || 1)).toFixed(2);
+      document.getElementById('fxOutputConverted').textContent = `$${converted} USD`;
+    }
+
+    function triggerGeolocationDiscovery() {
+      showToast('Found 12 group-friendly spots near your location! 📍', 'success');
+    }
+
+    function toggleLocationSharing(checkbox) {
+      showToast(checkbox.checked ? 'Live location sharing is active! 📍' : 'Location sharing stopped.', 'info');
+    }
+
+    function voteOnPoll(pollId, optionId) {
+      const poll = state.polls.find(p => p.id === pollId);
+      if (poll) {
+        const opt = poll.options.find(o => o.id === optionId);
+        if (opt) opt.votes++;
+        saveState();
+        renderTravelMode();
+        showToast('Vote cast! 🗳️', 'success');
+      }
+    }
+
+    function renderInsights() {
+      const categories = [
+        { name: 'Food & Dining', percent: 45, color: 'bg-emerald-500' },
+        { name: 'Housing & Hotel', percent: 35, color: 'bg-teal-500' },
+        { name: 'Transportation', percent: 15, color: 'bg-blue-500' },
+        { name: 'Activities', percent: 5, color: 'bg-amber-500' }
+      ];
+
+      document.getElementById('categorySpendBars').innerHTML = categories.map(c => `
+        <div class="space-y-1">
+          <div class="flex justify-between text-slate-600 dark:text-slate-300">
+            <span>${c.name}</span>
+            <span class="font-bold">${c.percent}%</span>
+          </div>
+          <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full ${c.color} rounded-full" style="width: ${c.percent}%;"></div>
+          </div>
+        </div>
+      `).join('');
+
+      const tips = [
+        "🍕 Group dining at local bistros saved an estimated $140 compared to individual takeout.",
+        "💡 You have 2 recurring subscriptions renewing in the next 12 days.",
+        "🚕 Rideshare carpooling reduced transport overhead by 28% across the Tokyo trip."
+      ];
+      document.getElementById('aiSavingsTipsList').innerHTML = tips.map(t => `<li>${t}</li>`).join('');
+
+      document.getElementById('subscriptionsListContainer').innerHTML = state.subscriptions.map(s => `
+        <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-xs">
+          <div>
+            <span class="font-bold block">${s.name}</span>
+            <span class="text-slate-400">Renews ${s.nextDate}</span>
+          </div>
+          <span class="font-mono font-bold">${centsToFormatted(s.amount)}/${s.cycle}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('savingsGoalsListContainer').innerHTML = state.savingsGoals.map(sg => {
+        const pct = Math.round((sg.current / sg.target) * 100);
+        return `
+          <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 space-y-1.5 text-xs">
+            <div class="flex justify-between font-bold">
+              <span>${sg.title}</span>
+              <span class="text-emerald-600">${pct}%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div class="h-full bg-emerald-500 rounded-full" style="width: ${pct}%;"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>${centsToFormatted(sg.current)} raised</span>
+              <span>Target ${centsToFormatted(sg.target)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    let activeSettlementContext = null;
+
+    function openPaymentModal(fromUserId, toUserId, amountCents) {
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+      const fromUser = group.members.find(m => m.id === fromUserId);
+      const toUser = group.members.find(m => m.id === toUserId);
+
+      activeSettlementContext = { fromUserId, toUserId, amountCents, groupId: group.id };
+
+      document.getElementById('paymentModalAmount').textContent = centsToFormatted(amountCents);
+      document.getElementById('paymentModalParties').textContent = `${fromUser.name} pays ${toUser.name}`;
+
+      renderDynamicQRCodeSvg();
+      openModal('paymentModal');
+    }
+
+    function renderDynamicQRCodeSvg() {
+      const svg = document.getElementById('dynamicQRSvg');
+      let rects = '';
+      for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+          if ((r < 3 && c < 3) || (r > 5 && c < 3) || (r < 3 && c > 5) || (r + c) % 2 === 0) {
+            rects += `<rect x="${c * 11}" y="${r * 11}" width="9" height="9" fill="#0f172a" rx="1.5"/>`;
+          }
+        }
+      }
+      svg.innerHTML = rects;
+    }
+
+    function executePayPalSandboxPayment() {
+      showToast('Connecting to PayPal Sandbox v2 REST API...', 'info');
+      setTimeout(() => {
+        markSettlementAsPaidManually();
+        showToast('PayPal Sandbox Order Captured! Settlement completed. 💳', 'success');
+      }, 1400);
+    }
+
+    function markSettlementAsPaidManually() {
+      if (!activeSettlementContext) return;
+      state.settlements.push({
+        id: 's_' + Date.now(),
+        groupId: activeSettlementContext.groupId,
+        fromUserId: activeSettlementContext.fromUserId,
+        toUserId: activeSettlementContext.toUserId,
+        amount: activeSettlementContext.amountCents,
+        status: 'COMPLETED',
+        completedAt: new Date().toISOString()
+      });
+      saveState();
+      closeModal('paymentModal');
+      closeModal('settlementOptimizerModal');
+      renderApp();
+      showToast('Settlement recorded & balances recalculated! ⚡', 'success');
+    }
+
+    function openSettlementOptimizerModal() {
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+      const optimized = runSmartSettlementOptimizer(group.id);
+      const list = document.getElementById('optimizerModalList');
+
+      if (optimized.length === 0) {
+        list.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">No settlements pending! All accounts are zero-sum balanced.</p>`;
+      } else {
+        list.innerHTML = optimized.map(t => `
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+            <div class="flex items-center space-x-2 text-xs">
+              <img src="${t.fromAvatar}" class="w-7 h-7 rounded-full">
+              <span class="font-bold text-slate-800 dark:text-slate-200">${t.fromUserName}</span>
+              <span class="text-slate-400">➔</span>
+              <img src="${t.toAvatar}" class="w-7 h-7 rounded-full">
+              <span class="font-bold text-slate-800 dark:text-slate-200">${t.toUserName}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="font-black text-sm text-emerald-600">${centsToFormatted(t.amount)}</span>
+              <button onclick="openPaymentModal('${t.fromUserId}', '${t.toUserId}', ${t.amount})" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">Pay</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      openModal('settlementOptimizerModal');
+    }
+
+    function showProfileModal() {
+      const grid = document.getElementById('avatarPickerGrid');
+      grid.innerHTML = AVATARS.map((url) => `
+        <div onclick="selectAvatar('${url}')" class="p-1 rounded-2xl border-2 cursor-pointer hover:border-emerald-500 ${url === state.currentUser.avatarUrl ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40' : 'border-transparent'}">
+          <img src="${url}" class="w-12 h-12 rounded-xl mx-auto">
+        </div>
+      `).join('');
+      openModal('userProfileModal');
+    }
+
+    function selectAvatar(url) {
+      state.currentUser.avatarUrl = url;
+      document.getElementById('profileCurrentAvatarImg').src = url;
+      showProfileModal();
+    }
+
+    function saveUserProfile() {
+      const name = document.getElementById('profileUserNameInput').value.trim();
+      if (name) state.currentUser.name = name;
+      saveState();
+      closeModal('userProfileModal');
+      renderApp();
+      showToast('Profile updated!', 'success');
+    }
+
+    function switchTab(tabId) {
+      ['dashboard', 'scanner', 'travel', 'insights'].forEach(t => {
+        const view = document.getElementById(`view${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const nav = document.getElementById(`navBtn-${t}`);
+        if (t === tabId) {
+          view.classList.remove('hidden');
+          nav.className = 'flex flex-col items-center text-emerald-600 dark:text-emerald-400';
+        } else {
+          view.classList.add('hidden');
+          nav.className = 'flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200';
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchGroupSubTab(subTabId) {
+      ['expenses', 'balances', 'chat', 'memories'].forEach(st => {
+        const content = document.getElementById(`subTabContent-${st}`);
+        const btn = document.getElementById(`subTabBtn-${st}`);
+        if (st === subTabId) {
+          content.classList.remove('hidden');
+          btn.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 whitespace-nowrap';
+        } else {
+          content.classList.add('hidden');
+          btn.className = 'px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap';
+        }
+      });
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function openAddExpenseModal() {
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+      const payerSelect = document.getElementById('expensePayerInput');
+      payerSelect.innerHTML = group.members.map(m => `
+        <option value="${m.id}" ${m.id === state.currentUser.id ? 'selected' : ''}>${m.name} (${m.id === state.currentUser.id ? 'You' : 'Member'})</option>
+      `).join('');
+      setSplitMode('EQUAL');
+      openModal('addExpenseModal');
+    }
+
+    function openExpenseWrappedModal() { openModal('expenseWrappedModal'); }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('THEME', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('THEME', 'dark');
+      }
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-600 text-white',
+        error: 'bg-rose-600 text-white',
+        info: 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+      };
+      toast.className = `px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0 flex items-center space-x-2 ${colors[type] || colors.info}`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 50);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function triggerConfettiShare() {
+      showToast('Summary card saved to clipboard! Ready to share on WhatsApp & Instagram 🎉', 'success');
+    }
+
+    function renderMemories() {
+      const container = document.getElementById('memoryWallContainer');
+      const mems = state.memories.filter(m => m.groupId === state.currentGroupId);
+      container.innerHTML = mems.map(m => `
+        <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+          <img src="${m.imageUrl}" class="w-full h-32 object-cover">
+          <div class="p-2.5">
+            <p class="text-xs font-medium line-clamp-2">${m.caption}</p>
+            <div class="flex justify-between items-center mt-2 text-[10px] text-slate-400">
+              <span>❤️ ${m.likes} likes</span>
+              <span>Nov 2026</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    if (localStorage.getItem('THEME') === 'dark' || (!localStorage.getItem('THEME') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    renderApp();
+  </script>
+</body>
+</html>

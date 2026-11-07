@@ -1,0 +1,26 @@
+{
+  "name": "splitsmart",
+  "version": "1.0.0",
+  "description": "Agentic Social Finance, 3D Bitmojis & PayPal Settlements for the PayPal AI Hackathon",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "paypal",
+    "paypal-sandbox",
+    "ai-agent",
+    "gemini",
+    "agentic-commerce",
+    "expense-splitting",
+    "threejs",
+    "devpost",
+    "hackathon"
+  ],
+  "author": "SplitSmart Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

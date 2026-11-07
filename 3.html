@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SplitSmart - AI Expense Splitting, Bitmoji Studio & PayPal Wallet</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10b981', 600: '#059669', 700: '#047857' },
+            paypal: { blue: '#0070ba', dark: '#003087', light: '#009cde', gold: '#ffc439', goldHover: '#f6b728' }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    * { transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+    .glassmorphism { background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(14px); }
+    .dark .glassmorphism { background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(14px); }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-28 md:pb-12 transition-colors">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="sticky top-0 z-40 glassmorphism border-b border-slate-200 dark:border-slate-800 px-4 py-2.5">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <!-- Brand & Group Switcher -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white font-black text-xl shadow-md shadow-emerald-500/20">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <h1 class="text-base font-black tracking-tight leading-none">SplitSmart</h1>
+            <span class="text-[9px] uppercase font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded-md">AI PWA</span>
+          </div>
+          <div class="flex items-center space-x-1 mt-0.5">
+            <select id="groupSelect" onchange="changeGroup(this.value)" class="text-xs font-bold bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer outline-none">
+              <option value="g1">🇯🇵 Tokyo Trip 2026</option>
+              <option value="g2">🏠 Apartment Roommates</option>
+              <option value="g3">🍕 Friday Pizza Club</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Header Actions: PayPal Balance, Theme, Bitmoji Avatar -->
+      <div class="flex items-center space-x-2">
+        <!-- Live PayPal Balance Pill -->
+        <button onclick="openPayPalWalletModal()" class="flex items-center space-x-2 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-sky-50 to-blue-50 dark:from-slate-800 dark:to-slate-900 border border-sky-200 dark:border-sky-900 shadow-2xs hover:border-sky-400 transition-all">
+          <svg class="w-4 h-4 text-[#0070ba]" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/></svg>
+          <div class="text-left">
+            <span class="text-[9px] font-black uppercase text-sky-600 dark:text-sky-400 block leading-none">PayPal</span>
+            <span id="navPayPalBalanceLabel" class="text-xs font-black text-slate-800 dark:text-slate-100 leading-tight">$2,450.00</span>
+          </div>
+        </button>
+
+        <!-- Dark Mode Toggle -->
+        <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Toggle Theme">
+          <span class="dark:hidden text-base">🌙</span>
+          <span class="hidden dark:inline text-base">☀️</span>
+        </button>
+
+        <!-- User Bitmoji Avatar Button -->
+        <button onclick="openBitmojiStudioModal()" class="relative group p-0.5 rounded-full ring-2 ring-emerald-500/50 hover:ring-emerald-500 transition-all" title="Snapchat Bitmoji Studio & Wardrobe">
+          <div id="navBitmojiAvatarContainer" class="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center bg-emerald-100"></div>
+          <span class="absolute -bottom-1 -right-1 text-[10px] bg-amber-400 rounded-full w-4 h-4 flex items-center justify-center shadow-xs">✨</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- VIEW 1: DASHBOARD & GROUP EXPENSES -->
+    <section id="viewDashboard" class="space-y-6">
+      
+      <!-- HERO BALANCE & PAYPAL OVERVIEW GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Net Group Balance Card (2 Cols) -->
+        <div class="md:col-span-2 rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-800 text-white p-6 shadow-xl shadow-emerald-950/15 relative overflow-hidden flex flex-col justify-between">
+          <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+            <div>
+              <div class="flex items-center space-x-2">
+                <p class="text-xs uppercase font-black tracking-widest text-emerald-200">Total Group Balance</p>
+                <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-mono">Integer minor units</span>
+              </div>
+              <div class="flex items-baseline space-x-2 mt-1">
+                <h1 id="heroNetBalance" class="text-3xl md:text-4xl font-black tracking-tight">$0.00</h1>
+                <span id="heroBalanceBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm">Settled Up</span>
+              </div>
+              <p id="heroBalanceSubtext" class="text-sm text-emerald-100/90 mt-1">You are all squared away in this group.</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <button onclick="openAddExpenseModal()" class="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-white text-emerald-800 hover:bg-emerald-50 font-black text-sm shadow-md transition-transform active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                <span>Add Expense</span>
+              </button>
+              <button onclick="openSettlementOptimizerModal()" class="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-emerald-500/40 hover:bg-emerald-500/60 border border-white/20 text-white font-black text-sm backdrop-blur-sm transition-transform active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span>Smart Settle</span>
+              </button>
+              <button onclick="switchTab('scanner')" class="p-2.5 rounded-2xl bg-white/20 hover:bg-white/30 text-white font-medium text-sm backdrop-blur-sm" title="Scan Receipt with Gemini AI">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mt-6 pt-5 border-t border-white/10 relative z-10">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3">
+              <span class="text-xs font-semibold text-emerald-100">You are owed</span>
+              <p id="totalOwedToYou" class="text-xl font-black text-white mt-0.5">$0.00</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3">
+              <span class="text-xs font-semibold text-emerald-100">You owe others</span>
+              <p id="totalYouOwe" class="text-xl font-black text-rose-200 mt-0.5">$0.00</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PayPal Linked Account Card (1 Col) -->
+        <div class="rounded-3xl bg-gradient-to-br from-[#003087] via-[#0070ba] to-sky-700 text-white p-5 shadow-xl shadow-sky-950/15 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-sky-200" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/></svg>
+                <span class="text-xs font-black tracking-wider uppercase text-sky-200">PayPal Wallet</span>
+              </div>
+              <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-400 text-emerald-950">Verified Sandbox</span>
+            </div>
+
+            <div class="mt-4">
+              <span class="text-xs text-sky-100/80 font-medium">Available PayPal Balance</span>
+              <div class="flex items-baseline space-x-2">
+                <h3 id="widgetPayPalBalance" class="text-2xl font-black tracking-tight text-white">$2,450.00</h3>
+                <span class="text-xs text-sky-200 font-mono">USD</span>
+              </div>
+              <p class="text-[11px] text-sky-100/70 mt-1 truncate">alex.buyer@splitsmart.sandbox</p>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-white/15 flex items-center justify-between gap-2">
+            <button onclick="refreshPayPalLiveBalance()" id="refreshPaypalBtn" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-xs font-bold text-white transition-all">
+              <svg id="refreshPaypalIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              <span>Check Balance</span>
+            </button>
+            <button onclick="openPayPalWalletModal()" class="px-3 py-1.5 rounded-xl bg-[#ffc439] hover:bg-[#f6b728] text-slate-900 font-black text-xs shadow-sm">
+              Manage Wallet
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group Sub-Tabs Container -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-2 shadow-xs">
+        <div class="flex items-center space-x-1 border-b border-slate-100 dark:border-slate-800 pb-2 px-2 overflow-x-auto">
+          <button onclick="switchGroupSubTab('expenses')" id="subTabBtn-expenses" class="px-4 py-2 rounded-xl text-xs font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 whitespace-nowrap">Expenses</button>
+          <button onclick="switchGroupSubTab('balances')" id="subTabBtn-balances" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">Balances & Debts</button>
+          <button onclick="switchGroupSubTab('chat')" id="subTabBtn-chat" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap flex items-center space-x-1.5">
+            <span>Group Chat</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          </button>
+          <button onclick="switchGroupSubTab('memories')" id="subTabBtn-memories" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">Memory Wall</button>
+        </div>
+
+        <!-- SubTab 1: Expenses List -->
+        <div id="subTabContent-expenses" class="p-3 space-y-3">
+          <div class="flex items-center justify-between px-1">
+            <h3 class="text-xs uppercase font-black tracking-wider text-slate-400 dark:text-slate-500">Transactions (<span id="expenseCountLabel">0</span>)</h3>
+            <span class="text-xs text-slate-400">Equal • Exact • Percentage • Item-Wise</span>
+          </div>
+          <div id="expensesListContainer" class="space-y-2.5"></div>
+        </div>
+
+        <!-- SubTab 2: Balances & Greedy Optimizer Matrix -->
+        <div id="subTabContent-balances" class="p-3 space-y-4 hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-extrabold text-sm">Individual Net Balances</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Paid by Member − Consumed Shares</p>
+            </div>
+            <button onclick="openSettlementOptimizerModal()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-sm flex items-center space-x-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Optimize Settlements</span>
+            </button>
+          </div>
+          <div id="balancesListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Greedy Min-Cash-Flow Settle Plan</h4>
+            <div id="optimizedSettlementCards" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- SubTab 3: Real-Time Chat & AI Reminder Generator -->
+        <div id="subTabContent-chat" class="p-3 space-y-3 hidden">
+          <div class="bg-gradient-to-r from-teal-500/10 to-emerald-500/10 border border-teal-500/20 rounded-2xl p-3 flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+              <span class="text-xl">🤖</span>
+              <div>
+                <span class="text-xs font-extrabold text-teal-800 dark:text-teal-300">Need to remind someone to settle up?</span>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400">Use our Gemini AI prompt generator with witty, polite personas.</p>
+              </div>
+            </div>
+            <button onclick="openAIReminderModal()" class="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-sm whitespace-nowrap">Generate AI Reminder</button>
+          </div>
+          <div id="chatMessagesStream" class="h-80 overflow-y-auto space-y-3 p-2 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800"></div>
+          <form onsubmit="handleSendChatMessage(event)" class="flex items-center space-x-2">
+            <input id="chatMessageInput" type="text" placeholder="Type a message or receipt comment..." class="flex-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-500 outline-none">
+            <button type="submit" class="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-transform active:scale-95">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- SubTab 4: Memory Wall -->
+        <div id="subTabContent-memories" class="p-3 space-y-4 hidden">
+          <div class="flex items-center justify-between">
+            <h3 class="font-extrabold text-sm">Group Memory Wall</h3>
+          </div>
+          <div id="memoryWallContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: AI BILL SCANNER -->
+    <section id="viewScanner" class="space-y-6 hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+        <div class="max-w-md mx-auto text-center space-y-3">
+          <div class="w-16 h-16 mx-auto rounded-3xl bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-3xl shadow-inner">📷</div>
+          <h2 class="text-2xl font-extrabold tracking-tight">AI Receipt Scanner</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Powered by Gemini Multimodal Vision. Extract items, prices, and tax directly into item-wise splits.</p>
+        </div>
+
+        <div class="mt-6 border-2 border-dashed border-emerald-300 dark:border-emerald-800 rounded-3xl p-8 text-center hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 cursor-pointer transition-colors" onclick="document.getElementById('receiptFileInput').click()">
+          <input type="file" id="receiptFileInput" accept="image/*" class="hidden" onchange="handleReceiptUpload(event)">
+          <svg class="w-10 h-10 mx-auto text-emerald-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          <span class="text-sm font-extrabold text-slate-700 dark:text-slate-300">Click to upload receipt photo</span>
+        </div>
+
+        <div class="mt-4 text-center">
+          <button onclick="loadSampleReceiptScan()" class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline">✨ Or load a realistic Restaurant Bill Sample with 4 Items + Tax/Tip</button>
+        </div>
+
+        <div id="scannedReceiptReviewSection" class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 space-y-4 hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-black text-emerald-600 uppercase tracking-wider">AI Extraction Complete</span>
+              <h3 id="scannedMerchantName" class="text-lg font-black text-slate-900 dark:text-white">Bistro Bella Italia</h3>
+              <p id="scannedDateLabel" class="text-xs text-slate-400">Date: Nov 6, 2026</p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400">Total Bill</span>
+              <p id="scannedTotalAmountLabel" class="text-xl font-black text-emerald-600 dark:text-emerald-400">$64.50</p>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Tap members who consumed each item:</h4>
+            <div id="scannedItemsListContainer" class="space-y-2"></div>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl space-y-2 text-xs">
+            <div class="flex justify-between text-slate-500"><span>Items Subtotal</span><span id="scannedSubtotalLabel" class="font-bold text-slate-700 dark:text-slate-300">$50.00</span></div>
+            <div class="flex justify-between text-slate-500"><span>Tax (Proportional)</span><span id="scannedTaxLabel" class="font-bold text-slate-700 dark:text-slate-300">$4.50</span></div>
+            <div class="flex justify-between text-slate-500"><span>Tip (Proportional)</span><span id="scannedTipLabel" class="font-bold text-slate-700 dark:text-slate-300">$10.00</span></div>
+          </div>
+
+          <button onclick="commitScannedReceiptToExpense()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-sm shadow-lg shadow-emerald-600/20 transition-transform active:scale-98">Create Item-Wise Expense from Bill</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: TRAVEL MODE -->
+    <section id="viewTravel" class="space-y-6 hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="text-2xl">✈️</span>
+            <h2 class="text-xl font-black tracking-tight">Travel Mode: Tokyo & Kyoto</h2>
+          </div>
+          <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">On Track (62%)</span>
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs font-bold"><span class="text-slate-500">Spent: $1,860.00</span><span class="text-slate-800 dark:text-slate-200">Budget: $3,000.00</span></div>
+          <div class="w-full h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" style="width: 62%;"></div>
+          </div>
+          <p class="text-[11px] text-slate-400 text-right">$1,140.00 remaining for group</p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl space-y-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Live Multi-Currency FX</span>
+            <div class="flex items-center space-x-2">
+              <input id="fxInputAmount" type="number" value="10000" class="w-28 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 text-sm font-bold" oninput="calculateLiveFX()">
+              <select id="fxSourceCurrency" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-2 py-1.5 text-xs font-bold" onchange="calculateLiveFX()">
+                <option value="JPY">JPY (¥)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="INR">INR (₹)</option>
+              </select>
+              <span class="text-xs text-slate-400">=</span>
+              <span id="fxOutputConverted" class="font-black text-sm text-emerald-600 dark:text-emerald-400">$67.11 USD</span>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Group Live Location</span>
+              <p class="text-[11px] text-slate-400">Opt-in sharing for travel safety</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="locationShareToggle" class="sr-only peer" onchange="toggleLocationSharing(this)">
+              <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-extrabold text-base">Nearby Places & Restaurants</h3>
+          <button onclick="triggerGeolocationDiscovery()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center space-x-1">
+            <span>Scan Nearby</span>
+          </button>
+        </div>
+        <div id="nearbyPlacesList" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+        <h3 class="font-extrabold text-base">Collaborative Group Polls</h3>
+        <div id="activePollsContainer" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: INSIGHTS & EXPENSE WRAPPED -->
+    <section id="viewInsights" class="space-y-6 hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-300 flex items-center justify-center text-xl">💡</div>
+            <div>
+              <h2 class="text-xl font-extrabold tracking-tight">AI Spending Assistant</h2>
+              <p class="text-xs text-slate-500">Intelligent breakdown, subscriptions & monthly recap</p>
+            </div>
+          </div>
+          <button onclick="openExpenseWrappedModal()" class="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md shadow-purple-600/20 flex items-center space-x-1.5">
+            <span>🎁</span><span>Expense Wrapped</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Spending by Category</h4>
+            <div id="categorySpendBars" class="space-y-2.5 text-xs"></div>
+          </div>
+          <div class="bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200/50 dark:border-purple-800/40 rounded-2xl p-4 space-y-2">
+            <span class="text-xs font-extrabold text-purple-800 dark:text-purple-300 flex items-center space-x-1"><span>✨</span><span>Gemini Smart Savings Recommendations</span></span>
+            <ul id="aiSavingsTipsList" class="space-y-2 text-xs text-slate-700 dark:text-slate-300"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3">
+          <h3 class="font-extrabold text-sm">Recurring Subscriptions</h3>
+          <div id="subscriptionsListContainer" class="space-y-2"></div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3">
+          <h3 class="font-extrabold text-sm">Shared Savings Goals</h3>
+          <div id="savingsGoalsListContainer" class="space-y-3"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MOBILE BOTTOM TAB NAVIGATION ==================== -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-2">
+    <div class="max-w-md mx-auto flex items-center justify-around">
+      <button onclick="switchTab('dashboard')" id="navBtn-dashboard" class="flex flex-col items-center text-emerald-600 dark:text-emerald-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Home</span>
+      </button>
+      <button onclick="switchTab('scanner')" id="navBtn-scanner" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Scan AI</span>
+      </button>
+      <button onclick="openAddExpenseModal()" class="w-12 h-12 -mt-5 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 font-extrabold text-2xl transition-transform active:scale-95">+</button>
+      <button onclick="openBitmojiStudioModal()" id="navBtn-bitmoji" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <span class="text-xl leading-none mt-0.5">👕</span>
+        <span class="text-[10px] font-bold mt-1">Bitmoji</span>
+      </button>
+      <button onclick="switchTab('travel')" id="navBtn-travel" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Travel</span>
+      </button>
+      <button onclick="switchTab('insights')" id="navBtn-insights" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Insights</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. SNAPCHAT BITMOJI STUDIO MODAL -->
+  <div id="bitmojiStudioModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3 md:p-6">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="p-4 px-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-pink-500 text-white flex items-center justify-center font-bold text-lg shadow-sm">✨</div>
+          <div>
+            <h3 class="text-base font-black tracking-tight">Snapchat Bitmoji Studio</h3>
+            <p class="text-[11px] text-slate-500">Customize avatar & unlock designer outfits via PayPal Sandbox</p>
+          </div>
+        </div>
+        <button onclick="closeModal('bitmojiStudioModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg p-1">✕</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-12 gap-4 p-5">
+        <div class="md:col-span-5 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-amber-500/10 via-emerald-500/5 to-slate-50 dark:to-slate-950/40 rounded-3xl border border-amber-200/40 dark:border-amber-900/30 text-center relative">
+          <span id="studioActiveOutfitBadge" class="absolute top-4 left-4 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-white dark:bg-slate-800 text-emerald-600 shadow-2xs">Equipped</span>
+          <div id="liveBitmojiStage" class="w-40 h-40 rounded-3xl flex items-center justify-center my-3 transform transition-transform hover:scale-105"></div>
+          <h4 id="studioAvatarName" class="font-black text-sm text-slate-800 dark:text-slate-100 mt-2">Alex Rivera</h4>
+          <p id="studioOutfitName" class="text-xs text-slate-500 font-semibold">Streetwear Emerald Hoodie</p>
+          <div class="mt-4 flex items-center space-x-2">
+            <button onclick="randomizeBitmoji()" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-bold text-slate-600 dark:text-slate-300">🎲 Randomize</button>
+            <button onclick="saveEquippedBitmoji()" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-sm">Save Avatar</button>
+          </div>
+        </div>
+
+        <div class="md:col-span-7 space-y-4">
+          <div class="flex space-x-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold">
+            <button onclick="setWardrobeCategory('outfits')" id="wardrobeTab-outfits" class="flex-1 py-1.5 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs">Wardrobe Clothes</button>
+            <button onclick="setWardrobeCategory('hairs')" id="wardrobeTab-hairs" class="flex-1 py-1.5 rounded-xl text-slate-500">Hairstyles</button>
+            <button onclick="setWardrobeCategory('skins')" id="wardrobeTab-skins" class="flex-1 py-1.5 rounded-xl text-slate-500">Skin Tones</button>
+          </div>
+          <div id="wardrobeItemsGrid" class="grid grid-cols-2 gap-2.5 max-h-[300px] overflow-y-auto pr-1"></div>
+          <div class="p-3 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/50 rounded-2xl flex items-center space-x-3 text-xs">
+            <svg class="w-6 h-6 text-[#0070ba] shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/></svg>
+            <div>
+              <span class="font-extrabold text-[#003087] dark:text-sky-300 block">PayPal Sandbox Wardrobe Store</span>
+              <p class="text-[11px] text-slate-600 dark:text-slate-400">Exclusive designer clothing purchases are processed in PayPal Sandbox test mode.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. PAYPAL WALLET MANAGEMENT MODAL -->
+  <div id="paypalWalletModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <svg class="w-7 h-7 text-[#0070ba]" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/></svg>
+          <h3 class="text-lg font-black tracking-tight">PayPal Sandbox Hub</h3>
+        </div>
+        <button onclick="closeModal('paypalWalletModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg p-1">✕</button>
+      </div>
+
+      <div class="p-5 rounded-2xl bg-gradient-to-br from-[#003087] via-[#0070ba] to-sky-600 text-white space-y-3 shadow-lg">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-sky-200 uppercase font-extrabold tracking-wider">Sandbox Balance</span>
+          <span class="px-2 py-0.5 rounded-full bg-emerald-400 text-emerald-950 font-bold text-[10px]">Active Node</span>
+        </div>
+        <div class="flex items-baseline space-x-2">
+          <span id="modalPayPalBalance" class="text-3xl font-black">$2,450.00</span>
+          <span class="text-xs text-sky-200">USD</span>
+        </div>
+        <p class="text-xs text-sky-100 font-mono">alex.buyer@splitsmart.sandbox</p>
+      </div>
+
+      <div class="space-y-2.5">
+        <button onclick="depositPayPalFunds(10000)" class="w-full py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-extrabold text-xs flex items-center justify-center space-x-2">
+          <span>💳</span><span>+ Top Up $100.00 Test Funds</span>
+        </button>
+        <button onclick="settleAllDebtsFromPayPal()" class="w-full py-3 rounded-2xl bg-[#ffc439] hover:bg-[#f6b728] text-slate-900 font-black text-xs shadow-md flex items-center justify-center space-x-2">
+          <span>⚡</span><span>Settle All Group Debts from PayPal</span>
+        </button>
+      </div>
+
+      <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl text-[11px] text-slate-500 space-y-1">
+        <div class="flex justify-between font-bold"><span>Environment:</span><span class="text-emerald-600">Sandbox v2 REST API</span></div>
+        <div class="flex justify-between font-bold"><span>OAuth Status:</span><span class="text-emerald-600">Bearer Token Active</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. PAYPAL SANDBOX CHECKOUT MODAL -->
+  <div id="paypalCheckoutModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-800 text-center">
+      <div class="w-12 h-12 mx-auto rounded-2xl bg-sky-100 text-[#0070ba] flex items-center justify-center">
+        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/></svg>
+      </div>
+      <div>
+        <h3 class="text-base font-black">PayPal Sandbox Checkout</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Confirm wardrobe purchase order</p>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 text-left space-y-2 text-xs border border-slate-100 dark:border-slate-800">
+        <div class="flex justify-between font-bold">
+          <span class="text-slate-500">Item:</span>
+          <span id="checkoutOutfitName" class="text-slate-900 dark:text-white">Designer Outfit</span>
+        </div>
+        <div class="flex justify-between font-bold">
+          <span class="text-slate-500">Order Amount:</span>
+          <span id="checkoutOutfitPrice" class="text-emerald-600 font-black">$9.99 USD</span>
+        </div>
+        <div class="flex justify-between border-t border-slate-200 dark:border-slate-800 pt-2 font-bold">
+          <span class="text-slate-500">PayPal Balance:</span>
+          <span id="checkoutAvailableBalance" class="text-slate-800 dark:text-slate-200">$2,450.00</span>
+        </div>
+      </div>
+
+      <div class="space-y-2 pt-2">
+        <button onclick="confirmPayPalWardrobePayment()" class="w-full py-3 rounded-2xl bg-[#ffc439] hover:bg-[#f6b728] text-slate-900 font-black text-xs shadow-md transition-transform active:scale-95">
+          Approve & Pay with PayPal
+        </button>
+        <button onclick="closeModal('paypalCheckoutModal')" class="w-full py-2 text-xs font-bold text-slate-500 hover:text-slate-700">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. ADD EXPENSE MODAL WITH 4 SPLIT MODES -->
+  <div id="addExpenseModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3 md:p-6">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full max-h-[92vh] overflow-y-auto p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-black tracking-tight">Add Group Expense</h3>
+        <button onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg p-1">✕</button>
+      </div>
+
+      <form onsubmit="handleCreateExpense(event)" class="space-y-4">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Description</label>
+          <input id="expDesc" type="text" required placeholder="e.g. Shinjuku Dinner, Uber ride" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-4 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Amount ($ USD)</label>
+            <input id="expAmount" type="number" step="0.01" required placeholder="0.00" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-4 py-2.5 text-sm font-black focus:ring-2 focus:ring-emerald-500 outline-none" oninput="renderSplitInputs()">
+          </div>
+          <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Paid By</label>
+            <select id="expPayer" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-3 py-2.5 text-xs font-bold focus:ring-2 focus:ring-emerald-500 outline-none"></select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Split Mode</label>
+          <div class="grid grid-cols-4 gap-1.5 mt-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold">
+            <button type="button" onclick="setSplitMode('EQUAL')" id="splitModeBtn-EQUAL" class="py-2 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 shadow-xs">Equal</button>
+            <button type="button" onclick="setSplitMode('EXACT')" id="splitModeBtn-EXACT" class="py-2 rounded-xl text-slate-500">Exact</button>
+            <button type="button" onclick="setSplitMode('PERCENTAGE')" id="splitModeBtn-PERCENTAGE" class="py-2 rounded-xl text-slate-500">% Pct</button>
+            <button type="button" onclick="setSplitMode('ITEM_WISE')" id="splitModeBtn-ITEM_WISE" class="py-2 rounded-xl text-slate-500">Items</button>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Split Breakdown</label>
+          <div id="splitBreakdownContainer" class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl space-y-2 text-xs"></div>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-sm shadow-lg shadow-emerald-600/20 transition-transform active:scale-98">
+          Save Expense
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. SMART SETTLEMENT OPTIMIZER MODAL -->
+  <div id="settlementOptimizerModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 space-y-5 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <div class="w-9 h-9 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center font-bold">⚡</div>
+          <div>
+            <h3 class="text-base font-black tracking-tight">Smart Settlement Optimizer</h3>
+            <p class="text-xs text-slate-500">Greedy min-cash-flow graph reduction</p>
+          </div>
+        </div>
+        <button onclick="closeModal('settlementOptimizerModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg p-1">✕</button>
+      </div>
+
+      <div class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300">
+        💡 Reduces arbitrary debt network down to at most <strong>N - 1</strong> transactions.
+      </div>
+
+      <div class="space-y-2.5">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Optimal Transaction Path</h4>
+        <div id="optimizerModalList" class="space-y-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. AI FUNNY PAYMENT REMINDER MODAL -->
+  <div id="aiReminderModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-black">AI Payment Reminder Generator</h3>
+        <button onclick="closeModal('aiReminderModal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg p-1">✕</button>
+      </div>
+      <div>
+        <label class="text-xs font-bold uppercase text-slate-400">Choose AI Tone</label>
+        <select id="reminderToneSelect" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl p-2.5 text-xs font-bold" onchange="generateAIReminderText()">
+          <option value="shakespearean">🎭 Shakespearean Drama</option>
+          <option value="passive_aggressive">🙃 Passive-Aggressive Roommate</option>
+          <option value="mobster">🕶️ 1920s Mob Boss</option>
+          <option value="pirate">🏴‍☠️ Pirate Captain</option>
+          <option value="accountant">📊 Ultra-Dry Certified Public Accountant</option>
+        </select>
+      </div>
+      <div class="p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl text-xs font-medium border border-slate-200 dark:border-slate-800">
+        <p id="aiReminderOutputText" class="italic text-slate-700 dark:text-slate-300">"Hark, gentle companion! The ledger doth weep for the pizza of yestereve..."</p>
+      </div>
+      <button onclick="postAIReminderToChat()" class="w-full py-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs shadow-md">Post Directly to Group Chat</button>
+    </div>
+  </div>
+
+  <!-- 7. EXPENSE WRAPPED CELEBRATION MODAL -->
+  <div id="expenseWrappedModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-950 text-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl border border-purple-500/30 text-center relative overflow-hidden">
+      <div class="absolute -top-10 -right-10 w-40 h-40 bg-pink-500/20 rounded-full blur-2xl"></div>
+      <div class="flex justify-between items-center relative z-10">
+        <span class="text-xs uppercase font-black tracking-widest text-purple-300">SplitSmart Retrospective</span>
+        <button onclick="closeModal('expenseWrappedModal')" class="text-white/60 hover:text-white font-bold text-lg">✕</button>
+      </div>
+      <div class="space-y-2 relative z-10">
+        <span class="text-4xl">🎉</span>
+        <h3 class="text-2xl font-black tracking-tight">November 2026 Wrapped</h3>
+        <p class="text-xs text-purple-200">You settled $1,860.00 across 14 group expenses this month!</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3 text-left relative z-10">
+        <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl">
+          <span class="text-[10px] uppercase font-bold text-purple-300">Top Category</span>
+          <p class="text-sm font-black mt-0.5">Dining & Ramen 🍜</p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl">
+          <span class="text-[10px] uppercase font-bold text-purple-300">Fastest Settler</span>
+          <p class="text-sm font-black mt-0.5">Alex (You) ⚡</p>
+        </div>
+      </div>
+      <button onclick="triggerConfettiCannon()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-500 font-black text-xs shadow-lg shadow-pink-500/20 relative z-10">
+        🎊 Celebrate & Share Card
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- ==================== JAVASCRIPT ENGINE ==================== -->
+  <script>
+    // ==================== APP STATE ====================
+    const state = {
+      users: [
+        { id: 'u1', name: 'Alex (You)', email: 'alex@splitsmart.app', bitmoji: { skin: 'peach', hairStyle: 'waves', hairColor: 'brown', outfit: 'emerald_hoodie' } },
+        { id: 'u2', name: 'Jordan Lee', email: 'jordan@splitsmart.app', bitmoji: { skin: 'olive', hairStyle: 'buzz', hairColor: 'black', outfit: 'cyberpunk_bomber' } },
+        { id: 'u3', name: 'Sam Taylor', email: 'sam@splitsmart.app', bitmoji: { skin: 'fair', hairStyle: 'locks', hairColor: 'blonde', outfit: 'golden_blazer' } },
+        { id: 'u4', name: 'Casey Morgan', email: 'casey@splitsmart.app', bitmoji: { skin: 'cocoa', hairStyle: 'afro', hairColor: 'black', outfit: 'velour_robe' } }
+      ],
+      user: null,
+      currentGroupId: 'g1',
+      activeTab: 'dashboard',
+      activeSubTab: 'expenses',
+      activeWardrobeCategory: 'outfits',
+      splitMode: 'EQUAL',
+      paypalBalance: 245000, // $2,450.00 USD in integer cents
+      paypalAccount: 'alex.buyer@splitsmart.sandbox',
+      pendingWardrobePurchase: null,
+      groups: [
+        { id: 'g1', name: 'Tokyo Trip 2026', members: ['u1', 'u2', 'u3', 'u4'], currency: 'USD', budget: 300000, tripMode: true },
+        { id: 'g2', name: 'Apartment Roommates', members: ['u1', 'u2', 'u3'], currency: 'USD', budget: 150000, tripMode: false },
+        { id: 'g3', name: 'Friday Pizza Club', members: ['u1', 'u4'], currency: 'USD', budget: 50000, tripMode: false }
+      ],
+      wardrobe: [
+        { id: 'emerald_hoodie', name: 'Emerald Streetwear Hoodie', priceCents: 0, owned: true, tag: 'Starter' },
+        { id: 'cyberpunk_bomber', name: 'Cyberpunk Neon Bomber', priceCents: 999, owned: false, tag: 'Popular' },
+        { id: 'golden_blazer', name: 'Executive Golden Blazer', priceCents: 799, owned: false, tag: 'VIP' },
+        { id: 'velour_robe', name: 'Royal Purple Velour Robe', priceCents: 1499, owned: false, tag: 'Exclusive' },
+        { id: 'aviator_leather', name: 'Retro Aviator Leather', priceCents: 1250, owned: false, tag: 'Classic' }
+      ],
+      expenses: [
+        {
+          id: 'e1', groupId: 'g1', payerId: 'u1', amount: 8400, description: 'Shinjuku Izakaya Banquet', category: 'DINING', splitType: 'EQUAL', date: '2026-11-05',
+          splits: [{ userId: 'u1', amount: 2100 }, { userId: 'u2', amount: 2100 }, { userId: 'u3', amount: 2100 }, { userId: 'u4', amount: 2100 }]
+        },
+        {
+          id: 'e2', groupId: 'g1', payerId: 'u2', amount: 4800, description: 'Bullet Train Passes', category: 'TRAVEL', splitType: 'EQUAL', date: '2026-11-04',
+          splits: [{ userId: 'u1', amount: 1200 }, { userId: 'u2', amount: 1200 }, { userId: 'u3', amount: 1200 }, { userId: 'u4', amount: 1200 }]
+        }
+      ],
+      settlements: [],
+      messages: [
+        { id: 'm1', groupId: 'g1', userId: 'u2', text: 'Hey guys, I paid for the bullet train passes! 🚅', date: 'Nov 4, 2:15 PM', reactions: ['👍', '❤️'] },
+        { id: 'm2', groupId: 'g1', userId: 'u1', text: 'Thanks Jordan! Settle you up tonight via PayPal.', date: 'Nov 4, 2:20 PM', reactions: ['🍕'] }
+      ],
+      memories: [
+        { id: 'mem1', groupId: 'g1', imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=400&q=80', caption: 'Tokyo Tower at sunset 🗼', likes: 6 },
+        { id: 'mem2', groupId: 'g1', imageUrl: 'https://images.unsplash.com/photo-1554797589-7241ab374b73?auto=format&fit=crop&w=400&q=80', caption: 'Shinjuku Golden Gai alleyway night 🏮', likes: 11 }
+      ],
+      polls: [
+        { id: 'p1', question: 'Dinner in Shibuya tomorrow night?', options: [{ id: 'opt1', text: 'Ichiran Ramen 🍜', votes: 3 }, { id: 'opt2', text: 'Wagyu Yakiniku 🥩', votes: 1 }] }
+      ]
+    };
+
+    state.user = state.users[0]; // Alex
+
+    // ==================== INTEGER MONEY UTILS ====================
+    function formatCents(cents) {
+      return `$${(cents / 100).toFixed(2)}`;
+    }
+
+    // ==================== PROCEDURAL BITMOJI SVG GENERATOR ====================
+    function renderBitmojiSvg(config, size = 64) {
+      const c = config || state.user.bitmoji;
+      const skinColors = { fair: '#fcd3b0', peach: '#fbc39e', olive: '#d9a066', bronze: '#b87333', cocoa: '#784315' };
+      const hairColors = { brown: '#4a2c11', black: '#1a1a1a', blonde: '#facc15', auburn: '#9a3412', silver: '#94a3b8' };
+
+      const skin = skinColors[c.skin] || skinColors.peach;
+      const hairColor = hairColors[c.hairColor] || hairColors.brown;
+
+      let outfitSvg = '';
+      switch (c.outfit) {
+        case 'cyberpunk_bomber':
+          outfitSvg = `<path d="M22 85 C28 66 72 66 78 85 L84 100 L16 100 Z" fill="#0f172a" stroke="#06b6d4" stroke-width="2.5"/><path d="M42 70 L50 85 L58 70" stroke="#f43f5e" stroke-width="2.5" fill="none"/><line x1="50" y1="85" x2="50" y2="100" stroke="#06b6d4" stroke-width="2"/>`;
+          break;
+        case 'golden_blazer':
+          outfitSvg = `<path d="M22 85 C28 66 72 66 78 85 L84 100 L16 100 Z" fill="#78350f" stroke="#fbbf24" stroke-width="2"/><polygon points="50,75 42,90 58,90" fill="#fef3c7"/><polygon points="48,82 52,82 50,92" fill="#d97706"/>`;
+          break;
+        case 'velour_robe':
+          outfitSvg = `<path d="M22 85 C28 66 72 66 78 85 L84 100 L16 100 Z" fill="#581c87" stroke="#c084fc" stroke-width="1.5"/><path d="M38 72 L50 90 L62 72" stroke="#e9d5ff" stroke-width="3" fill="none"/>`;
+          break;
+        case 'aviator_leather':
+          outfitSvg = `<path d="M22 85 C28 66 72 66 78 85 L84 100 L16 100 Z" fill="#451a03" stroke="#92400e" stroke-width="1.5"/><circle cx="36" cy="80" r="2" fill="#d97706"/><circle cx="64" cy="80" r="2" fill="#d97706"/>`;
+          break;
+        default: // emerald_hoodie
+          outfitSvg = `<path d="M22 85 C28 66 72 66 78 85 L84 100 L16 100 Z" fill="#059669" stroke="#10b981" stroke-width="1.5"/><circle cx="50" cy="84" r="3" fill="#34d399"/>`;
+          break;
+      }
+
+      let hairSvg = `<path d="M28 42 C28 26 72 26 72 42 C72 32 60 22 50 22 C38 22 28 32 28 42 Z" fill="${hairColor}"/>`;
+      if (c.hairStyle === 'buzz') {
+        hairSvg = `<path d="M30 40 C30 28 70 28 70 40 C70 30 62 25 50 25 C38 25 30 30 30 40 Z" fill="${hairColor}"/>`;
+      } else if (c.hairStyle === 'afro') {
+        hairSvg = `<circle cx="50" cy="42" r="28" fill="${hairColor}"/><circle cx="50" cy="48" r="22" fill="${skin}"/>`;
+      }
+
+      return `
+        <svg width="${size}" height="${size}" viewBox="0 0 100 100" class="rounded-full shadow-sm">
+          <circle cx="50" cy="50" r="48" fill="#f8fafc"/>
+          ${outfitSvg}
+          <path d="M43 65 L43 74 L57 74 L57 65 Z" fill="${skin}"/>
+          <ellipse cx="50" cy="48" rx="22" ry="24" fill="${skin}"/>
+          ${hairSvg}
+          <ellipse cx="42" cy="46" rx="2.5" ry="3" fill="#1e293b"/>
+          <ellipse cx="58" cy="46" rx="2.5" ry="3" fill="#1e293b"/>
+          <circle cx="43" cy="45" r="0.8" fill="#ffffff"/>
+          <circle cx="59" cy="45" r="0.8" fill="#ffffff"/>
+          <path d="M44 56 Q50 62 56 56" stroke="#991b1b" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    // ==================== PAYPAL WALLET & BALANCE ====================
+    function updatePayPalUI() {
+      const balanceStr = formatCents(state.paypalBalance);
+      const navEl = document.getElementById('navPayPalBalanceLabel');
+      const widgetEl = document.getElementById('widgetPayPalBalance');
+      const modalEl = document.getElementById('modalPayPalBalance');
+      if (navEl) navEl.innerText = balanceStr;
+      if (widgetEl) widgetEl.innerText = balanceStr;
+      if (modalEl) modalEl.innerText = balanceStr;
+    }
+
+    function refreshPayPalLiveBalance() {
+      const icon = document.getElementById('refreshPaypalIcon');
+      if (icon) icon.classList.add('animate-spin');
+      setTimeout(() => {
+        if (icon) icon.classList.remove('animate-spin');
+        updatePayPalUI();
+        showToast(`PayPal Live Balance Verified: ${formatCents(state.paypalBalance)} USD`, 'success');
+      }, 600);
+    }
+
+    function depositPayPalFunds(cents) {
+      state.paypalBalance += cents;
+      updatePayPalUI();
+      showToast(`Deposited +${formatCents(cents)} to PayPal Sandbox!`, 'success');
+    }
+
+    function settleAllDebtsFromPayPal() {
+      const net = calculateUserNetInGroup(state.user.id, state.currentGroupId);
+      if (net >= 0) {
+        showToast('You do not owe any money in this group!', 'info');
+        return;
+      }
+      const amountToSettle = Math.abs(net);
+      if (state.paypalBalance < amountToSettle) {
+        showToast('Insufficient PayPal sandbox balance!', 'error');
+        return;
+      }
+
+      state.paypalBalance -= amountToSettle;
+      updatePayPalUI();
+
+      state.settlements.push({
+        id: 'settle-' + Date.now(),
+        groupId: state.currentGroupId,
+        payerId: state.user.id,
+        amount: amountToSettle,
+        status: 'COMPLETED',
+        method: 'PAYPAL_SANDBOX',
+        date: new Date().toISOString()
+      });
+
+      triggerConfettiCannon();
+      showToast(`Settled ${formatCents(amountToSettle)} via PayPal Sandbox!`, 'success');
+      closeModal('paypalWalletModal');
+      renderApp();
+    }
+
+    function buyWardrobeWithPayPal(outfitId) {
+      const outfit = state.wardrobe.find(w => w.id === outfitId);
+      if (!outfit) return;
+      state.pendingWardrobePurchase = outfit;
+      document.getElementById('checkoutOutfitName').innerText = outfit.name;
+      document.getElementById('checkoutOutfitPrice').innerText = formatCents(outfit.priceCents);
+      document.getElementById('checkoutAvailableBalance').innerText = formatCents(state.paypalBalance);
+      openModal('paypalCheckoutModal');
+    }
+
+    function confirmPayPalWardrobePayment() {
+      const outfit = state.pendingWardrobePurchase;
+      if (!outfit) return;
+      if (state.paypalBalance < outfit.priceCents) {
+        showToast('Insufficient PayPal balance! Top up in your wallet.', 'error');
+        return;
+      }
+      state.paypalBalance -= outfit.priceCents;
+      outfit.owned = true;
+      state.user.bitmoji.outfit = outfit.id;
+
+      updatePayPalUI();
+      closeModal('paypalCheckoutModal');
+      renderBitmojiStudio();
+      renderApp();
+      triggerConfettiCannon();
+      showToast(`Purchased and equipped ${outfit.name}!`, 'success');
+    }
+
+    // ==================== SNAPCHAT BITMOJI STUDIO ====================
+    function openBitmojiStudioModal() {
+      renderBitmojiStudio();
+      openModal('bitmojiStudioModal');
+    }
+
+    function renderBitmojiStudio() {
+      const stage = document.getElementById('liveBitmojiStage');
+      if (stage) stage.innerHTML = renderBitmojiSvg(state.user.bitmoji, 140);
+      const activeOutfit = state.wardrobe.find(w => w.id === state.user.bitmoji.outfit);
+      if (activeOutfit) {
+        document.getElementById('studioOutfitName').innerText = activeOutfit.name;
+      }
+      renderWardrobeItems();
+    }
+
+    function setWardrobeCategory(cat) {
+      state.activeWardrobeCategory = cat;
+      ['outfits', 'hairs', 'skins'].forEach(c => {
+        const btn = document.getElementById(`wardrobeTab-${c}`);
+        if (btn) {
+          if (c === cat) {
+            btn.className = 'flex-1 py-1.5 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs';
+          } else {
+            btn.className = 'flex-1 py-1.5 rounded-xl text-slate-500';
+          }
+        }
+      });
+      renderWardrobeItems();
+    }
+
+    function renderWardrobeItems() {
+      const container = document.getElementById('wardrobeItemsGrid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (state.activeWardrobeCategory === 'outfits') {
+        state.wardrobe.forEach(w => {
+          const isEquipped = state.user.bitmoji.outfit === w.id;
+          const card = document.createElement('div');
+          card.className = `p-3 rounded-2xl border ${isEquipped ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'} space-y-2 text-left`;
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${w.owned ? 'bg-slate-100 dark:bg-slate-800 text-slate-600' : 'bg-amber-100 text-amber-800'}">${w.tag}</span>
+              <span class="text-xs font-black ${w.owned ? 'text-slate-400' : 'text-emerald-600'}">${w.priceCents === 0 ? 'Free' : formatCents(w.priceCents)}</span>
+            </div>
+            <p class="text-xs font-bold truncate">${w.name}</p>
+            ${w.owned ? `
+              <button onclick="equipOutfit('${w.id}')" class="w-full py-1.5 rounded-xl ${isEquipped ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'} text-xs font-black">
+                ${isEquipped ? '✓ Equipped' : 'Equip'}
+              </button>
+            ` : `
+              <button onclick="buyWardrobeWithPayPal('${w.id}')" class="w-full py-1.5 rounded-xl bg-[#ffc439] hover:bg-[#f6b728] text-slate-900 text-xs font-black flex items-center justify-center space-x-1 shadow-sm">
+                <span>Buy with PayPal</span>
+              </button>
+            `}
+          `;
+          container.appendChild(card);
+        });
+      } else if (state.activeWardrobeCategory === 'hairs') {
+        ['waves', 'buzz', 'locks', 'slick', 'afro'].forEach(style => {
+          const isSelected = state.user.bitmoji.hairStyle === style;
+          const card = document.createElement('div');
+          card.className = `p-3 rounded-2xl border ${isSelected ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'} cursor-pointer text-center`;
+          card.onclick = () => { state.user.bitmoji.hairStyle = style; renderBitmojiStudio(); };
+          card.innerHTML = `<span class="text-sm font-bold capitalize">${style}</span>`;
+          container.appendChild(card);
+        });
+      } else if (state.activeWardrobeCategory === 'skins') {
+        ['fair', 'peach', 'olive', 'bronze', 'cocoa'].forEach(skin => {
+          const isSelected = state.user.bitmoji.skin === skin;
+          const card = document.createElement('div');
+          card.className = `p-3 rounded-2xl border ${isSelected ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'} cursor-pointer text-center`;
+          card.onclick = () => { state.user.bitmoji.skin = skin; renderBitmojiStudio(); };
+          card.innerHTML = `<span class="text-sm font-bold capitalize">${skin}</span>`;
+          container.appendChild(card);
+        });
+      }
+    }
+
+    function equipOutfit(id) {
+      state.user.bitmoji.outfit = id;
+      renderBitmojiStudio();
+      renderApp();
+      showToast('Avatar outfit updated!', 'success');
+    }
+
+    function randomizeBitmoji() {
+      const skins = ['fair', 'peach', 'olive', 'bronze', 'cocoa'];
+      const hairs = ['waves', 'buzz', 'locks', 'afro'];
+      state.user.bitmoji.skin = skins[Math.floor(Math.random() * skins.length)];
+      state.user.bitmoji.hairStyle = hairs[Math.floor(Math.random() * hairs.length)];
+      renderBitmojiStudio();
+    }
+
+    function saveEquippedBitmoji() {
+      closeModal('bitmojiStudioModal');
+      renderApp();
+      showToast('Bitmoji avatar saved!', 'success');
+    }
+
+    // ==================== BALANCE ENGINE & GREEDY OPTIMIZER ====================
+    function calculateUserNetInGroup(userId, groupId) {
+      let paid = 0, owed = 0;
+      state.expenses.filter(e => e.groupId === groupId).forEach(e => {
+        if (e.payerId === userId) paid += e.amount;
+        const mySplit = e.splits.find(s => s.userId === userId);
+        if (mySplit) owed += mySplit.amount;
+      });
+      state.settlements.filter(s => s.groupId === groupId && s.status === 'COMPLETED').forEach(s => {
+        if (s.payerId === userId) paid += s.amount;
+        if (s.payeeId === userId) owed += s.amount;
+      });
+      return paid - owed;
+    }
+
+    function runGreedySettlementOptimizer(groupId) {
+      const group = state.groups.find(g => g.id === groupId);
+      if (!group) return [];
+      const netBalances = {};
+      group.members.forEach(m => netBalances[m] = calculateUserNetInGroup(m, groupId));
+
+      const debtors = [], creditors = [];
+      Object.entries(netBalances).forEach(([uid, net]) => {
+        if (net < -5) debtors.push({ uid, net: -net });
+        else if (net > 5) creditors.push({ uid, net });
+      });
+
+      debtors.sort((a, b) => b.net - a.net);
+      creditors.sort((a, b) => b.net - a.net);
+
+      const optimal = [];
+      let i = 0, j = 0;
+      while (i < debtors.length && j < creditors.length) {
+        const debt = debtors[i], cred = creditors[j];
+        const settleAmt = Math.min(debt.net, cred.net);
+        optimal.push({ from: debt.uid, to: cred.uid, amount: settleAmt });
+        debt.net -= settleAmt;
+        cred.net -= settleAmt;
+        if (debt.net <= 5) i++;
+        if (cred.net <= 5) j++;
+      }
+      return optimal;
+    }
+
+    // ==================== MODAL HELPERS ====================
+    function openModal(id) { document.getElementById(id)?.classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
+
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      ['viewDashboard', 'viewScanner', 'viewTravel', 'viewInsights'].forEach(v => {
+        document.getElementById(v)?.classList.add('hidden');
+      });
+      if (tabId === 'dashboard') document.getElementById('viewDashboard')?.classList.remove('hidden');
+      if (tabId === 'scanner') document.getElementById('viewScanner')?.classList.remove('hidden');
+      if (tabId === 'travel') { document.getElementById('viewTravel')?.classList.remove('hidden'); renderTravelMode(); }
+      if (tabId === 'insights') { document.getElementById('viewInsights')?.classList.remove('hidden'); renderInsights(); }
+    }
+
+    function switchGroupSubTab(sub) {
+      state.activeSubTab = sub;
+      ['expenses', 'balances', 'chat', 'memories'].forEach(s => {
+        document.getElementById(`subTabContent-${s}`)?.classList.add('hidden');
+        document.getElementById(`subTabBtn-${s}`)?.classList.replace('bg-emerald-100', 'text-slate-500');
+      });
+      document.getElementById(`subTabContent-${sub}`)?.classList.remove('hidden');
+      document.getElementById(`subTabBtn-${sub}`)?.classList.add('bg-emerald-100');
+      if (sub === 'balances') renderBalancesAndOptimizer();
+      if (sub === 'chat') renderChatStream();
+      if (sub === 'memories') renderMemories();
+    }
+
+    function openPayPalWalletModal() { updatePayPalUI(); openModal('paypalWalletModal'); }
+    function openSettlementOptimizerModal() {
+      const optimal = runGreedySettlementOptimizer(state.currentGroupId);
+      const list = document.getElementById('optimizerModalList');
+      if (list) {
+        list.innerHTML = optimal.length === 0 ? '<p class="text-xs text-slate-400">All members are squared away!</p>' :
+          optimal.map(o => {
+            const fromUser = state.users.find(u => u.id === o.from);
+            const toUser = state.users.find(u => u.id === o.to);
+            return `
+              <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 text-xs font-bold">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">→</span>
+                  <span>${fromUser.name} pays ${toUser.name}</span>
+                </div>
+                <span class="font-black text-emerald-600">${formatCents(o.amount)}</span>
+              </div>`;
+          }).join('');
+      }
+      openModal('settlementOptimizerModal');
+    }
+
+    function openAddExpenseModal() {
+      const payerSel = document.getElementById('expPayer');
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+      if (payerSel && group) {
+        payerSel.innerHTML = group.members.map(mId => {
+          const u = state.users.find(x => x.id === mId);
+          return `<option value="${u.id}">${u.name}</option>`;
+        }).join('');
+      }
+      renderSplitInputs();
+      openModal('addExpenseModal');
+    }
+
+    function setSplitMode(mode) {
+      state.splitMode = mode;
+      ['EQUAL', 'EXACT', 'PERCENTAGE', 'ITEM_WISE'].forEach(m => {
+        const btn = document.getElementById(`splitModeBtn-${m}`);
+        if (btn) btn.className = m === mode ? 'py-2 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 shadow-xs' : 'py-2 rounded-xl text-slate-500';
+      });
+      renderSplitInputs();
+    }
+
+    function renderSplitInputs() {
+      const container = document.getElementById('splitBreakdownContainer');
+      const amount = Math.round(parseFloat(document.getElementById('expAmount')?.value || 0) * 100);
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+      if (!container || !group) return;
+
+      if (state.splitMode === 'EQUAL') {
+        const share = Math.floor(amount / group.members.length);
+        container.innerHTML = group.members.map(mId => {
+          const u = state.users.find(x => x.id === mId);
+          return `<div class="flex justify-between font-bold"><span>${u.name}</span><span class="text-emerald-600">${formatCents(share)}</span></div>`;
+        }).join('');
+      } else {
+        container.innerHTML = group.members.map(mId => {
+          const u = state.users.find(x => x.id === mId);
+          return `
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-bold truncate">${u.name}</span>
+              <input type="number" step="0.01" placeholder="0.00" class="w-24 bg-white dark:bg-slate-800 rounded-lg px-2 py-1 text-right font-bold outline-none border border-slate-200 dark:border-slate-700">
+            </div>`;
+        }).join('');
+      }
+    }
+
+    function handleCreateExpense(e) {
+      e.preventDefault();
+      const desc = document.getElementById('expDesc').value;
+      const amtCents = Math.round(parseFloat(document.getElementById('expAmount').value) * 100);
+      const payerId = document.getElementById('expPayer').value;
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+
+      const splitShare = Math.floor(amtCents / group.members.length);
+      const splits = group.members.map(m => ({ userId: m, amount: splitShare }));
+
+      state.expenses.unshift({
+        id: 'e-' + Date.now(),
+        groupId: state.currentGroupId,
+        payerId,
+        amount: amtCents,
+        description: desc,
+        category: 'GENERAL',
+        splitType: state.splitMode,
+        date: new Date().toISOString().split('T')[0],
+        splits
+      });
+
+      closeModal('addExpenseModal');
+      renderApp();
+      triggerConfettiCannon();
+      showToast('Expense added successfully!', 'success');
+    }
+
+    function triggerConfettiCannon() {
+      if (window.confetti) confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+    }
+
+    function showToast(msg, type = 'info') {
+      const tc = document.getElementById('toastContainer');
+      if (!tc) return;
+      const toast = document.createElement('div');
+      toast.className = `p-3 rounded-2xl text-xs font-bold shadow-xl border backdrop-blur-md pointer-events-auto ${type === 'success' ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-white border-slate-700'}`;
+      toast.innerText = msg;
+      tc.appendChild(toast);
+      setTimeout(() => toast.remove(), 2800);
+    }
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('THEME', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    // ==================== RENDERING & INIT ====================
+    function renderApp() {
+      // 1. Update Bitmoji avatars
+      const navAvatar = document.getElementById('navBitmojiAvatarContainer');
+      if (navAvatar) navAvatar.innerHTML = renderBitmojiSvg(state.user.bitmoji, 36);
+
+      // 2. Update PayPal Balance displays
+      updatePayPalUI();
+
+      // 3. Update Net Balance Card
+      const myNet = calculateUserNetInGroup(state.user.id, state.currentGroupId);
+      const heroNet = document.getElementById('heroNetBalance');
+      const heroBadge = document.getElementById('heroBalanceBadge');
+      if (heroNet) heroNet.innerText = (myNet < 0 ? '-' : '') + formatCents(Math.abs(myNet));
+      if (heroBadge) {
+        heroBadge.innerText = myNet > 0 ? 'You are owed' : (myNet < 0 ? 'You owe' : 'Settled Up');
+        heroBadge.className = `text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm ${myNet < 0 ? 'bg-rose-500/80 text-white' : 'bg-white/20 text-white'}`;
+      }
+
+      // 4. Update Expenses List
+      const expContainer = document.getElementById('expensesListContainer');
+      const grpExpenses = state.expenses.filter(e => e.groupId === state.currentGroupId);
+      document.getElementById('expenseCountLabel').innerText = grpExpenses.length;
+      if (expContainer) {
+        expContainer.innerHTML = grpExpenses.map(e => {
+          const payer = state.users.find(u => u.id === e.payerId);
+          return `
+            <div class="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-sm">🧾</div>
+                <div>
+                  <h4 class="font-extrabold text-xs">${e.description}</h4>
+                  <p class="text-[10px] text-slate-400">Paid by ${payer.name} • ${e.date}</p>
+                </div>
+              </div>
+              <span class="font-black text-sm text-slate-900 dark:text-white">${formatCents(e.amount)}</span>
+            </div>`;
+        }).join('');
+      }
+    }
+
+    function renderBalancesAndOptimizer() {
+      const grp = state.groups.find(g => g.id === state.currentGroupId);
+      const list = document.getElementById('balancesListContainer');
+      if (list && grp) {
+        list.innerHTML = grp.members.map(mId => {
+          const u = state.users.find(x => x.id === mId);
+          const net = calculateUserNetInGroup(mId, state.currentGroupId);
+          return `
+            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-between text-xs font-bold">
+              <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-full overflow-hidden">${renderBitmojiSvg(u.bitmoji, 32)}</div>
+                <span>${u.name}</span>
+              </div>
+              <span class="${net >= 0 ? 'text-emerald-600' : 'text-rose-500'} font-black">${net >= 0 ? '+' : ''}${formatCents(net)}</span>
+            </div>`;
+        }).join('');
+      }
+    }
+
+    function renderChatStream() {
+      const container = document.getElementById('chatMessagesStream');
+      const grpMessages = state.messages.filter(m => m.groupId === state.currentGroupId);
+      if (container) {
+        container.innerHTML = grpMessages.map(m => {
+          const u = state.users.find(x => x.id === m.userId);
+          return `
+            <div class="flex items-start space-x-2 text-xs">
+              <div class="w-7 h-7 rounded-full overflow-hidden shrink-0">${renderBitmojiSvg(u.bitmoji, 28)}</div>
+              <div class="bg-white dark:bg-slate-900 p-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1">
+                <div class="flex items-center space-x-1.5"><span class="font-bold">${u.name}</span><span class="text-[9px] text-slate-400">${m.date}</span></div>
+                <p>${m.text}</p>
+              </div>
+            </div>`;
+        }).join('');
+      }
+    }
+
+    function handleSendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatMessageInput');
+      if (!input || !input.value.trim()) return;
+      state.messages.push({
+        id: 'm-' + Date.now(),
+        groupId: state.currentGroupId,
+        userId: state.user.id,
+        text: input.value.trim(),
+        date: 'Just now',
+        reactions: []
+      });
+      input.value = '';
+      renderChatStream();
+    }
+
+    function renderMemories() {
+      const container = document.getElementById('memoryWallContainer');
+      const grpMems = state.memories.filter(m => m.groupId === state.currentGroupId);
+      if (container) {
+        container.innerHTML = grpMems.map(m => `
+          <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+            <img src="${m.imageUrl}" class="w-full h-32 object-cover">
+            <div class="p-2.5">
+              <p class="text-xs font-semibold line-clamp-2">${m.caption}</p>
+              <span class="text-[10px] text-slate-400 mt-1 block">❤️ ${m.likes} likes</span>
+            </div>
+          </div>`).join('');
+      }
+    }
+
+    function renderTravelMode() {
+      const places = [
+        { name: 'Afuri Ramen Shibuya', tag: 'Ramen & Craft Beer', rating: '4.8 ★' },
+        { name: 'Meiji Jingu Shrine', tag: 'Cultural Sight', rating: '4.9 ★' },
+        { name: 'Harajuku Crepes', tag: 'Desserts', rating: '4.6 ★' }
+      ];
+      const pList = document.getElementById('nearbyPlacesList');
+      if (pList) {
+        pList.innerHTML = places.map(p => `
+          <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-xs">
+            <h4 class="font-black">${p.name}</h4>
+            <div class="flex justify-between text-slate-400 mt-1"><span>${p.tag}</span><span class="text-emerald-600 font-bold">${p.rating}</span></div>
+          </div>`).join('');
+      }
+      const pollList = document.getElementById('activePollsContainer');
+      if (pollList) {
+        pollList.innerHTML = state.polls.map(p => `
+          <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 space-y-2 text-xs">
+            <h4 class="font-extrabold">${p.question}</h4>
+            <div class="space-y-1.5">${p.options.map(o => `
+              <button onclick="votePoll('${p.id}', '${o.id}')" class="w-full p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex justify-between font-bold hover:border-emerald-500">
+                <span>${o.text}</span><span class="text-emerald-600">${o.votes} votes</span>
+              </button>`).join('')}</div>
+          </div>`).join('');
+      }
+    }
+
+    function votePoll(pid, oid) {
+      const poll = state.polls.find(p => p.id === pid);
+      const opt = poll?.options.find(o => o.id === oid);
+      if (opt) { opt.votes++; renderTravelMode(); showToast('Vote cast!', 'success'); }
+    }
+
+    function renderInsights() {
+      const cats = [{ name: 'Dining & Drinks', amt: '$84.00', pct: 60 }, { name: 'Travel & Trains', amt: '$48.00', pct: 35 }, { name: 'Snacks', amt: '$7.00', pct: 5 }];
+      const cList = document.getElementById('categorySpendBars');
+      if (cList) {
+        cList.innerHTML = cats.map(c => `
+          <div class="space-y-1">
+            <div class="flex justify-between font-bold"><span>${c.name}</span><span>${c.amt}</span></div>
+            <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden"><div class="h-full bg-purple-500 rounded-full" style="width: ${c.pct}%;"></div></div>
+          </div>`).join('');
+      }
+      const tipList = document.getElementById('aiSavingsTipsList');
+      if (tipList) {
+        tipList.innerHTML = `
+          <li class="flex items-start space-x-1.5"><span>💡</span><span>Dining made up 60% of group spend. Booking group lunch sets in Shinjuku could save ~$35.</span></li>
+          <li class="flex items-start space-x-1.5"><span>🚅</span><span>Pre-booking 72-hour Tokyo Metro subway passes saves $12/person over single tickets.</span></li>`;
+      }
+    }
+
+    function calculateLiveFX() {
+      const amt = parseFloat(document.getElementById('fxInputAmount')?.value || 0);
+      const curr = document.getElementById('fxSourceCurrency')?.value || 'JPY';
+      const rates = { JPY: 0.0067, EUR: 1.08, GBP: 1.29, INR: 0.012 };
+      const converted = amt * (rates[curr] || 1);
+      document.getElementById('fxOutputConverted').innerText = `$${converted.toFixed(2)} USD`;
+    }
+
+    function openAIReminderModal() { openModal('aiReminderModal'); generateAIReminderText(); }
+    function generateAIReminderText() {
+      const tone = document.getElementById('reminderToneSelect')?.value || 'shakespearean';
+      const map = {
+        shakespearean: '"Hark, noble companion! The ledger weepeth for the feast of yestereve. Settle thy coin, prithee!"',
+        passive_aggressive: '"I love how we all agree to split equally, but somehow only my bank account gets deducted."',
+        mobster: '"Nice balance sheet you got here. Be a real shame if someone had to remind you twice to settle up."',
+        pirate: '"Ahoy matey! Ye haven\'t surrendered yer doubloons for the tavern rations. Settle up or walk the plank!"',
+        accountant: '"According to Subsection 4A of our friendship protocol, your accounts payable has reached delinquent status."'
+      };
+      document.getElementById('aiReminderOutputText').innerText = map[tone] || map.shakespearean;
+    }
+
+    function postAIReminderToChat() {
+      const text = document.getElementById('aiReminderOutputText').innerText;
+      state.messages.push({
+        id: 'm-' + Date.now(),
+        groupId: state.currentGroupId,
+        userId: state.user.id,
+        text: `🤖 AI Reminder: ${text}`,
+        date: 'Just now',
+        reactions: ['😂']
+      });
+      closeModal('aiReminderModal');
+      switchGroupSubTab('chat');
+      showToast('AI reminder posted to chat!', 'success');
+    }
+
+    function loadSampleReceiptScan() {
+      document.getElementById('scannedReceiptReviewSection')?.classList.remove('hidden');
+      const items = [
+        { name: 'Wood-Fired Truffle Pizza', price: '$22.00', assigned: ['u1', 'u2'] },
+        { name: 'Handmade Pappardelle', price: '$18.00', assigned: ['u3'] },
+        { name: 'Sparkling San Pellegrino (x2)', price: '$10.00', assigned: ['u1', 'u2', 'u3', 'u4'] }
+      ];
+      const container = document.getElementById('scannedItemsListContainer');
+      if (container) {
+        container.innerHTML = items.map(it => `
+          <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 flex items-center justify-between text-xs">
+            <div><span class="font-bold">${it.name}</span><div class="text-[10px] text-slate-400">Assigned: ${it.assigned.map(uid => state.users.find(u => u.id === uid).name).join(', ')}</div></div>
+            <span class="font-black text-emerald-600">${it.price}</span>
+          </div>`).join('');
+      }
+    }
+
+    function commitScannedReceiptToExpense() {
+      state.expenses.unshift({
+        id: 'e-scan-' + Date.now(),
+        groupId: state.currentGroupId,
+        payerId: state.user.id,
+        amount: 6450,
+        description: 'Bistro Bella Italia (AI OCR)',
+        category: 'DINING',
+        splitType: 'ITEM_WISE',
+        date: new Date().toISOString().split('T')[0],
+        splits: [
+          { userId: 'u1', amount: 1650 },
+          { userId: 'u2', amount: 1650 },
+          { userId: 'u3', amount: 2050 },
+          { userId: 'u4', amount: 1100 }
+        ]
+      });
+      switchTab('dashboard');
+      renderApp();
+      triggerConfettiCannon();
+      showToast('Created Item-Wise expense from AI Bill Scanner!', 'success');
+    }
+
+    function openExpenseWrappedModal() { openModal('expenseWrappedModal'); triggerConfettiCannon(); }
+    function changeGroup(gid) { state.currentGroupId = gid; renderApp(); }
+
+    // Init theme
+    if (localStorage.getItem('THEME') === 'dark' || (!localStorage.getItem('THEME') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    // App Startup
+    renderApp();
+  </script>
+</body>
+</html>

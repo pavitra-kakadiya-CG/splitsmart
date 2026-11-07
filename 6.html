@@ -1,0 +1,2609 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SplitSmart - 3D Realistic Bitmoji Studio, PayPal Wallet & Group Expenses</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10b981', 600: '#059669', 700: '#047857' },
+            paypal: { blue: '#0070ba', dark: '#003087', light: '#009cde', gold: '#ffc439', goldHover: '#f6b728' },
+            snap: { yellow: '#fffc00', dark: '#111111' }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Three.js CDN for genuine 3D WebGL Realistic Bitmoji Avatars -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    * { transition: background-color 0.2s ease, border-color 0.2s ease; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #334155; }
+    .glassmorphism { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(14px); }
+    .dark .glassmorphism { background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(14px); }
+    /* Compact Instagram / Snapchat Story Rings */
+    .story-ring-active {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      padding: 2px;
+    }
+    .story-ring-viewed {
+      background: #94a3b8;
+      padding: 2px;
+    }
+    .dark .story-ring-viewed {
+      background: #475569;
+      padding: 2px;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-110px) scale(1.3); }
+    }
+    .floating-heart {
+      position: absolute;
+      animation: floatUp 1.2s ease-out forwards;
+      pointer-events: none;
+    }
+    .paypal-btn {
+      background-color: #ffc439;
+      color: #003087;
+      transition: all 0.15s ease-in-out;
+    }
+    .paypal-btn:hover {
+      background-color: #f6b728;
+      transform: translateY(-1px);
+    }
+    .paypal-btn:active {
+      transform: translateY(1px);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-28 md:pb-12 transition-colors">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="sticky top-0 z-40 glassmorphism border-b border-slate-200/80 dark:border-slate-800/80 px-3.5 py-2.5">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
+      <!-- App Brand & Group Switcher -->
+      <div class="flex items-center space-x-2.5 shrink-0">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center text-white font-black text-lg shadow-sm shadow-emerald-500/20">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center space-x-1">
+            <h1 class="text-sm md:text-base font-black tracking-tight leading-none">SplitSmart</h1>
+            <span class="text-[9px] uppercase font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded-md hidden sm:inline">AI & 3D</span>
+          </div>
+          <div class="flex items-center space-x-1 mt-0.5">
+            <select id="groupSelect" onchange="changeGroup(this.value)" class="text-xs font-bold bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer outline-none max-w-[130px] md:max-w-none truncate">
+              <option value="g1">🇯🇵 Tokyo Trip 2026</option>
+              <option value="g2">🏠 Apartment Roommates</option>
+              <option value="g3">🍕 Friday Pizza Club</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Header Controls: Currency Switcher, PayPal Balance, 3D Bitmoji, Dark Mode -->
+      <div class="flex items-center space-x-2">
+        <!-- GLOBAL COUNTRY & CURRENCY EXCHANGE SWITCHER -->
+        <div class="relative flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-2 py-1 shadow-2xs">
+          <span id="currencyFlag" class="text-sm mr-1">🇺🇸</span>
+          <select id="currencySelector" onchange="changeCurrency(this.value)" class="text-xs font-extrabold bg-transparent text-slate-700 dark:text-slate-200 outline-none cursor-pointer pr-1">
+            <option value="USD">USD ($)</option>
+            <option value="INR">INR (₹)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="JPY">JPY (¥)</option>
+            <option value="CAD">CAD (CA$)</option>
+            <option value="AUD">AUD (A$)</option>
+            <option value="SGD">SGD (S$)</option>
+            <option value="AED">AED (AED)</option>
+            <option value="CHF">CHF (CHF)</option>
+          </select>
+        </div>
+
+        <!-- Official PayPal Live Balance Pill -->
+        <button onclick="openPayPalWalletModal()" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-2xl bg-gradient-to-r from-sky-50 to-blue-50 dark:from-slate-800 dark:to-slate-900 border border-sky-200 dark:border-sky-900 shadow-2xs hover:border-sky-400 transition-all shrink-0" title="PayPal Sandbox Live Balance">
+          <svg class="w-4 h-4 text-[#0070ba] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/>
+          </svg>
+          <div class="text-left hidden xs:block sm:block">
+            <span class="text-[9px] font-black uppercase text-[#0070ba] dark:text-sky-400 block leading-none">PayPal</span>
+            <span id="navPayPalBalanceLabel" class="text-xs font-black text-slate-800 dark:text-slate-100 leading-tight">$2,450.00</span>
+          </div>
+          <span id="navPayPalBalanceShort" class="text-xs font-black text-slate-800 dark:text-slate-100 leading-tight xs:hidden sm:hidden">$2.4k</span>
+        </button>
+
+        <!-- 3D Realistic Bitmoji Studio Trigger -->
+        <button onclick="openBitmojiStudioModal()" class="relative group p-0.5 rounded-full ring-2 ring-emerald-500/50 hover:ring-emerald-500 transition-all shrink-0" title="Realistic 3D Avatar & Wardrobe Studio">
+          <div id="navBitmojiAvatarContainer" class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-tr from-amber-100 to-rose-200 text-base shadow-2xs">
+            👩‍🦰
+          </div>
+          <span class="absolute -bottom-1 -right-1 text-[8px] bg-amber-400 text-slate-900 font-black rounded-full px-1 shadow-2xs">3D</span>
+        </button>
+
+        <!-- Dark Mode Toggle -->
+        <button onclick="toggleDarkMode()" class="p-1.5 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Toggle Theme">
+          <span class="dark:hidden text-sm">🌙</span>
+          <span class="hidden dark:inline text-sm">☀️</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+  <main class="max-w-5xl mx-auto px-3.5 py-4 space-y-4">
+
+    <!-- ==================== REFINED COMPACT SNAPSHOTS TRAY ==================== -->
+    <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 py-2.5 px-3 shadow-2xs">
+      <div class="flex items-center space-x-3 overflow-x-auto scrollbar-none" id="snapshotsTrayContainer">
+        <!-- Rendered dynamically: sleek 44px compact story circles -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 1: DASHBOARD & EXPENSES ==================== -->
+    <section id="viewDashboard" class="space-y-4">
+      
+      <!-- HERO BALANCE & PAYPAL OVERVIEW GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+        <!-- Net Group Balance Card (2 Cols) -->
+        <div class="md:col-span-2 rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-800 text-white p-5 shadow-lg shadow-emerald-950/15 relative overflow-hidden flex flex-col justify-between">
+          <div class="absolute -right-8 -bottom-8 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+            <div>
+              <div class="flex items-center space-x-2">
+                <p class="text-[11px] uppercase font-black tracking-wider text-emerald-200">Total Group Balance</p>
+                <span class="text-[9px] bg-white/20 px-2 py-0.5 rounded-full font-mono font-bold" id="currentCurrencyTag">USD ($)</span>
+              </div>
+              <div class="flex items-baseline space-x-2.5 mt-0.5">
+                <h1 id="heroNetBalance" class="text-3xl sm:text-4xl font-black tracking-tight">$0.00</h1>
+                <span id="heroBalanceBadge" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/20 text-white backdrop-blur-sm">Settled Up</span>
+              </div>
+              <p id="heroBalanceSubtext" class="text-xs text-emerald-100/90 mt-0.5">You are all squared away in this group.</p>
+            </div>
+
+            <!-- Primary Action Buttons: Clear, Simple, Intuitive -->
+            <div class="flex items-center gap-2 flex-wrap">
+              <button onclick="openAddExpenseModal()" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-2xl bg-white text-emerald-800 hover:bg-emerald-50 font-black text-xs shadow-md transition-transform active:scale-95">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                <span>Add Expense</span>
+              </button>
+              <button onclick="openSettlementOptimizerModal()" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-2xl bg-emerald-500/40 hover:bg-emerald-500/60 border border-white/20 text-white font-black text-xs backdrop-blur-sm transition-transform active:scale-95">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span>Smart Settle</span>
+              </button>
+              <button onclick="switchTab('scanner')" class="flex items-center space-x-1 px-3 py-2 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-black text-xs backdrop-blur-sm transition-transform active:scale-95" title="Scan receipt with AI">
+                <span>📷 Scan</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5 mt-5 pt-4 border-t border-white/10 relative z-10">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-2.5">
+              <span class="text-[11px] font-semibold text-emerald-100">You are owed</span>
+              <p id="totalOwedToYou" class="text-lg font-black text-white mt-0.5">$0.00</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-2.5">
+              <span class="text-[11px] font-semibold text-emerald-100">You owe others</span>
+              <p id="totalYouOwe" class="text-lg font-black text-rose-200 mt-0.5">$0.00</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official PayPal Branded Card (1 Col) -->
+        <div class="rounded-3xl bg-gradient-to-br from-[#003087] via-[#0070ba] to-sky-700 text-white p-5 shadow-lg shadow-sky-950/15 flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+
+          <div>
+            <div class="flex items-center justify-between">
+              <!-- Official PayPal Monogram -->
+              <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 rounded-xl bg-white flex items-center justify-center p-1 shadow-xs">
+                  <svg class="w-full h-full text-[#003087]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="text-xs font-black tracking-wider uppercase text-white block leading-none">PayPal Wallet</span>
+                  <span class="text-[9px] text-sky-200 font-bold">Buyer Protection Verified</span>
+                </div>
+              </div>
+              <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-400 text-emerald-950">Sandbox Live</span>
+            </div>
+
+            <div class="mt-4">
+              <span class="text-[11px] text-sky-100/80 font-medium">Available PayPal Balance</span>
+              <div class="flex items-baseline space-x-2">
+                <h3 id="widgetPayPalBalance" class="text-2xl font-black tracking-tight text-white">$2,450.00</h3>
+                <span id="widgetPayPalCurrency" class="text-xs text-sky-200 font-mono font-bold">USD</span>
+              </div>
+              <p class="text-[10px] text-sky-100/70 mt-0.5 truncate">alex.buyer@splitsmart.sandbox</p>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-white/15 flex items-center justify-between gap-2">
+            <button onclick="refreshPayPalLiveBalance()" id="refreshPaypalBtn" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-xs font-bold text-white transition-all">
+              <svg id="refreshPaypalIcon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              <span>Verify</span>
+            </button>
+            <button onclick="openPayPalWalletModal()" class="paypal-btn px-3 py-1.5 rounded-xl font-black text-xs shadow-xs flex items-center space-x-1">
+              <span>Manage PayPal</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIMPLIFIED TABS: EXPENSES / BALANCES / CHAT / MEMORIES -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 p-2 shadow-2xs">
+        <div class="flex items-center space-x-1 border-b border-slate-100 dark:border-slate-800 pb-2 px-2 overflow-x-auto">
+          <button onclick="switchGroupSubTab('expenses')" id="subTabBtn-expenses" class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 whitespace-nowrap">Expenses</button>
+          <button onclick="switchGroupSubTab('balances')" id="subTabBtn-balances" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">Balances & Settle</button>
+          <button onclick="switchGroupSubTab('chat')" id="subTabBtn-chat" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap flex items-center space-x-1.5">
+            <span>Group Chat</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          </button>
+          <button onclick="switchGroupSubTab('memories')" id="subTabBtn-memories" class="px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap">Memory Wall</button>
+        </div>
+
+        <!-- SubTab 1: Expenses List -->
+        <div id="subTabContent-expenses" class="p-3 space-y-3">
+          <div class="flex items-center justify-between px-1">
+            <h3 class="text-xs uppercase font-black tracking-wider text-slate-400 dark:text-slate-500">Transactions (<span id="expenseCountLabel">0</span>)</h3>
+            <span class="text-[11px] text-slate-400">Equal • Exact • Percentage • Item-Wise</span>
+          </div>
+          <div id="expensesListContainer" class="space-y-2.5"></div>
+        </div>
+
+        <!-- SubTab 2: Balances & Greedy Optimizer Matrix -->
+        <div id="subTabContent-balances" class="p-3 space-y-4 hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-extrabold text-sm">Individual Net Balances</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Paid by Member − Consumed Shares</p>
+            </div>
+            <button onclick="openSettlementOptimizerModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-2xs flex items-center space-x-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Greedy Settle</span>
+            </button>
+          </div>
+          <div id="balancesListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-2.5"></div>
+          <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Smart Minimum-Cash-Flow Settle Plan</h4>
+            <div id="optimizedSettlementCards" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- SubTab 3: Real-Time Chat & AI Reminder Generator -->
+        <div id="subTabContent-chat" class="p-3 space-y-3 hidden">
+          <div class="bg-gradient-to-r from-teal-500/10 to-emerald-500/10 border border-teal-500/20 rounded-2xl p-3 flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+              <span class="text-lg">🤖</span>
+              <div>
+                <span class="text-xs font-extrabold text-teal-800 dark:text-teal-300">Need to remind someone to settle up?</span>
+                <p class="text-[11px] text-slate-600 dark:text-slate-400">Generate witty or polite reminders using Gemini AI.</p>
+              </div>
+            </div>
+            <button onclick="openAIReminderModal()" class="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-2xs whitespace-nowrap">Generate AI Reminder</button>
+          </div>
+          <div id="chatMessagesStream" class="h-72 overflow-y-auto space-y-2.5 p-2.5 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800"></div>
+          <form onsubmit="handleSendChatMessage(event)" class="flex items-center space-x-2">
+            <input id="chatMessageInput" type="text" placeholder="Type a message or receipt comment..." class="flex-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-4 py-2 text-xs font-medium focus:ring-2 focus:ring-emerald-500 outline-none">
+            <button type="submit" class="p-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-transform active:scale-95">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- SubTab 4: Memory Wall -->
+        <div id="subTabContent-memories" class="p-3 space-y-3 hidden">
+          <div class="flex items-center justify-between">
+            <h3 class="font-extrabold text-sm">Group Memory Wall</h3>
+            <button onclick="openCreateSnapshotModal()" class="px-3 py-1.5 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs">+ Post Photo</button>
+          </div>
+          <div id="memoryWallContainer" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: AI BILL SCANNER ==================== -->
+    <section id="viewScanner" class="space-y-4 hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xs">
+        <div class="max-w-md mx-auto text-center space-y-2">
+          <div class="w-14 h-14 mx-auto rounded-3xl bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-2xl shadow-inner">📷</div>
+          <h2 class="text-xl font-extrabold tracking-tight">AI Receipt Scanner</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Powered by Gemini Multimodal Vision. Extract items, prices, and tax directly into item-wise splits.</p>
+        </div>
+
+        <div class="mt-5 border-2 border-dashed border-emerald-300 dark:border-emerald-800 rounded-3xl p-6 text-center hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 cursor-pointer transition-colors" onclick="document.getElementById('receiptFileInput').click()">
+          <input type="file" id="receiptFileInput" accept="image/*" class="hidden" onchange="handleReceiptUpload(event)">
+          <svg class="w-8 h-8 mx-auto text-emerald-500 mb-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+          <span class="text-xs font-extrabold text-slate-700 dark:text-slate-300">Click to upload receipt photo</span>
+        </div>
+
+        <div class="mt-3 text-center">
+          <button onclick="loadSampleReceiptScan()" class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline">✨ Or load realistic Restaurant Bill Sample with 4 Items + Tax/Tip</button>
+        </div>
+
+        <div id="scannedReceiptReviewSection" class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800 space-y-3 hidden">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-[10px] font-black text-emerald-600 uppercase tracking-wider">AI Extraction Complete</span>
+              <h3 id="scannedMerchantName" class="text-base font-black text-slate-900 dark:text-white">Bistro Bella Italia</h3>
+              <p id="scannedDateLabel" class="text-[11px] text-slate-400">Date: Nov 6, 2026</p>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400 uppercase font-bold">Total Bill</span>
+              <p id="scannedTotalAmountLabel" class="text-lg font-black text-emerald-600 dark:text-emerald-400">$64.50</p>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Assign members who consumed each item:</h4>
+            <div id="scannedItemsListContainer" class="space-y-2"></div>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-2xl space-y-1.5 text-xs">
+            <div class="flex justify-between text-slate-500"><span>Items Subtotal</span><span id="scannedSubtotalLabel" class="font-bold text-slate-700 dark:text-slate-300">$50.00</span></div>
+            <div class="flex justify-between text-slate-500"><span>Tax (Proportional)</span><span id="scannedTaxLabel" class="font-bold text-slate-700 dark:text-slate-300">$4.50</span></div>
+            <div class="flex justify-between text-slate-500"><span>Tip (Proportional)</span><span id="scannedTipLabel" class="font-bold text-slate-700 dark:text-slate-300">$10.00</span></div>
+          </div>
+
+          <button onclick="commitScannedReceiptToExpense()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-xs shadow-md shadow-emerald-600/20 transition-transform active:scale-98">Create Item-Wise Expense from Bill</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: TRAVEL MODE ==================== -->
+    <section id="viewTravel" class="space-y-4 hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xs space-y-3.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">✈️</span>
+            <h2 class="text-lg font-black tracking-tight">Travel Mode: Tokyo & Kyoto</h2>
+          </div>
+          <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">On Track (62%)</span>
+        </div>
+
+        <div class="space-y-1">
+          <div class="flex justify-between text-xs font-bold"><span id="travelSpentLabel" class="text-slate-500">Spent: $1,860.00</span><span id="travelBudgetLabel" class="text-slate-800 dark:text-slate-200">Budget: $3,000.00</span></div>
+          <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" style="width: 62%;"></div>
+          </div>
+          <p id="travelRemainingLabel" class="text-[10px] text-slate-400 text-right">$1,140.00 remaining for group</p>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl space-y-1.5">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Live Multi-Currency FX Converter</span>
+            <div class="flex items-center space-x-2">
+              <input id="fxInputAmount" type="number" value="10000" class="w-24 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-2.5 py-1 text-xs font-bold" oninput="calculateLiveFX()">
+              <select id="fxSourceCurrency" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-2 py-1 text-xs font-bold" onchange="calculateLiveFX()">
+                <option value="JPY">JPY (¥)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="INR">INR (₹)</option>
+                <option value="CAD">CAD (CA$)</option>
+                <option value="AUD">AUD (A$)</option>
+              </select>
+              <span class="text-xs text-slate-400">=</span>
+              <span id="fxOutputConverted" class="font-black text-xs text-emerald-600 dark:text-emerald-400">$64.94 USD</span>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Group Live Location</span>
+              <p class="text-[10px] text-slate-400">Opt-in sharing for travel safety</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="locationShareToggle" class="sr-only peer" onchange="toggleLocationSharing(this)">
+              <div class="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xs space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="font-extrabold text-sm">Nearby Places & Restaurants</h3>
+          <button onclick="triggerGeolocationDiscovery()" class="px-3 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold flex items-center space-x-1">
+            <span>Scan Nearby</span>
+          </button>
+        </div>
+        <div id="nearbyPlacesList" class="grid grid-cols-1 md:grid-cols-3 gap-2.5"></div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xs space-y-3">
+        <h3 class="font-extrabold text-sm">Collaborative Group Polls</h3>
+        <div id="activePollsContainer" class="space-y-2.5"></div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: INSIGHTS & EXPENSE WRAPPED ==================== -->
+    <section id="viewInsights" class="space-y-4 hidden">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xs space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-9 h-9 rounded-2xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-300 flex items-center justify-center text-lg">💡</div>
+            <div>
+              <h2 class="text-lg font-extrabold tracking-tight">AI Spending Assistant</h2>
+              <p class="text-[11px] text-slate-500">Intelligent breakdown, subscriptions & monthly recap</p>
+            </div>
+          </div>
+          <button onclick="openExpenseWrappedModal()" class="px-3 py-1.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-2xs flex items-center space-x-1.5">
+            <span>🎁</span><span>Expense Wrapped</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Spending by Category</h4>
+            <div id="categorySpendBars" class="space-y-2 text-xs"></div>
+          </div>
+          <div class="bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200/50 dark:border-purple-800/40 rounded-2xl p-3.5 space-y-2">
+            <span class="text-xs font-extrabold text-purple-800 dark:text-purple-300 flex items-center space-x-1"><span>✨</span><span>Gemini Smart Savings Recommendations</span></span>
+            <ul id="aiSavingsTipsList" class="space-y-1.5 text-xs text-slate-700 dark:text-slate-300"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xs space-y-2.5">
+          <h3 class="font-extrabold text-xs uppercase tracking-wider text-slate-400">Recurring Subscriptions</h3>
+          <div id="subscriptionsListContainer" class="space-y-2"></div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-5 shadow-2xs space-y-2.5">
+          <h3 class="font-extrabold text-xs uppercase tracking-wider text-slate-400">Shared Savings Goals</h3>
+          <div id="savingsGoalsListContainer" class="space-y-2.5"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MOBILE BOTTOM TAB NAVIGATION ==================== -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 px-4 py-2">
+    <div class="max-w-md mx-auto flex items-center justify-around">
+      <button onclick="switchTab('dashboard')" id="navBtn-dashboard" class="flex flex-col items-center text-emerald-600 dark:text-emerald-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Home</span>
+      </button>
+      <button onclick="switchTab('scanner')" id="navBtn-scanner" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Scan AI</span>
+      </button>
+      <button onclick="openAddExpenseModal()" class="w-11 h-11 -mt-5 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 font-black text-xl transition-transform active:scale-95">+</button>
+      <button onclick="openBitmojiStudioModal()" id="navBtn-bitmoji" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <span class="text-base leading-none mt-0.5">👤</span>
+        <span class="text-[10px] font-bold mt-1">3D Avatar</span>
+      </button>
+      <button onclick="switchTab('travel')" id="navBtn-travel" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Travel</span>
+      </button>
+      <button onclick="switchTab('insights')" id="navBtn-insights" class="flex flex-col items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+        <span class="text-[10px] font-bold mt-0.5">Insights</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. REALISTIC 3D BITMOJI STUDIO MODAL (MALE/FEMALE, MAKEUP, SHOES, CLOTHES) -->
+  <div id="bitmojiStudioModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-2.5 md:p-5">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full max-h-[94vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800">
+      
+      <!-- Studio Header -->
+      <div class="p-3.5 px-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#fffc00] to-amber-500 text-slate-900 flex items-center justify-center font-black text-base shadow-2xs">
+            👻
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 class="text-sm font-black tracking-tight">Realistic 3D Avatar & Makeup Studio</h3>
+              <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">WebGL 3D Rig</span>
+            </div>
+            <p class="text-[10px] text-slate-500">Rotate 360° • Female & Male Models • Real Makeup, Shoes & PayPal Drip</p>
+          </div>
+        </div>
+        <button onclick="closeModal('bitmojiStudioModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+      </div>
+
+      <!-- Studio Body (2 Columns) -->
+      <div class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-12 gap-3 p-4">
+        <!-- Left: Interactive 3D Canvas Rig -->
+        <div class="md:col-span-5 flex flex-col items-center justify-between p-3.5 bg-gradient-to-b from-slate-100 via-amber-50/20 to-slate-200/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 text-center relative overflow-hidden">
+          
+          <div class="w-full flex items-center justify-between z-10 px-1">
+            <!-- MALE / FEMALE GENDER CHOOSING TOGGLE -->
+            <div class="flex items-center bg-white/90 dark:bg-slate-800/90 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700 shadow-2xs">
+              <button onclick="setAvatarGender('female')" id="genderBtn-female" class="px-2.5 py-1 rounded-lg text-xs font-black bg-rose-500 text-white shadow-2xs">
+                👩 Female
+              </button>
+              <button onclick="setAvatarGender('male')" id="genderBtn-male" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white">
+                👨 Male
+              </button>
+            </div>
+            <span class="text-[10px] text-slate-400 bg-white/70 dark:bg-slate-800/70 px-2 py-0.5 rounded-full">
+              👆 Drag to spin 360°
+            </span>
+          </div>
+
+          <!-- THREE.JS 3D AVATAR CANVAS -->
+          <div class="w-full h-64 md:h-72 flex items-center justify-center relative cursor-grab active:cursor-grabbing my-1" id="canvas3dContainer">
+            <canvas id="avatar3dCanvas" class="w-full h-full rounded-2xl"></canvas>
+          </div>
+
+          <div class="w-full pt-2 border-t border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between px-1">
+              <div class="text-left">
+                <h4 id="studioAvatarName" class="font-black text-xs text-slate-800 dark:text-slate-100">Alex Rivera</h4>
+                <p id="studioOutfitName" class="text-[10px] text-emerald-600 font-bold truncate max-w-[150px]">Emerald Streetwear ✨</p>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <button onclick="reset3DAvatarView()" class="px-2.5 py-1 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                  🔄 Center
+                </button>
+                <button onclick="capture3DAvatarSnapshot()" class="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black shadow-2xs">
+                  ✓ Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Studio Customizer (Tabs for Tops, Bottoms, Shoes, Makeup, Skin) -->
+        <div class="md:col-span-7 space-y-3">
+          <!-- Closet Category Tabs -->
+          <div class="flex space-x-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold overflow-x-auto">
+            <button onclick="setWardrobeCategory('tops')" id="wardrobeTab-tops" class="flex-1 py-1.5 px-2 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-2xs whitespace-nowrap">
+              Tops
+            </button>
+            <button onclick="setWardrobeCategory('bottoms')" id="wardrobeTab-bottoms" class="flex-1 py-1.5 px-2 rounded-xl text-slate-500 whitespace-nowrap">
+              Pants
+            </button>
+            <button onclick="setWardrobeCategory('shoes')" id="wardrobeTab-shoes" class="flex-1 py-1.5 px-2 rounded-xl text-slate-500 whitespace-nowrap">
+              Shoes
+            </button>
+            <button onclick="setWardrobeCategory('makeup')" id="wardrobeTab-makeup" class="flex-1 py-1.5 px-2 rounded-xl text-slate-500 whitespace-nowrap">
+              💄 Makeup
+            </button>
+            <button onclick="setWardrobeCategory('skins')" id="wardrobeTab-skins" class="flex-1 py-1.5 px-2 rounded-xl text-slate-500 whitespace-nowrap">
+              Skin & Hair
+            </button>
+          </div>
+
+          <!-- Wardrobe & Makeup Items Grid -->
+          <div id="wardrobeItemsGrid" class="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto pr-1">
+            <!-- Populated dynamically with Outfits, Makeup, Shoes, PayPal prices -->
+          </div>
+
+          <!-- PayPal Wardrobe Security & Sandbox Guarantee Notice -->
+          <div class="p-2.5 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/50 rounded-2xl flex items-center space-x-2.5 text-xs">
+            <div class="w-6 h-6 rounded-lg bg-[#003087] flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/>
+              </svg>
+            </div>
+            <div>
+              <span class="font-black text-[#003087] dark:text-sky-300 block text-[11px] leading-tight">PayPal Sandbox Wardrobe Store</span>
+              <p class="text-[10px] text-slate-600 dark:text-slate-400">Unlock outfits instantly using your test PayPal balance with zero real charges.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. COMPACT INSTAGRAM / SNAPCHAT STORY VIEWER MODAL -->
+  <div id="snapshotViewerModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg hidden flex items-center justify-center p-0 md:p-4">
+    <div class="relative w-full max-w-sm h-full md:h-[88vh] bg-slate-900 rounded-none md:rounded-3xl overflow-hidden flex flex-col justify-between shadow-2xl border border-white/10">
+      <!-- Story Top Progress Bars -->
+      <div class="absolute top-3 left-3 right-3 z-30 flex space-x-1" id="storyProgressBars">
+        <div class="h-1 flex-1 bg-white/40 rounded-full overflow-hidden">
+          <div id="storyProgressFill" class="h-full bg-white w-0 transition-all duration-100 ease-linear"></div>
+        </div>
+      </div>
+
+      <!-- Story User Info & Close Button -->
+      <div class="absolute top-6 left-3 right-3 z-30 flex items-center justify-between text-white drop-shadow">
+        <div class="flex items-center space-x-2">
+          <div id="storyViewerAvatar" class="w-7 h-7 rounded-full overflow-hidden border border-white/50 bg-emerald-500 flex items-center justify-center font-bold text-xs"></div>
+          <div>
+            <h4 id="storyViewerUsername" class="text-xs font-black leading-none">Alex Rivera</h4>
+            <span id="storyViewerTime" class="text-[9px] text-white/80">Tokyo • 2h ago</span>
+          </div>
+        </div>
+        <button onclick="closeModal('snapshotViewerModal')" class="w-7 h-7 rounded-full bg-black/40 text-white flex items-center justify-center font-bold text-xs">✕</button>
+      </div>
+
+      <!-- Story Media Content -->
+      <div class="relative w-full h-full flex items-center justify-center overflow-hidden cursor-pointer" onclick="handleStoryTap(event)">
+        <img id="storyViewerImage" src="" class="w-full h-full object-cover">
+        
+        <!-- Interactive Expense Sticker -->
+        <div id="storyExpenseSticker" class="absolute bottom-16 left-4 right-4 p-3 rounded-2xl bg-black/60 backdrop-blur-md border border-white/20 text-white space-y-1 shadow-lg">
+          <div class="flex items-center space-x-1.5 text-emerald-400 font-bold text-[10px] uppercase tracking-wider">
+            <span>🧾 Expense Shared</span>
+          </div>
+          <h3 id="storyStickerDesc" class="font-black text-xs">Shinjuku Izakaya Banquet</h3>
+          <div class="flex items-center justify-between text-[11px]">
+            <span id="storyStickerAmount" class="font-black text-emerald-400">$84.00 Total</span>
+            <span class="text-white/80">Equal split (4 people)</span>
+          </div>
+        </div>
+
+        <!-- Floating reaction particles container -->
+        <div id="storyReactionsContainer" class="absolute inset-0 pointer-events-none"></div>
+      </div>
+
+      <!-- Story Bottom Quick Interaction Bar -->
+      <div class="absolute bottom-3 left-3 right-3 z-30 flex items-center space-x-2">
+        <input id="storyReplyInput" type="text" placeholder="Send a reply..." class="flex-1 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-3 py-1.5 text-xs font-medium text-white placeholder-white/70 outline-none">
+        <div class="flex items-center space-x-1">
+          <button onclick="sendStoryReaction('🔥')" class="p-1 rounded-full bg-white/20 hover:bg-white/40 text-base transition-transform active:scale-125">🔥</button>
+          <button onclick="sendStoryReaction('❤️')" class="p-1 rounded-full bg-white/20 hover:bg-white/40 text-base transition-transform active:scale-125">❤️</button>
+          <button onclick="sendStoryReaction('💸')" class="p-1 rounded-full bg-white/20 hover:bg-white/40 text-base transition-transform active:scale-125">💸</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. CREATE STORY SNAPSHOT MODAL -->
+  <div id="createSnapshotModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl">📸</span>
+          <h3 class="text-sm font-black">Post Group Snapshot</h3>
+        </div>
+        <button onclick="closeModal('createSnapshotModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="relative rounded-2xl h-40 overflow-hidden border border-slate-200 dark:border-slate-800">
+          <img id="snapPreviewImage" src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black/30 flex items-center justify-center space-x-1.5">
+            <button onclick="pickSampleStoryImage(0)" class="px-2 py-0.5 rounded-lg bg-white/90 text-slate-900 text-[10px] font-bold hover:bg-white">Tokyo Tower</button>
+            <button onclick="pickSampleStoryImage(1)" class="px-2 py-0.5 rounded-lg bg-white/90 text-slate-900 text-[10px] font-bold hover:bg-white">Ramen Bar</button>
+            <button onclick="pickSampleStoryImage(2)" class="px-2 py-0.5 rounded-lg bg-white/90 text-slate-900 text-[10px] font-bold hover:bg-white">Night Alley</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Caption / Mood</label>
+          <input id="snapCaptionInput" type="text" placeholder="e.g. Best Ramen in Shinjuku with the group!" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Attach Group Expense Sticker</label>
+          <select id="snapExpenseSelect" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-2.5 py-1.5 text-xs font-bold focus:ring-2 focus:ring-emerald-500 outline-none">
+            <option value="">None (Photo only)</option>
+            <option value="e1">Shinjuku Izakaya Banquet</option>
+            <option value="e2">Bullet Train Passes</option>
+          </select>
+        </div>
+
+        <button onclick="submitNewSnapshot()" class="w-full py-2.5 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 text-white font-black text-xs shadow-md shadow-pink-500/20 transition-transform active:scale-95 flex items-center justify-center space-x-1.5">
+          <span>Post to Group Story</span>
+          <span>⚡</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. OFFICIAL PAYPAL WALLET MANAGEMENT MODAL -->
+  <div id="paypalWalletModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <div class="w-7 h-7 rounded-xl bg-[#003087] flex items-center justify-center p-1">
+            <svg class="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-black tracking-tight text-[#003087] dark:text-sky-300">PayPal Sandbox Wallet</h3>
+            <span class="text-[9px] text-slate-400">Official REST API v2 Mock Node</span>
+          </div>
+        </div>
+        <button onclick="closeModal('paypalWalletModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-gradient-to-br from-[#003087] via-[#0070ba] to-sky-600 text-white space-y-2.5 shadow-md">
+        <div class="flex justify-between items-center text-[10px]">
+          <span class="text-sky-200 uppercase font-black tracking-wider">Available Balance</span>
+          <span class="px-2 py-0.5 rounded-full bg-emerald-400 text-emerald-950 font-bold">Active</span>
+        </div>
+        <div class="flex items-baseline space-x-2">
+          <span id="modalPayPalBalance" class="text-2xl font-black">$2,450.00</span>
+          <span id="modalPayPalCurrency" class="text-xs text-sky-200 font-mono font-bold">USD</span>
+        </div>
+        <div class="flex justify-between items-center text-[10px] text-sky-100 font-mono">
+          <span>alex.buyer@splitsmart.sandbox</span>
+          <span>Verified Merchant</span>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <button onclick="depositPayPalFunds(10000)" class="w-full py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-xs flex items-center justify-center space-x-2">
+          <span>💳</span><span id="topupFundsBtnLabel">+ Add $100.00 Test Funds</span>
+        </button>
+        <button onclick="settleAllDebtsFromPayPal()" class="paypal-btn w-full py-2.5 rounded-xl font-black text-xs shadow-xs flex items-center justify-center space-x-2">
+          <span>⚡</span><span>Settle All Debts with PayPal</span>
+        </button>
+      </div>
+
+      <div class="p-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl text-[10px] text-slate-500 space-y-1">
+        <div class="flex justify-between font-bold"><span>OAuth Status:</span><span class="text-emerald-600">Bearer Token Verified</span></div>
+        <div class="flex justify-between font-bold"><span>Buyer Protection:</span><span class="text-emerald-600">100% Guaranteed</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. PAYPAL SANDBOX CHECKOUT MODAL -->
+  <div id="paypalCheckoutModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-xs w-full p-5 space-y-3.5 shadow-2xl border border-slate-200 dark:border-slate-800 text-center">
+      <div class="w-10 h-10 mx-auto rounded-2xl bg-sky-100 text-[#0070ba] flex items-center justify-center">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.807 1.57 1.155.965 1.678 2.378 1.554 4.2-.284 4.14-2.73 6.467-7.27 6.467H10.16l-1.42 8.52a.641.641 0 0 1-.634.58h-1.03z"/></svg>
+      </div>
+      <div>
+        <h3 class="text-sm font-black">PayPal Checkout</h3>
+        <p class="text-[11px] text-slate-500">Confirm purchase order</p>
+      </div>
+
+      <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 text-left space-y-1.5 text-xs border border-slate-100 dark:border-slate-800">
+        <div class="flex justify-between font-bold">
+          <span class="text-slate-500">Item:</span>
+          <span id="checkoutOutfitName" class="text-slate-900 dark:text-white truncate max-w-[140px]">Designer Outfit</span>
+        </div>
+        <div class="flex justify-between font-bold">
+          <span class="text-slate-500">Amount:</span>
+          <span id="checkoutOutfitPrice" class="text-emerald-600 font-black">$9.99</span>
+        </div>
+        <div class="flex justify-between border-t border-slate-200 dark:border-slate-800 pt-1.5 font-bold">
+          <span class="text-slate-500">PayPal Balance:</span>
+          <span id="checkoutAvailableBalance" class="text-slate-800 dark:text-slate-200">$2,450.00</span>
+        </div>
+      </div>
+
+      <div class="space-y-1.5 pt-1">
+        <button onclick="confirmPayPalWardrobePayment()" class="paypal-btn w-full py-2.5 rounded-xl font-black text-xs shadow-xs transition-transform active:scale-95">
+          Approve & Pay with PayPal
+        </button>
+        <button onclick="closeModal('paypalCheckoutModal')" class="w-full py-1 text-xs font-bold text-slate-400 hover:text-slate-600">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. ADD EXPENSE MODAL WITH 4 SPLIT MODES -->
+  <div id="addExpenseModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3 md:p-6">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full max-h-[92vh] overflow-y-auto p-5 space-y-3.5 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-black tracking-tight">Add Group Expense</h3>
+        <button onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+      </div>
+
+      <form onsubmit="handleCreateExpense(event)" class="space-y-3.5">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Description</label>
+          <input id="expDesc" type="text" required placeholder="e.g. Shinjuku Dinner, Uber ride" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-3.5 py-2 text-xs font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400" id="expAmountLabel">Amount ($ USD)</label>
+            <input id="expAmount" type="number" step="0.01" required placeholder="0.00" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-3.5 py-2 text-xs font-black focus:ring-2 focus:ring-emerald-500 outline-none" oninput="renderSplitInputs()">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Paid By</label>
+            <select id="expPayer" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-2.5 py-2 text-xs font-bold focus:ring-2 focus:ring-emerald-500 outline-none"></select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Split Mode</label>
+          <div class="grid grid-cols-4 gap-1 mt-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-[11px] font-bold">
+            <button type="button" onclick="setSplitMode('EQUAL')" id="splitModeBtn-EQUAL" class="py-1.5 rounded-lg bg-white dark:bg-slate-700 text-emerald-600 shadow-2xs">Equal</button>
+            <button type="button" onclick="setSplitMode('EXACT')" id="splitModeBtn-EXACT" class="py-1.5 rounded-lg text-slate-500">Exact</button>
+            <button type="button" onclick="setSplitMode('PERCENTAGE')" id="splitModeBtn-PERCENTAGE" class="py-1.5 rounded-lg text-slate-500">Percent</button>
+            <button type="button" onclick="setSplitMode('ITEM_WISE')" id="splitModeBtn-ITEM_WISE" class="py-1.5 rounded-lg text-slate-500">Item-wise</button>
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
+          <div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-400">
+            <span>Split Breakdown</span>
+            <span>Integer Minor Units</span>
+          </div>
+          <div id="splitBreakdownContainer" class="space-y-1.5 text-xs"></div>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md transition-transform active:scale-95">Save Expense</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. SMART SETTLEMENT OPTIMIZER MODAL -->
+  <div id="settlementOptimizerModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-5 space-y-3.5 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <div class="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">⚡</div>
+          <h3 class="text-sm font-black tracking-tight">Smart Settle Optimizer</h3>
+        </div>
+        <button onclick="closeModal('settlementOptimizerModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+      </div>
+
+      <p class="text-[11px] text-slate-500">Greedy min-cash-flow algorithm reducing debt payments to ≤ N-1 transactions.</p>
+
+      <div id="optimizerModalList" class="space-y-2 max-h-56 overflow-y-auto"></div>
+
+      <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
+        <button onclick="executeAllOptimizedSettlements()" class="paypal-btn w-full py-2.5 rounded-xl font-black text-xs shadow-xs flex items-center justify-center space-x-1.5">
+          <span>Pay via PayPal Sandbox</span>
+        </button>
+        <button onclick="closeModal('settlementOptimizerModal')" class="w-full py-1 text-xs font-bold text-slate-400">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. AI REMINDER MODAL -->
+  <div id="aiReminderModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full p-5 space-y-3 shadow-2xl border border-slate-200 dark:border-slate-800">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-lg">🤖</span>
+          <h3 class="text-sm font-black">AI Payment Reminder</h3>
+        </div>
+        <button onclick="closeModal('aiReminderModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+      </div>
+
+      <div>
+        <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Persona Style</label>
+        <select id="reminderToneSelect" onchange="generateAIReminderText()" class="w-full mt-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-2.5 py-1.5 text-xs font-bold outline-none">
+          <option value="shakespearean">🎭 Shakespearean Noble</option>
+          <option value="passive_aggressive">🙃 Passive-Aggressive Roommate</option>
+          <option value="mobster">🕶️ 1930s Mobster</option>
+          <option value="pirate">🏴‍☠️ High Seas Pirate</option>
+          <option value="accountant">📊 Serious Forensic Auditor</option>
+        </select>
+      </div>
+
+      <div class="p-3 bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800/40 rounded-2xl text-xs italic text-slate-700 dark:text-slate-200" id="aiReminderOutputText">
+        "Hark, noble companion! The ledger weepeth for the feast of yestereve. Settle thy coin, prithee!"
+      </div>
+
+      <div class="flex space-x-2">
+        <button onclick="generateAIReminderText()" class="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs">🎲 Reroll</button>
+        <button onclick="postAIReminderToChat()" class="flex-1 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-2xs">Post to Chat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. EXPENSE WRAPPED MODAL -->
+  <div id="expenseWrappedModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-3">
+    <div class="bg-gradient-to-br from-purple-900 via-indigo-950 to-slate-900 text-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-purple-500/30 text-center relative overflow-hidden">
+      <div class="w-12 h-12 mx-auto rounded-2xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-2xl">🎁</div>
+      <div>
+        <h3 class="text-xl font-black">November Wrapped</h3>
+        <p class="text-xs text-purple-200/80">Your group financial highlights</p>
+      </div>
+      <div class="bg-white/10 rounded-2xl p-4 space-y-2 text-xs backdrop-blur-sm text-left">
+        <div class="flex justify-between"><span>Total Group Spent:</span><span class="font-black text-emerald-400" id="wrappedTotalSpent">$132.00</span></div>
+        <div class="flex justify-between"><span>Top Spender:</span><span class="font-black">Alex Rivera ($84.00)</span></div>
+        <div class="flex justify-between"><span>Favorite Spot:</span><span class="font-black">Shinjuku Izakaya</span></div>
+        <div class="flex justify-between"><span>Money Saved via Splits:</span><span class="font-black text-purple-300">$45.50</span></div>
+      </div>
+      <button onclick="closeModal('expenseWrappedModal')" class="w-full py-2.5 rounded-xl bg-white text-purple-900 font-black text-xs shadow-md">Done</button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed top-14 right-4 z-50 space-y-2 pointer-events-none max-w-xs"></div>
+
+  <!-- ==================== JAVASCRIPT & THREE.JS ENGINE ==================== -->
+  <script>
+    // ==================== GLOBAL CURRENCY CONFIG ====================
+    const CURRENCIES = {
+      USD: { symbol: '$', rate: 1.0, flag: '🇺🇸', name: 'US Dollar', decimals: 2 },
+      INR: { symbol: '₹', rate: 84.50, flag: '🇮🇳', name: 'Indian Rupee', decimals: 2 },
+      EUR: { symbol: '€', rate: 0.92, flag: '🇪🇺', name: 'Euro', decimals: 2 },
+      GBP: { symbol: '£', rate: 0.79, flag: '🇬🇧', name: 'British Pound', decimals: 2 },
+      JPY: { symbol: '¥', rate: 154.0, flag: '🇯🇵', name: 'Japanese Yen', decimals: 0 },
+      CAD: { symbol: 'CA$', rate: 1.38, flag: '🇨🇦', name: 'Canadian Dollar', decimals: 2 },
+      AUD: { symbol: 'A$', rate: 1.52, flag: '🇦🇺', name: 'Australian Dollar', decimals: 2 },
+      SGD: { symbol: 'S$', rate: 1.34, flag: '🇸🇬', name: 'Singapore Dollar', decimals: 2 },
+      AED: { symbol: 'AED ', rate: 3.67, flag: '🇦🇪', name: 'UAE Dirham', decimals: 2 },
+      CHF: { symbol: 'CHF ', rate: 0.88, flag: '🇨🇭', name: 'Swiss Franc', decimals: 2 }
+    };
+
+    // ==================== APP STATE ====================
+    const state = {
+      selectedCurrency: localStorage.getItem('SPLITSMART_CURRENCY') || 'USD',
+      users: [
+        {
+          id: 'u1',
+          name: 'Alex (You)',
+          email: 'alex@splitsmart.app',
+          gender: 'female',
+          bitmoji3D: {
+            skin: '#fbc39e',
+            hairColor: '#451a03',
+            hairStyle: 'long_wavy',
+            topColor: '#059669',
+            topStyle: 'fitted_hoodie',
+            pantsColor: '#1e293b',
+            pantsStyle: 'slim_jeans',
+            shoesColor: '#f8fafc',
+            shoesStyle: 'sneakers',
+            lipstick: '#b91c1c',
+            eyeshadow: '#7c3aed',
+            blush: '#f43f5e',
+            glasses: true,
+            makeupEnabled: true
+          }
+        },
+        {
+          id: 'u2',
+          name: 'Jordan Lee',
+          email: 'jordan@splitsmart.app',
+          gender: 'male',
+          bitmoji3D: {
+            skin: '#d9a066',
+            hairColor: '#111827',
+            hairStyle: 'fade',
+            topColor: '#06b6d4',
+            topStyle: 'bomber',
+            pantsColor: '#0f172a',
+            pantsStyle: 'tech_joggers',
+            shoesColor: '#10b981',
+            shoesStyle: 'sneakers',
+            lipstick: null,
+            eyeshadow: null,
+            blush: null,
+            glasses: false,
+            makeupEnabled: false
+          }
+        },
+        {
+          id: 'u3',
+          name: 'Sam Taylor',
+          email: 'sam@splitsmart.app',
+          gender: 'female',
+          bitmoji3D: {
+            skin: '#fcd3b0',
+            hairColor: '#b45309',
+            hairStyle: 'bob',
+            topColor: '#d97706',
+            topStyle: 'blazer',
+            pantsColor: '#334155',
+            pantsStyle: 'slacks',
+            shoesColor: '#78350f',
+            shoesStyle: 'oxfords',
+            lipstick: '#fb7185',
+            eyeshadow: '#f59e0b',
+            blush: '#f43f5e',
+            glasses: true,
+            makeupEnabled: true
+          }
+        },
+        {
+          id: 'u4',
+          name: 'Casey Morgan',
+          email: 'casey@splitsmart.app',
+          gender: 'male',
+          bitmoji3D: {
+            skin: '#784315',
+            hairColor: '#1e1b4b',
+            hairStyle: 'quiff',
+            topColor: '#7e22ce',
+            topStyle: 'jacket',
+            pantsColor: '#581c87',
+            pantsStyle: 'cargo',
+            shoesColor: '#ffffff',
+            shoesStyle: 'boots',
+            lipstick: null,
+            eyeshadow: null,
+            blush: null,
+            glasses: false,
+            makeupEnabled: false
+          }
+        }
+      ],
+      user: null,
+      currentGroupId: 'g1',
+      activeTab: 'dashboard',
+      activeSubTab: 'expenses',
+      activeWardrobeCategory: 'tops',
+      splitMode: 'EQUAL',
+      paypalBalance: 245000, // $2,450.00 USD in integer cents
+      paypalAccount: 'alex.buyer@splitsmart.sandbox',
+      pendingWardrobePurchase: null,
+      
+      // Compact Snapshots Tray State
+      snapshots: [
+        { id: 's1', userId: 'u1', imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80', time: '1h ago', location: 'Tokyo Tower', caption: 'Golden sunset over Tokyo! 🗼', expenseId: null, viewed: false },
+        { id: 's2', userId: 'u2', imageUrl: 'https://images.unsplash.com/photo-1554797589-7241ab374b73?auto=format&fit=crop&w=600&q=80', time: '3h ago', location: 'Shinjuku Golden Gai', caption: 'Izakaya feast with the whole crew! 🍢', expenseId: 'e1', viewed: false },
+        { id: 's3', userId: 'u3', imageUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=600&q=80', time: '5h ago', location: 'Shibuya Crossing', caption: 'Bullet train passes secured 🚅', expenseId: 'e2', viewed: false },
+        { id: 's4', userId: 'u4', imageUrl: 'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=600&q=80', time: '8h ago', location: 'Harajuku', caption: 'Crepes & vintage shopping! 🛍️', expenseId: null, viewed: true }
+      ],
+      currentSnapshotIndex: 0,
+      snapshotTimer: null,
+
+      groups: [
+        { id: 'g1', name: 'Tokyo Trip 2026', members: ['u1', 'u2', 'u3', 'u4'], currency: 'USD', budget: 300000, tripMode: true },
+        { id: 'g2', name: 'Apartment Roommates', members: ['u1', 'u2', 'u3'], currency: 'USD', budget: 150000, tripMode: false },
+        { id: 'g3', name: 'Friday Pizza Club', members: ['u1', 'u4'], currency: 'USD', budget: 50000, tripMode: false }
+      ],
+
+      // Expanded Realistic Wardrobe & Makeup Catalog
+      wardrobeCatalog: {
+        tops: [
+          { id: 'top_hoodie', name: 'Emerald Streetwear Hoodie', color: '#059669', style: 'fitted_hoodie', priceCents: 0, owned: true, tag: 'Starter' },
+          { id: 'top_blouse', name: 'Silk Satin Rose Blouse', color: '#f43f5e', style: 'blouse', priceCents: 499, owned: true, tag: 'Chic' },
+          { id: 'top_bomber', name: 'Cyberpunk Neon Bomber', color: '#06b6d4', style: 'bomber', priceCents: 899, owned: false, tag: 'Popular' },
+          { id: 'top_blazer', name: 'Executive Golden Blazer', color: '#d97706', style: 'blazer', priceCents: 799, owned: false, tag: 'VIP' },
+          { id: 'top_leather', name: 'Vintage Biker Leather', color: '#18181b', style: 'jacket', priceCents: 1199, owned: false, tag: 'Classic' },
+          { id: 'top_knit', name: 'Lavender Cashmere Knit', color: '#a855f7', style: 'knit', priceCents: 650, owned: false, tag: 'Warm' }
+        ],
+        bottoms: [
+          { id: 'bottom_jeans', name: 'Classic Dark Denim Jeans', color: '#1e293b', style: 'slim_jeans', priceCents: 0, owned: true, tag: 'Basic' },
+          { id: 'bottom_skirt', name: 'Pleated Velvet Skirt', color: '#be123c', style: 'skirt', priceCents: 499, owned: true, tag: 'Trendy' },
+          { id: 'bottom_cargo', name: 'Military Cargo Joggers', color: '#3f3f46', style: 'cargo', priceCents: 599, owned: false, tag: 'Casual' },
+          { id: 'bottom_slacks', name: 'Tailored Slate Slacks', color: '#334155', style: 'slacks', priceCents: 450, owned: false, tag: 'Formal' }
+        ],
+        shoes: [
+          { id: 'shoe_sneakers', name: 'Triple White Low Tops', color: '#f8fafc', style: 'sneakers', priceCents: 0, owned: true, tag: 'Clean' },
+          { id: 'shoe_heels', name: 'Ruby Stiletto Pumps', color: '#b91c1c', style: 'heels', priceCents: 699, owned: true, tag: 'Glam' },
+          { id: 'shoe_boots', name: 'Chelsea Leather Boots', color: '#451a03', style: 'boots', priceCents: 899, owned: false, tag: 'Durable' },
+          { id: 'shoe_oxfords', name: 'Italian Formal Oxfords', color: '#1c1917', style: 'oxfords', priceCents: 750, owned: false, tag: 'Luxe' }
+        ],
+        makeup: [
+          { id: 'mu_ruby', name: 'Ruby Red Lipstick', type: 'lipstick', hex: '#b91c1c', priceCents: 199, owned: true, tag: 'Lipstick' },
+          { id: 'mu_berry', name: 'Velvet Plum Lipstick', type: 'lipstick', hex: '#701a75', priceCents: 249, owned: false, tag: 'Lipstick' },
+          { id: 'mu_nude', name: 'Peach Nude Lipstick', type: 'lipstick', hex: '#fb7185', priceCents: 199, owned: false, tag: 'Lipstick' },
+          { id: 'mu_eyeshadow_violet', name: 'Amethyst Smokey Eye', type: 'eyeshadow', hex: '#7c3aed', priceCents: 299, owned: true, tag: 'Eyeshadow' },
+          { id: 'mu_eyeshadow_gold', name: 'Golden Glow Eyeshadow', type: 'eyeshadow', hex: '#f59e0b', priceCents: 299, owned: false, tag: 'Eyeshadow' },
+          { id: 'mu_blush_rose', name: 'Soft Rose Blush', type: 'blush', hex: '#f43f5e', priceCents: 199, owned: true, tag: 'Blush' }
+        ],
+        skins: [
+          { id: 'skin_peach', name: 'Warm Peach', hex: '#fbc39e' },
+          { id: 'skin_olive', name: 'Golden Olive', hex: '#d9a066' },
+          { id: 'skin_fair', name: 'Fair Ivory', hex: '#fcd3b0' },
+          { id: 'skin_bronze', name: 'Bronze Sun', hex: '#b87333' },
+          { id: 'skin_cocoa', name: 'Rich Cocoa', hex: '#784315' }
+        ]
+      },
+
+      expenses: [
+        {
+          id: 'e1', groupId: 'g1', payerId: 'u1', amount: 8400, description: 'Shinjuku Izakaya Banquet', category: 'DINING', splitType: 'EQUAL', date: '2026-11-05',
+          splits: [{ userId: 'u1', amount: 2100 }, { userId: 'u2', amount: 2100 }, { userId: 'u3', amount: 2100 }, { userId: 'u4', amount: 2100 }]
+        },
+        {
+          id: 'e2', groupId: 'g1', payerId: 'u2', amount: 4800, description: 'Bullet Train Passes', category: 'TRAVEL', splitType: 'EQUAL', date: '2026-11-04',
+          splits: [{ userId: 'u1', amount: 1200 }, { userId: 'u2', amount: 1200 }, { userId: 'u3', amount: 1200 }, { userId: 'u4', amount: 1200 }]
+        }
+      ],
+      settlements: [],
+      messages: [
+        { id: 'm1', groupId: 'g1', userId: 'u2', text: 'Bullet train passes secured! 🚅', date: 'Nov 4, 2:15 PM', reactions: ['👍', '❤️'] },
+        { id: 'm2', groupId: 'g1', userId: 'u1', text: 'Awesome Jordan! Settle you up via PayPal Sandbox.', date: 'Nov 4, 2:20 PM', reactions: ['⚡'] }
+      ],
+      memories: [
+        { id: 'mem1', groupId: 'g1', imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=400&q=80', caption: 'Tokyo Tower sunset 🗼', likes: 8 },
+        { id: 'mem2', groupId: 'g1', imageUrl: 'https://images.unsplash.com/photo-1554797589-7241ab374b73?auto=format&fit=crop&w=400&q=80', caption: 'Shinjuku Golden Gai alleyway 🏮', likes: 14 }
+      ],
+      polls: [
+        { id: 'p1', question: 'Dinner in Shibuya tomorrow night?', options: [{ id: 'opt1', text: 'Ichiran Ramen 🍜', votes: 3 }, { id: 'opt2', text: 'Wagyu Yakiniku 🥩', votes: 1 }] }
+      ]
+    };
+
+    state.user = state.users[0]; // Alex
+
+    // ==================== MULTI-CURRENCY CONVERSION ENGINE ====================
+    function formatMoney(cents) {
+      const curr = CURRENCIES[state.selectedCurrency] || CURRENCIES.USD;
+      const converted = (cents / 100) * curr.rate;
+      if (curr.decimals === 0) {
+        return `${curr.symbol}${Math.round(converted).toLocaleString()}`;
+      }
+      return `${curr.symbol}${converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function changeCurrency(currCode) {
+      if (!CURRENCIES[currCode]) return;
+      state.selectedCurrency = currCode;
+      localStorage.setItem('SPLITSMART_CURRENCY', currCode);
+      
+      const curr = CURRENCIES[currCode];
+      const flagEl = document.getElementById('currencyFlag');
+      const tagEl = document.getElementById('currentCurrencyTag');
+      const expLabel = document.getElementById('expAmountLabel');
+      
+      if (flagEl) flagEl.innerText = curr.flag;
+      if (tagEl) tagEl.innerText = `${currCode} (${curr.symbol.trim()})`;
+      if (expLabel) expLabel.innerText = `Amount (${curr.symbol.trim()} ${currCode})`;
+      
+      renderApp();
+      showToast(`Switched currency to ${curr.flag} ${curr.name} • 1 USD = ${curr.rate} ${currCode}`, 'success');
+    }
+
+    // ==================== REALISTIC THREE.JS 3D AVATAR RIG ====================
+    let scene3D, camera3D, renderer3D, avatarGroup;
+    let isDragging3D = false, prevMouseX = 0;
+
+    function init3DAvatarScene() {
+      const canvas = document.getElementById('avatar3dCanvas');
+      if (!canvas || scene3D) return;
+
+      const container = document.getElementById('canvas3dContainer');
+      const width = container.clientWidth || 320;
+      const height = container.clientHeight || 280;
+
+      scene3D = new THREE.Scene();
+      camera3D = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      camera3D.position.set(0, 1.15, 3.7);
+
+      renderer3D = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer3D.setSize(width, height);
+      renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Studio Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+      scene3D.add(ambientLight);
+
+      const mainLight = new THREE.DirectionalLight(0xfff7ed, 1.2);
+      mainLight.position.set(2, 4, 3);
+      scene3D.add(mainLight);
+
+      const softFill = new THREE.DirectionalLight(0xe0f2fe, 0.6);
+      softFill.position.set(-2, 1, 2);
+      scene3D.add(softFill);
+
+      const rimLight = new THREE.PointLight(0x06b6d4, 1.4, 8);
+      rimLight.position.set(-2, 2.5, -2);
+      scene3D.add(rimLight);
+
+      build3DAvatarRig();
+
+      // Mouse & Touch Drag 360 Rotation
+      canvas.addEventListener('mousedown', (e) => { isDragging3D = true; prevMouseX = e.clientX; });
+      window.addEventListener('mouseup', () => { isDragging3D = false; });
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging3D || !avatarGroup) return;
+        const delta = e.clientX - prevMouseX;
+        avatarGroup.rotation.y += delta * 0.015;
+        prevMouseX = e.clientX;
+      });
+
+      canvas.addEventListener('touchstart', (e) => { isDragging3D = true; prevMouseX = e.touches[0].clientX; });
+      window.addEventListener('touchend', () => { isDragging3D = false; });
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging3D || !avatarGroup) return;
+        const delta = e.touches[0].clientX - prevMouseX;
+        avatarGroup.rotation.y += delta * 0.015;
+        prevMouseX = e.touches[0].clientX;
+      });
+
+      // Smooth Idle Animation Loop
+      let clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        const time = clock.getElapsedTime();
+        if (avatarGroup) {
+          avatarGroup.position.y = Math.sin(time * 2.2) * 0.02;
+          if (!isDragging3D) {
+            avatarGroup.rotation.y = Math.sin(time * 0.8) * 0.12;
+          }
+        }
+        renderer3D.render(scene3D, camera3D);
+      }
+      animate();
+    }
+
+    function build3DAvatarRig() {
+      if (avatarGroup) scene3D.remove(avatarGroup);
+      avatarGroup = new THREE.Group();
+
+      const conf = state.user.bitmoji3D;
+      const isFemale = state.user.gender === 'female';
+
+      // 1. Realistic Skin Material
+      const skinMat = new THREE.MeshStandardMaterial({
+        color: conf.skin,
+        roughness: 0.55,
+        metalness: 0.05
+      });
+
+      // 2. Anatomical Head & Neck
+      const headGeom = new THREE.SphereGeometry(isFemale ? 0.39 : 0.43, 32, 32);
+      const head = new THREE.Mesh(headGeom, skinMat);
+      head.position.y = 1.45;
+      if (isFemale) {
+        head.scale.set(0.94, 1.02, 0.96); // feminine tapered jawline
+      } else {
+        head.scale.set(1.02, 1.0, 1.04); // masculine stronger jaw
+      }
+      avatarGroup.add(head);
+
+      const neckGeom = new THREE.CylinderGeometry(isFemale ? 0.12 : 0.15, isFemale ? 0.14 : 0.18, 0.22, 20);
+      const neck = new THREE.Mesh(neckGeom, skinMat);
+      neck.position.y = 1.05;
+      avatarGroup.add(neck);
+
+      // 3. Eyes & Realistic Pupils
+      const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xfdfdfd });
+      const pupilMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.2 });
+      
+      const leftEyeWhite = new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 20), eyeWhiteMat);
+      leftEyeWhite.position.set(-0.13, 1.48, 0.35);
+      avatarGroup.add(leftEyeWhite);
+
+      const rightEyeWhite = new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 20), eyeWhiteMat);
+      rightEyeWhite.position.set(0.13, 1.48, 0.35);
+      avatarGroup.add(rightEyeWhite);
+
+      const leftPupil = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), pupilMat);
+      leftPupil.position.set(-0.13, 1.48, 0.41);
+      avatarGroup.add(leftPupil);
+
+      const rightPupil = new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 16), pupilMat);
+      rightPupil.position.set(0.13, 1.48, 0.41);
+      avatarGroup.add(rightPupil);
+
+      // 4. MAKEUP STUDIO (Lipstick, Eyeshadow, Blush)
+      if (conf.makeupEnabled) {
+        // Lipstick
+        if (conf.lipstick) {
+          const lipMat = new THREE.MeshStandardMaterial({
+            color: conf.lipstick,
+            roughness: 0.35,
+            metalness: 0.15
+          });
+          const lipGeom = new THREE.CylinderGeometry(0.07, 0.08, 0.025, 20);
+          const lips = new THREE.Mesh(lipGeom, lipMat);
+          lips.rotation.x = Math.PI / 2;
+          lips.position.set(0, 1.28, 0.38);
+          lips.scale.set(1.2, 0.5, 1);
+          avatarGroup.add(lips);
+        }
+
+        // Eyeshadow
+        if (conf.eyeshadow) {
+          const shadowMat = new THREE.MeshStandardMaterial({ color: conf.eyeshadow, roughness: 0.4, transparent: true, opacity: 0.75 });
+          const leftShadow = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), shadowMat);
+          leftShadow.position.set(-0.13, 1.54, 0.34);
+          leftShadow.scale.set(1.2, 0.3, 0.8);
+          avatarGroup.add(leftShadow);
+
+          const rightShadow = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), shadowMat);
+          rightShadow.position.set(0.13, 1.54, 0.34);
+          rightShadow.scale.set(1.2, 0.3, 0.8);
+          avatarGroup.add(rightShadow);
+        }
+
+        // Blush Cheek Glow
+        if (conf.blush) {
+          const blushMat = new THREE.MeshStandardMaterial({ color: conf.blush, roughness: 0.8, transparent: true, opacity: 0.45 });
+          const leftBlush = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), blushMat);
+          leftBlush.position.set(-0.25, 1.37, 0.28);
+          leftBlush.scale.set(0.8, 0.6, 0.5);
+          avatarGroup.add(leftBlush);
+
+          const rightBlush = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), blushMat);
+          rightBlush.position.set(0.25, 1.37, 0.28);
+          rightBlush.scale.set(0.8, 0.6, 0.5);
+          avatarGroup.add(rightBlush);
+        }
+      }
+
+      // 5. Defined Hair Styling (Female vs Male)
+      const hairMat = new THREE.MeshStandardMaterial({ color: conf.hairColor || 0x271911, roughness: 0.7 });
+      const hairBase = new THREE.Mesh(new THREE.SphereGeometry(isFemale ? 0.42 : 0.45, 24, 24), hairMat);
+      hairBase.position.set(0, 1.62, -0.05);
+      hairBase.scale.set(1.02, 0.95, 1.05);
+      avatarGroup.add(hairBase);
+
+      if (isFemale) {
+        // Flowing long hair strands / side locks
+        const strandGeom = new THREE.CylinderGeometry(0.1, 0.06, 0.7, 16);
+        const leftStrand = new THREE.Mesh(strandGeom, hairMat);
+        leftStrand.position.set(-0.35, 1.25, 0.05);
+        leftStrand.rotation.z = -0.15;
+        avatarGroup.add(leftStrand);
+
+        const rightStrand = new THREE.Mesh(strandGeom, hairMat);
+        rightStrand.position.set(0.35, 1.25, 0.05);
+        rightStrand.rotation.z = 0.15;
+        avatarGroup.add(rightStrand);
+      }
+
+      // 6. Aviator Shades / Glasses
+      if (conf.glasses) {
+        const frameMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.8, roughness: 0.2 });
+        const lensMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.9, roughness: 0.1 });
+
+        const leftLens = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 24), lensMat);
+        leftLens.rotation.x = Math.PI / 2;
+        leftLens.position.set(-0.14, 1.48, 0.42);
+        avatarGroup.add(leftLens);
+
+        const rightLens = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 24), lensMat);
+        rightLens.rotation.x = Math.PI / 2;
+        rightLens.position.set(0.14, 1.48, 0.42);
+        avatarGroup.add(rightLens);
+
+        const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.015, 0.02), frameMat);
+        bridge.position.set(0, 1.5, 0.42);
+        avatarGroup.add(bridge);
+      }
+
+      // 7. Clothing / Torso (Anatomy: Sculpted curves for female vs broad chest for male)
+      const topMat = new THREE.MeshStandardMaterial({ color: conf.topColor, roughness: 0.4, metalness: 0.1 });
+      const torsoGeom = isFemale 
+        ? new THREE.CylinderGeometry(0.26, 0.31, 0.72, 24) 
+        : new THREE.CylinderGeometry(0.36, 0.28, 0.75, 24);
+      const torso = new THREE.Mesh(torsoGeom, topMat);
+      torso.position.y = 0.65;
+      avatarGroup.add(torso);
+
+      // Arms
+      const armRadius = isFemale ? 0.075 : 0.095;
+      const leftArmGeom = new THREE.CylinderGeometry(armRadius, armRadius * 0.9, 0.6, 16);
+      const leftArm = new THREE.Mesh(leftArmGeom, topMat);
+      leftArm.position.set(isFemale ? -0.36 : -0.44, 0.65, 0);
+      leftArm.rotation.z = 0.18;
+      avatarGroup.add(leftArm);
+
+      const rightArmGeom = new THREE.CylinderGeometry(armRadius, armRadius * 0.9, 0.6, 16);
+      const rightArm = new THREE.Mesh(rightArmGeom, topMat);
+      rightArm.position.set(isFemale ? 0.36 : 0.44, 0.65, 0);
+      rightArm.rotation.z = -0.18;
+      avatarGroup.add(rightArm);
+
+      // 8. Pants / Bottoms
+      const pantsMat = new THREE.MeshStandardMaterial({ color: conf.pantsColor, roughness: 0.6 });
+      const legRadius = isFemale ? 0.105 : 0.125;
+      const leftLegGeom = new THREE.CylinderGeometry(legRadius, legRadius * 0.9, 0.7, 16);
+      const leftLeg = new THREE.Mesh(leftLegGeom, pantsMat);
+      leftLeg.position.set(-0.15, -0.05, 0);
+      avatarGroup.add(leftLeg);
+
+      const rightLegGeom = new THREE.CylinderGeometry(legRadius, legRadius * 0.9, 0.7, 16);
+      const rightLeg = new THREE.Mesh(rightLegGeom, pantsMat);
+      rightLeg.position.set(0.15, -0.05, 0);
+      avatarGroup.add(rightLeg);
+
+      // 9. Defined Shoes (Sneakers vs High Heels vs Boots)
+      const shoeMat = new THREE.MeshStandardMaterial({ color: conf.shoesColor, roughness: 0.35, metalness: 0.1 });
+      if (conf.shoesStyle === 'heels') {
+        // High heels geometry
+        const leftShoe = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.09, 0.28), shoeMat);
+        leftShoe.position.set(-0.15, -0.42, 0.05);
+        avatarGroup.add(leftShoe);
+
+        const leftHeel = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.12, 12), shoeMat);
+        leftHeel.position.set(-0.15, -0.48, -0.07);
+        avatarGroup.add(leftHeel);
+
+        const rightShoe = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.09, 0.28), shoeMat);
+        rightShoe.position.set(0.15, -0.42, 0.05);
+        avatarGroup.add(rightShoe);
+
+        const rightHeel = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.12, 12), shoeMat);
+        rightHeel.position.set(0.15, -0.48, -0.07);
+        avatarGroup.add(rightHeel);
+      } else {
+        // Sneakers / Boots geometry with sole highlight
+        const soleMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+        
+        const leftShoe = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.11, 0.32), shoeMat);
+        leftShoe.position.set(-0.15, -0.43, 0.06);
+        avatarGroup.add(leftShoe);
+
+        const leftSole = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.03, 0.33), soleMat);
+        leftSole.position.set(-0.15, -0.48, 0.06);
+        avatarGroup.add(leftSole);
+
+        const rightShoe = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.11, 0.32), shoeMat);
+        rightShoe.position.set(0.15, -0.43, 0.06);
+        avatarGroup.add(rightShoe);
+
+        const rightSole = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.03, 0.33), soleMat);
+        rightSole.position.set(0.15, -0.48, 0.06);
+        avatarGroup.add(rightSole);
+      }
+
+      scene3D.add(avatarGroup);
+    }
+
+    function reset3DAvatarView() {
+      if (avatarGroup) avatarGroup.rotation.set(0, 0, 0);
+    }
+
+    function setAvatarGender(gender) {
+      state.user.gender = gender;
+      state.user.bitmoji3D.makeupEnabled = (gender === 'female');
+      
+      const femBtn = document.getElementById('genderBtn-female');
+      const maleBtn = document.getElementById('genderBtn-male');
+      if (gender === 'female') {
+        femBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-black bg-rose-500 text-white shadow-2xs';
+        maleBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white';
+        document.getElementById('navBitmojiAvatarContainer').innerText = '👩‍🦰';
+      } else {
+        maleBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-black bg-blue-600 text-white shadow-2xs';
+        femBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white';
+        document.getElementById('navBitmojiAvatarContainer').innerText = '👨‍🦱';
+      }
+
+      build3DAvatarRig();
+      renderWardrobeItems();
+      showToast(`Model anatomy switched to ${gender === 'female' ? 'Female' : 'Male'}!`, 'info');
+    }
+
+    function capture3DAvatarSnapshot() {
+      closeModal('bitmojiStudioModal');
+      triggerConfettiCannon();
+      showToast('3D Avatar & Makeup Saved Successfully!', 'success');
+    }
+
+    // ==================== COMPACT INSTAGRAM / SNAPCHAT STORIES TRAY ====================
+    function renderSnapshotsTray() {
+      const container = document.getElementById('snapshotsTrayContainer');
+      if (!container) return;
+
+      let html = `
+        <!-- Compact Add Story Button (44px) -->
+        <div onclick="openCreateSnapshotModal()" class="flex flex-col items-center space-y-1 shrink-0 cursor-pointer group">
+          <div class="relative w-11 h-11 rounded-full border-2 border-dashed border-emerald-500/80 hover:border-emerald-500 flex items-center justify-center bg-slate-100 dark:bg-slate-800 transition-transform group-hover:scale-105">
+            <span class="text-sm">📸</span>
+            <span class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-[10px] shadow-2xs">+</span>
+          </div>
+          <span class="text-[10px] font-bold text-slate-600 dark:text-slate-300 max-w-[50px] truncate text-center">Add Snap</span>
+        </div>
+      `;
+
+      state.snapshots.forEach((snap, idx) => {
+        const u = state.users.find(x => x.id === snap.userId) || state.user;
+        html += `
+          <div onclick="openSnapshotViewer(${idx})" class="flex flex-col items-center space-y-1 shrink-0 cursor-pointer group">
+            <div class="${snap.viewed ? 'story-ring-viewed' : 'story-ring-active'} rounded-full transition-transform group-hover:scale-105">
+              <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-slate-900 bg-slate-200">
+                <img src="${snap.imageUrl}" class="w-full h-full object-cover">
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 truncate max-w-[52px] text-center">${u.name.split(' ')[0]}</span>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function openSnapshotViewer(idx) {
+      state.currentSnapshotIndex = idx;
+      const snap = state.snapshots[idx];
+      if (!snap) return;
+
+      snap.viewed = true;
+      renderSnapshotsTray();
+
+      const u = state.users.find(x => x.id === snap.userId) || state.user;
+      document.getElementById('storyViewerUsername').innerText = u.name;
+      document.getElementById('storyViewerTime').innerText = `${snap.location} • ${snap.time}`;
+      document.getElementById('storyViewerImage').src = snap.imageUrl;
+
+      const sticker = document.getElementById('storyExpenseSticker');
+      if (snap.expenseId) {
+        const exp = state.expenses.find(e => e.id === snap.expenseId);
+        if (exp) {
+          sticker.classList.remove('hidden');
+          document.getElementById('storyStickerDesc').innerText = exp.description;
+          document.getElementById('storyStickerAmount').innerText = `${formatMoney(exp.amount)} Total`;
+        } else {
+          sticker.classList.add('hidden');
+        }
+      } else {
+        sticker.classList.add('hidden');
+      }
+
+      openModal('snapshotViewerModal');
+
+      // 5-second progression
+      const fill = document.getElementById('storyProgressFill');
+      fill.style.width = '0%';
+      clearInterval(state.snapshotTimer);
+      let progress = 0;
+      state.snapshotTimer = setInterval(() => {
+        progress += 2;
+        fill.style.width = progress + '%';
+        if (progress >= 100) {
+          clearInterval(state.snapshotTimer);
+          if (state.currentSnapshotIndex < state.snapshots.length - 1) {
+            openSnapshotViewer(state.currentSnapshotIndex + 1);
+          } else {
+            closeModal('snapshotViewerModal');
+          }
+        }
+      }, 100);
+    }
+
+    function handleStoryTap(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      clearInterval(state.snapshotTimer);
+      if (clickX < rect.width / 2) {
+        if (state.currentSnapshotIndex > 0) openSnapshotViewer(state.currentSnapshotIndex - 1);
+      } else {
+        if (state.currentSnapshotIndex < state.snapshots.length - 1) {
+          openSnapshotViewer(state.currentSnapshotIndex + 1);
+        } else {
+          closeModal('snapshotViewerModal');
+        }
+      }
+    }
+
+    function sendStoryReaction(emoji) {
+      const container = document.getElementById('storyReactionsContainer');
+      const heart = document.createElement('div');
+      heart.className = 'floating-heart text-2xl';
+      heart.innerText = emoji;
+      heart.style.left = (Math.random() * 60 + 20) + '%';
+      heart.style.bottom = '15%';
+      container.appendChild(heart);
+      setTimeout(() => heart.remove(), 1200);
+
+      state.messages.push({
+        id: 'm-' + Date.now(),
+        groupId: state.currentGroupId,
+        userId: state.user.id,
+        text: `Reacted with ${emoji} to ${document.getElementById('storyViewerUsername').innerText}'s snapshot!`,
+        date: 'Just now',
+        reactions: [emoji]
+      });
+      renderChatStream();
+    }
+
+    function openCreateSnapshotModal() {
+      openModal('createSnapshotModal');
+    }
+
+    function pickSampleStoryImage(idx) {
+      const samples = [
+        'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1554797589-7241ab374b73?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=600&q=80'
+      ];
+      document.getElementById('snapPreviewImage').src = samples[idx];
+    }
+
+    function submitNewSnapshot() {
+      const img = document.getElementById('snapPreviewImage').src;
+      const caption = document.getElementById('snapCaptionInput').value || 'Tokyo snapshot!';
+      const expId = document.getElementById('snapExpenseSelect').value || null;
+
+      state.snapshots.unshift({
+        id: 's-' + Date.now(),
+        userId: state.user.id,
+        imageUrl: img,
+        time: 'Just now',
+        location: 'Shinjuku, Tokyo',
+        caption,
+        expenseId: expId,
+        viewed: false
+      });
+
+      closeModal('createSnapshotModal');
+      renderSnapshotsTray();
+      triggerConfettiCannon();
+      showToast('Snapshot posted to Group Story!', 'success');
+    }
+
+    // ==================== OFFICIAL PAYPAL WALLET & BALANCE ====================
+    function updatePayPalUI() {
+      const balanceStr = formatMoney(state.paypalBalance);
+      const currCode = state.selectedCurrency;
+
+      const navEl = document.getElementById('navPayPalBalanceLabel');
+      const navShort = document.getElementById('navPayPalBalanceShort');
+      const widgetEl = document.getElementById('widgetPayPalBalance');
+      const widgetCurr = document.getElementById('widgetPayPalCurrency');
+      const modalEl = document.getElementById('modalPayPalBalance');
+      const modalCurr = document.getElementById('modalPayPalCurrency');
+      const topupLabel = document.getElementById('topupFundsBtnLabel');
+
+      if (navEl) navEl.innerText = balanceStr;
+      if (navShort) navShort.innerText = balanceStr;
+      if (widgetEl) widgetEl.innerText = balanceStr;
+      if (widgetCurr) widgetCurr.innerText = currCode;
+      if (modalEl) modalEl.innerText = balanceStr;
+      if (modalCurr) modalCurr.innerText = currCode;
+      if (topupLabel) topupLabel.innerText = `+ Add ${formatMoney(10000)} Test Funds`;
+    }
+
+    function refreshPayPalLiveBalance() {
+      const icon = document.getElementById('refreshPaypalIcon');
+      if (icon) icon.classList.add('animate-spin');
+      setTimeout(() => {
+        if (icon) icon.classList.remove('animate-spin');
+        updatePayPalUI();
+        showToast(`PayPal Live Balance Verified: ${formatMoney(state.paypalBalance)} ${state.selectedCurrency}`, 'success');
+      }, 500);
+    }
+
+    function depositPayPalFunds(cents) {
+      state.paypalBalance += cents;
+      updatePayPalUI();
+      triggerConfettiCannon();
+      showToast(`Deposited +${formatMoney(cents)} to PayPal Sandbox!`, 'success');
+    }
+
+    function settleAllDebtsFromPayPal() {
+      const net = calculateUserNetInGroup(state.user.id, state.currentGroupId);
+      if (net >= 0) {
+        showToast('You do not owe any money in this group!', 'info');
+        return;
+      }
+      const amountToSettle = Math.abs(net);
+      if (state.paypalBalance < amountToSettle) {
+        showToast('Insufficient PayPal sandbox balance! Add test funds.', 'error');
+        return;
+      }
+
+      state.paypalBalance -= amountToSettle;
+      updatePayPalUI();
+
+      state.settlements.push({
+        id: 'settle-' + Date.now(),
+        groupId: state.currentGroupId,
+        payerId: state.user.id,
+        amount: amountToSettle,
+        status: 'COMPLETED',
+        method: 'PAYPAL_SANDBOX',
+        date: new Date().toISOString()
+      });
+
+      triggerConfettiCannon();
+      showToast(`Settled ${formatMoney(amountToSettle)} via PayPal Sandbox!`, 'success');
+      closeModal('paypalWalletModal');
+      renderApp();
+    }
+
+    function executeAllOptimizedSettlements() {
+      const optimal = runGreedySettlementOptimizer(state.currentGroupId);
+      if (optimal.length === 0) {
+        showToast('All members are squared away!', 'info');
+        return;
+      }
+
+      optimal.forEach(o => {
+        state.settlements.push({
+          id: 'settle-' + Date.now() + Math.random(),
+          groupId: state.currentGroupId,
+          payerId: o.from,
+          payeeId: o.to,
+          amount: o.amount,
+          status: 'COMPLETED',
+          method: 'PAYPAL_SANDBOX',
+          date: new Date().toISOString()
+        });
+      });
+
+      closeModal('settlementOptimizerModal');
+      triggerConfettiCannon();
+      showToast('All greedy settlements cleared via PayPal Sandbox!', 'success');
+      renderApp();
+    }
+
+    // ==================== WARDROBE, MAKEUP & SHOES STORE ====================
+    function openBitmojiStudioModal() {
+      openModal('bitmojiStudioModal');
+      setTimeout(() => {
+        init3DAvatarScene();
+        build3DAvatarRig();
+      }, 100);
+      renderWardrobeItems();
+    }
+
+    function setWardrobeCategory(cat) {
+      state.activeWardrobeCategory = cat;
+      ['tops', 'bottoms', 'shoes', 'makeup', 'skins'].forEach(c => {
+        const btn = document.getElementById(`wardrobeTab-${c}`);
+        if (btn) {
+          if (c === cat) {
+            btn.className = 'flex-1 py-1.5 px-2 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-2xs whitespace-nowrap';
+          } else {
+            btn.className = 'flex-1 py-1.5 px-2 rounded-xl text-slate-500 whitespace-nowrap';
+          }
+        }
+      });
+      renderWardrobeItems();
+    }
+
+    function renderWardrobeItems() {
+      const container = document.getElementById('wardrobeItemsGrid');
+      if (!container) return;
+      container.innerHTML = '';
+      const cat = state.activeWardrobeCategory;
+
+      if (cat === 'skins') {
+        state.wardrobeCatalog.skins.forEach(s => {
+          const isSelected = state.user.bitmoji3D.skin === s.hex;
+          const card = document.createElement('div');
+          card.className = `p-2.5 rounded-2xl border ${isSelected ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'} cursor-pointer flex items-center space-x-2.5`;
+          card.onclick = () => {
+            state.user.bitmoji3D.skin = s.hex;
+            build3DAvatarRig();
+            renderWardrobeItems();
+          };
+          card.innerHTML = `
+            <div class="w-7 h-7 rounded-full border border-black/10 shrink-0" style="background-color: ${s.hex}"></div>
+            <span class="text-xs font-bold truncate">${s.name}</span>
+          `;
+          container.appendChild(card);
+        });
+        return;
+      }
+
+      const items = state.wardrobeCatalog[cat] || [];
+      items.forEach(item => {
+        let isEquipped = false;
+        if (cat === 'tops') isEquipped = state.user.bitmoji3D.topColor === item.color;
+        if (cat === 'bottoms') isEquipped = state.user.bitmoji3D.pantsColor === item.color;
+        if (cat === 'shoes') isEquipped = state.user.bitmoji3D.shoesColor === item.color;
+        if (cat === 'makeup') {
+          if (item.type === 'lipstick') isEquipped = state.user.bitmoji3D.lipstick === item.hex;
+          if (item.type === 'eyeshadow') isEquipped = state.user.bitmoji3D.eyeshadow === item.hex;
+          if (item.type === 'blush') isEquipped = state.user.bitmoji3D.blush === item.hex;
+        }
+
+        const card = document.createElement('div');
+        card.className = `p-2.5 rounded-2xl border ${isEquipped ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'} space-y-1.5 text-left`;
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${item.owned ? 'bg-slate-100 dark:bg-slate-800 text-slate-600' : 'bg-amber-100 text-amber-900'}">${item.tag}</span>
+            <span class="text-xs font-black ${item.owned ? 'text-slate-400' : 'text-emerald-600'}">${item.priceCents === 0 ? 'Free' : formatMoney(item.priceCents)}</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            ${item.color || item.hex ? `<div class="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0" style="background-color: ${item.color || item.hex}"></div>` : ''}
+            <p class="text-xs font-bold truncate">${item.name}</p>
+          </div>
+          ${item.owned ? `
+            <button onclick="equipWardrobeItem('${cat}', '${item.id}')" class="w-full py-1 rounded-xl ${isEquipped ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'} text-xs font-black">
+              ${isEquipped ? '✓ Equipped' : 'Equip in 3D'}
+            </button>
+          ` : `
+            <button onclick="buyWardrobeWithPayPal('${cat}', '${item.id}')" class="paypal-btn w-full py-1 rounded-xl text-xs font-black flex items-center justify-center space-x-1 shadow-2xs">
+              <span>Pay with PayPal</span>
+            </button>
+          `}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function equipWardrobeItem(cat, id) {
+      const item = state.wardrobeCatalog[cat]?.find(w => w.id === id);
+      if (!item) return;
+
+      if (cat === 'tops') {
+        state.user.bitmoji3D.topColor = item.color;
+        state.user.bitmoji3D.topStyle = item.style;
+        document.getElementById('studioOutfitName').innerText = item.name;
+      } else if (cat === 'bottoms') {
+        state.user.bitmoji3D.pantsColor = item.color;
+        state.user.bitmoji3D.pantsStyle = item.style;
+      } else if (cat === 'shoes') {
+        state.user.bitmoji3D.shoesColor = item.color;
+        state.user.bitmoji3D.shoesStyle = item.style;
+      } else if (cat === 'makeup') {
+        state.user.bitmoji3D.makeupEnabled = true;
+        if (item.type === 'lipstick') state.user.bitmoji3D.lipstick = item.hex;
+        if (item.type === 'eyeshadow') state.user.bitmoji3D.eyeshadow = item.hex;
+        if (item.type === 'blush') state.user.bitmoji3D.blush = item.hex;
+      }
+
+      build3DAvatarRig();
+      renderWardrobeItems();
+      showToast(`Equipped ${item.name}!`, 'success');
+    }
+
+    function buyWardrobeWithPayPal(category, itemId) {
+      const item = state.wardrobeCatalog[category]?.find(w => w.id === itemId);
+      if (!item) return;
+      state.pendingWardrobePurchase = { category, item };
+      document.getElementById('checkoutOutfitName').innerText = item.name;
+      document.getElementById('checkoutOutfitPrice').innerText = formatMoney(item.priceCents);
+      document.getElementById('checkoutAvailableBalance').innerText = formatMoney(state.paypalBalance);
+      openModal('paypalCheckoutModal');
+    }
+
+    function confirmPayPalWardrobePayment() {
+      const { category, item } = state.pendingWardrobePurchase || {};
+      if (!item) return;
+      if (state.paypalBalance < item.priceCents) {
+        showToast('Insufficient PayPal sandbox balance! Add test funds in wallet.', 'error');
+        return;
+      }
+      state.paypalBalance -= item.priceCents;
+      item.owned = true;
+
+      equipWardrobeItem(category, item.id);
+      updatePayPalUI();
+      closeModal('paypalCheckoutModal');
+      triggerConfettiCannon();
+      showToast(`Unlocked and equipped ${item.name} via PayPal!`, 'success');
+    }
+
+    // ==================== BALANCE ENGINE & GREEDY OPTIMIZER ====================
+    function calculateUserNetInGroup(userId, groupId) {
+      let paid = 0, owed = 0;
+      state.expenses.filter(e => e.groupId === groupId).forEach(e => {
+        if (e.payerId === userId) paid += e.amount;
+        const mySplit = e.splits.find(s => s.userId === userId);
+        if (mySplit) owed += mySplit.amount;
+      });
+      state.settlements.filter(s => s.groupId === groupId && s.status === 'COMPLETED').forEach(s => {
+        if (s.payerId === userId) paid += s.amount;
+        if (s.payeeId === userId) owed += s.amount;
+      });
+      return paid - owed;
+    }
+
+    function runGreedySettlementOptimizer(groupId) {
+      const group = state.groups.find(g => g.id === groupId);
+      if (!group) return [];
+      const netBalances = {};
+      group.members.forEach(m => netBalances[m] = calculateUserNetInGroup(m, groupId));
+
+      const debtors = [], creditors = [];
+      Object.entries(netBalances).forEach(([uid, net]) => {
+        if (net < -5) debtors.push({ uid, net: -net });
+        else if (net > 5) creditors.push({ uid, net });
+      });
+
+      debtors.sort((a, b) => b.net - a.net);
+      creditors.sort((a, b) => b.net - a.net);
+
+      const optimal = [];
+      let i = 0, j = 0;
+      while (i < debtors.length && j < creditors.length) {
+        const debt = debtors[i], cred = creditors[j];
+        const settleAmt = Math.min(debt.net, cred.net);
+        optimal.push({ from: debt.uid, to: cred.uid, amount: settleAmt });
+        debt.net -= settleAmt;
+        cred.net -= settleAmt;
+        if (debt.net <= 5) i++;
+        if (cred.net <= 5) j++;
+      }
+      return optimal;
+    }
+
+    // ==================== MODAL HELPERS & TABS ====================
+    function openModal(id) { document.getElementById(id)?.classList.remove('hidden'); }
+    function closeModal(id) { 
+      document.getElementById(id)?.classList.add('hidden');
+      if (id === 'snapshotViewerModal') clearInterval(state.snapshotTimer);
+    }
+
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      ['viewDashboard', 'viewScanner', 'viewTravel', 'viewInsights'].forEach(v => {
+        document.getElementById(v)?.classList.add('hidden');
+      });
+      if (tabId === 'dashboard') document.getElementById('viewDashboard')?.classList.remove('hidden');
+      if (tabId === 'scanner') document.getElementById('viewScanner')?.classList.remove('hidden');
+      if (tabId === 'travel') { document.getElementById('viewTravel')?.classList.remove('hidden'); renderTravelMode(); }
+      if (tabId === 'insights') { document.getElementById('viewInsights')?.classList.remove('hidden'); renderInsights(); }
+    }
+
+    function switchGroupSubTab(sub) {
+      state.activeSubTab = sub;
+      ['expenses', 'balances', 'chat', 'memories'].forEach(s => {
+        document.getElementById(`subTabContent-${s}`)?.classList.add('hidden');
+        document.getElementById(`subTabBtn-${s}`)?.classList.replace('bg-emerald-100', 'text-slate-500');
+      });
+      document.getElementById(`subTabContent-${sub}`)?.classList.remove('hidden');
+      document.getElementById(`subTabBtn-${sub}`)?.classList.add('bg-emerald-100');
+      if (sub === 'balances') renderBalancesAndOptimizer();
+      if (sub === 'chat') renderChatStream();
+      if (sub === 'memories') renderMemories();
+    }
+
+    function openPayPalWalletModal() { updatePayPalUI(); openModal('paypalWalletModal'); }
+
+    function openSettlementOptimizerModal() {
+      const optimal = runGreedySettlementOptimizer(state.currentGroupId);
+      const list = document.getElementById('optimizerModalList');
+      if (list) {
+        list.innerHTML = optimal.length === 0 ? '<p class="text-xs text-slate-400">All members are squared away!</p>' :
+          optimal.map(o => {
+            const fromUser = state.users.find(u => u.id === o.from);
+            const toUser = state.users.find(u => u.id === o.to);
+            return `
+              <div class="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 text-xs font-bold">
+                <div class="flex items-center space-x-2">
+                  <span class="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center">→</span>
+                  <span>${fromUser.name} pays ${toUser.name}</span>
+                </div>
+                <span class="font-black text-emerald-600">${formatMoney(o.amount)}</span>
+              </div>`;
+          }).join('');
+      }
+      openModal('settlementOptimizerModal');
+    }
+
+    function openAddExpenseModal() {
+      const payerSel = document.getElementById('expPayer');
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+      if (payerSel && group) {
+        payerSel.innerHTML = group.members.map(mId => {
+          const u = state.users.find(x => x.id === mId);
+          return `<option value="${u.id}">${u.name}</option>`;
+        }).join('');
+      }
+      renderSplitInputs();
+      openModal('addExpenseModal');
+    }
+
+    function setSplitMode(mode) {
+      state.splitMode = mode;
+      ['EQUAL', 'EXACT', 'PERCENTAGE', 'ITEM_WISE'].forEach(m => {
+        const btn = document.getElementById(`splitModeBtn-${m}`);
+        if (btn) btn.className = m === mode ? 'py-1.5 rounded-lg bg-white dark:bg-slate-700 text-emerald-600 shadow-2xs' : 'py-1.5 rounded-lg text-slate-500';
+      });
+      renderSplitInputs();
+    }
+
+    function renderSplitInputs() {
+      const container = document.getElementById('splitBreakdownContainer');
+      const amount = Math.round(parseFloat(document.getElementById('expAmount')?.value || 0) * 100);
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+      if (!container || !group) return;
+
+      if (state.splitMode === 'EQUAL') {
+        const share = Math.floor(amount / group.members.length);
+        container.innerHTML = group.members.map(mId => {
+          const u = state.users.find(x => x.id === mId);
+          return `<div class="flex justify-between font-bold"><span>${u.name}</span><span class="text-emerald-600">${formatMoney(share)}</span></div>`;
+        }).join('');
+      } else {
+        container.innerHTML = group.members.map(mId => {
+          const u = state.users.find(x => x.id === mId);
+          return `
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-bold truncate">${u.name}</span>
+              <input type="number" step="0.01" placeholder="0.00" class="w-20 bg-white dark:bg-slate-800 rounded-lg px-2 py-1 text-right font-bold outline-none border border-slate-200 dark:border-slate-700">
+            </div>`;
+        }).join('');
+      }
+    }
+
+    function handleCreateExpense(e) {
+      e.preventDefault();
+      const desc = document.getElementById('expDesc').value;
+      const amtCents = Math.round(parseFloat(document.getElementById('expAmount').value) * 100);
+      const payerId = document.getElementById('expPayer').value;
+      const group = state.groups.find(g => g.id === state.currentGroupId);
+
+      const splitShare = Math.floor(amtCents / group.members.length);
+      const splits = group.members.map(m => ({ userId: m, amount: splitShare }));
+
+      state.expenses.unshift({
+        id: 'e-' + Date.now(),
+        groupId: state.currentGroupId,
+        payerId,
+        amount: amtCents,
+        description: desc,
+        category: 'GENERAL',
+        splitType: state.splitMode,
+        date: new Date().toISOString().split('T')[0],
+        splits
+      });
+
+      closeModal('addExpenseModal');
+      renderApp();
+      triggerConfettiCannon();
+      showToast('Expense added successfully!', 'success');
+    }
+
+    function triggerConfettiCannon() {
+      if (window.confetti) confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+    }
+
+    function showToast(msg, type = 'info') {
+      const tc = document.getElementById('toastContainer');
+      if (!tc) return;
+      const toast = document.createElement('div');
+      toast.className = `p-2.5 rounded-2xl text-xs font-bold shadow-xl border backdrop-blur-md pointer-events-auto ${type === 'success' ? 'bg-emerald-600 text-white border-emerald-500' : 'bg-slate-900 text-white border-slate-700'}`;
+      toast.innerText = msg;
+      tc.appendChild(toast);
+      setTimeout(() => toast.remove(), 2600);
+    }
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('THEME', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    // ==================== RENDERING & INIT ====================
+    function renderApp() {
+      // 1. Stories Tray
+      renderSnapshotsTray();
+
+      // 2. PayPal UI
+      updatePayPalUI();
+
+      // 3. Hero Net Balance
+      const myNet = calculateUserNetInGroup(state.user.id, state.currentGroupId);
+      const heroNet = document.getElementById('heroNetBalance');
+      const heroBadge = document.getElementById('heroBalanceBadge');
+      if (heroNet) heroNet.innerText = (myNet < 0 ? '-' : '') + formatMoney(Math.abs(myNet));
+      if (heroBadge) {
+        heroBadge.innerText = myNet > 0 ? 'You are owed' : (myNet < 0 ? 'You owe' : 'Settled Up');
+        heroBadge.className = `text-xs font-extrabold px-2.5 py-0.5 rounded-full backdrop-blur-sm ${myNet < 0 ? 'bg-rose-500/80 text-white' : 'bg-white/20 text-white'}`;
+      }
+
+      // Group totals owed / you owe
+      const grp = state.groups.find(g => g.id === state.currentGroupId);
+      let owedToMe = 0, owedByMe = 0;
+      if (grp) {
+        if (myNet > 0) owedToMe = myNet;
+        else if (myNet < 0) owedByMe = Math.abs(myNet);
+      }
+      document.getElementById('totalOwedToYou').innerText = formatMoney(owedToMe);
+      document.getElementById('totalYouOwe').innerText = formatMoney(owedByMe);
+
+      // 4. Expenses List
+      const expContainer = document.getElementById('expensesListContainer');
+      const grpExpenses = state.expenses.filter(e => e.groupId === state.currentGroupId);
+      document.getElementById('expenseCountLabel').innerText = grpExpenses.length;
+      if (expContainer) {
+        expContainer.innerHTML = grpExpenses.map(e => {
+          const payer = state.users.find(u => u.id === e.payerId);
+          return `
+            <div class="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-sm">🧾</div>
+                <div>
+                  <h4 class="font-extrabold text-xs">${e.description}</h4>
+                  <p class="text-[10px] text-slate-400">Paid by ${payer.name} • ${e.date}</p>
+                </div>
+              </div>
+              <span class="font-black text-xs text-slate-900 dark:text-white">${formatMoney(e.amount)}</span>
+            </div>`;
+        }).join('');
+      }
+
+      // 5. Travel & Insights updates
+      renderTravelMode();
+      renderInsights();
+    }
+
+    function renderBalancesAndOptimizer() {
+      const grp = state.groups.find(g => g.id === state.currentGroupId);
+      const list = document.getElementById('balancesListContainer');
+      if (list && grp) {
+        list.innerHTML = grp.members.map(mId => {
+          const u = state.users.find(x => x.id === mId);
+          const net = calculateUserNetInGroup(mId, state.currentGroupId);
+          return `
+            <div class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-between text-xs font-bold">
+              <div class="flex items-center space-x-2">
+                <div class="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs">👤</div>
+                <span>${u.name}</span>
+              </div>
+              <span class="${net >= 0 ? 'text-emerald-600' : 'text-rose-500'} font-black">${net >= 0 ? '+' : ''}${formatMoney(net)}</span>
+            </div>`;
+        }).join('');
+      }
+
+      const optList = document.getElementById('optimizedSettlementCards');
+      const optimal = runGreedySettlementOptimizer(state.currentGroupId);
+      if (optList) {
+        optList.innerHTML = optimal.length === 0 ? '<p class="text-xs text-slate-400">All members are squared away!</p>' :
+          optimal.map(o => {
+            const fromUser = state.users.find(u => u.id === o.from);
+            const toUser = state.users.find(u => u.id === o.to);
+            return `
+              <div class="flex items-center justify-between p-2.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/20 text-xs font-bold">
+                <div class="flex items-center space-x-2">
+                  <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px]">✓</span>
+                  <span>${fromUser.name} pays ${toUser.name}</span>
+                </div>
+                <span class="font-black text-emerald-600">${formatMoney(o.amount)}</span>
+              </div>`;
+          }).join('');
+      }
+    }
+
+    function renderChatStream() {
+      const container = document.getElementById('chatMessagesStream');
+      const grpMessages = state.messages.filter(m => m.groupId === state.currentGroupId);
+      if (container) {
+        container.innerHTML = grpMessages.map(m => {
+          const u = state.users.find(x => x.id === m.userId);
+          return `
+            <div class="flex items-start space-x-2 text-xs">
+              <div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0 text-[10px]">👤</div>
+              <div class="bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-0.5">
+                <div class="flex items-center space-x-1.5"><span class="font-bold">${u.name}</span><span class="text-[9px] text-slate-400">${m.date}</span></div>
+                <p>${m.text}</p>
+              </div>
+            </div>`;
+        }).join('');
+      }
+    }
+
+    function handleSendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatMessageInput');
+      if (!input || !input.value.trim()) return;
+      state.messages.push({
+        id: 'm-' + Date.now(),
+        groupId: state.currentGroupId,
+        userId: state.user.id,
+        text: input.value.trim(),
+        date: 'Just now',
+        reactions: []
+      });
+      input.value = '';
+      renderChatStream();
+    }
+
+    function renderMemories() {
+      const container = document.getElementById('memoryWallContainer');
+      const grpMems = state.memories.filter(m => m.groupId === state.currentGroupId);
+      if (container) {
+        container.innerHTML = grpMems.map(m => `
+          <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
+            <img src="${m.imageUrl}" class="w-full h-28 object-cover">
+            <div class="p-2">
+              <p class="text-[11px] font-semibold line-clamp-2">${m.caption}</p>
+              <span class="text-[9px] text-slate-400 mt-0.5 block">❤️ ${m.likes} likes</span>
+            </div>
+          </div>`).join('');
+      }
+    }
+
+    function renderTravelMode() {
+      const grp = state.groups.find(g => g.id === state.currentGroupId);
+      if (grp) {
+        document.getElementById('travelSpentLabel').innerText = `Spent: ${formatMoney(186000)}`;
+        document.getElementById('travelBudgetLabel').innerText = `Budget: ${formatMoney(grp.budget)}`;
+        document.getElementById('travelRemainingLabel').innerText = `${formatMoney(grp.budget - 186000)} remaining for group`;
+      }
+
+      const places = [
+        { name: 'Afuri Ramen Shibuya', tag: 'Ramen & Craft Beer', rating: '4.8 ★' },
+        { name: 'Meiji Jingu Shrine', tag: 'Cultural Sight', rating: '4.9 ★' },
+        { name: 'Harajuku Crepes', tag: 'Desserts', rating: '4.6 ★' }
+      ];
+      const pList = document.getElementById('nearbyPlacesList');
+      if (pList) {
+        pList.innerHTML = places.map(p => `
+          <div class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 text-xs">
+            <h4 class="font-black">${p.name}</h4>
+            <div class="flex justify-between text-slate-400 mt-1"><span>${p.tag}</span><span class="text-emerald-600 font-bold">${p.rating}</span></div>
+          </div>`).join('');
+      }
+
+      const pollList = document.getElementById('activePollsContainer');
+      if (pollList) {
+        pollList.innerHTML = state.polls.map(p => `
+          <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 space-y-1.5 text-xs">
+            <h4 class="font-extrabold">${p.question}</h4>
+            <div class="space-y-1">${p.options.map(o => `
+              <button onclick="votePoll('${p.id}', '${o.id}')" class="w-full p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex justify-between font-bold hover:border-emerald-500">
+                <span>${o.text}</span><span class="text-emerald-600">${o.votes} votes</span>
+              </button>`).join('')}</div>
+          </div>`).join('');
+      }
+    }
+
+    function votePoll(pid, oid) {
+      const poll = state.polls.find(p => p.id === pid);
+      const opt = poll?.options.find(o => o.id === oid);
+      if (opt) { opt.votes++; renderTravelMode(); showToast('Vote cast!', 'success'); }
+    }
+
+    function renderInsights() {
+      const cats = [{ name: 'Dining & Drinks', amt: formatMoney(8400), pct: 60 }, { name: 'Travel & Trains', amt: formatMoney(4800), pct: 35 }, { name: 'Snacks', amt: formatMoney(700), pct: 5 }];
+      const cList = document.getElementById('categorySpendBars');
+      if (cList) {
+        cList.innerHTML = cats.map(c => `
+          <div class="space-y-1">
+            <div class="flex justify-between font-bold"><span>${c.name}</span><span>${c.amt}</span></div>
+            <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden"><div class="h-full bg-purple-500 rounded-full" style="width: ${c.pct}%;"></div></div>
+          </div>`).join('');
+      }
+      const tipList = document.getElementById('aiSavingsTipsList');
+      if (tipList) {
+        tipList.innerHTML = `
+          <li class="flex items-start space-x-1.5"><span>💡</span><span>Dining made up 60% of group spend. Booking lunch sets in Shinjuku saves ~${formatMoney(3500)}.</span></li>
+          <li class="flex items-start space-x-1.5"><span>🚅</span><span>Pre-booking 72-hour Tokyo Metro subway passes saves ${formatMoney(1200)}/person over single tickets.</span></li>`;
+      }
+
+      // Subscriptions
+      const subContainer = document.getElementById('subscriptionsListContainer');
+      if (subContainer) {
+        subContainer.innerHTML = `
+          <div class="flex justify-between items-center p-2 rounded-xl bg-slate-50 dark:bg-slate-950 text-xs"><span>Netflix 4K (Group)</span><span class="font-bold text-emerald-600">${formatMoney(1999)}/mo</span></div>
+          <div class="flex justify-between items-center p-2 rounded-xl bg-slate-50 dark:bg-slate-950 text-xs"><span>Spotify Family</span><span class="font-bold text-emerald-600">${formatMoney(1699)}/mo</span></div>
+        `;
+      }
+
+      // Goals
+      const goalContainer = document.getElementById('savingsGoalsListContainer');
+      if (goalContainer) {
+        goalContainer.innerHTML = `
+          <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 text-xs space-y-1">
+            <div class="flex justify-between font-bold"><span>Ski Trip 2027</span><span>${formatMoney(120000)} / ${formatMoney(250000)}</span></div>
+            <div class="w-full h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-emerald-500" style="width: 48%;"></div></div>
+          </div>
+        `;
+      }
+    }
+
+    function calculateLiveFX() {
+      const amt = parseFloat(document.getElementById('fxInputAmount')?.value || 0);
+      const curr = document.getElementById('fxSourceCurrency')?.value || 'JPY';
+      const rates = { JPY: 0.0065, EUR: 1.09, GBP: 1.27, INR: 0.0118, CAD: 0.72, AUD: 0.66 };
+      const convertedUSD = amt * (rates[curr] || 1);
+      document.getElementById('fxOutputConverted').innerText = formatMoney(Math.round(convertedUSD * 100));
+    }
+
+    function openAIReminderModal() { openModal('aiReminderModal'); generateAIReminderText(); }
+    function generateAIReminderText() {
+      const tone = document.getElementById('reminderToneSelect')?.value || 'shakespearean';
+      const map = {
+        shakespearean: '"Hark, noble companion! The ledger weepeth for the feast of yestereve. Settle thy coin, prithee!"',
+        passive_aggressive: '"I love how we all agree to split equally, but somehow only my bank account gets deducted."',
+        mobster: '"Nice balance sheet you got here. Be a real shame if someone had to remind you twice to settle up."',
+        pirate: '"Ahoy matey! Ye haven\'t surrendered yer doubloons for the tavern rations. Settle up or walk the plank!"',
+        accountant: '"According to Subsection 4A of our friendship protocol, your accounts payable has reached delinquent status."'
+      };
+      document.getElementById('aiReminderOutputText').innerText = map[tone] || map.shakespearean;
+    }
+
+    function postAIReminderToChat() {
+      const text = document.getElementById('aiReminderOutputText').innerText;
+      state.messages.push({
+        id: 'm-' + Date.now(),
+        groupId: state.currentGroupId,
+        userId: state.user.id,
+        text: `🤖 AI Reminder: ${text}`,
+        date: 'Just now',
+        reactions: ['😂']
+      });
+      closeModal('aiReminderModal');
+      switchGroupSubTab('chat');
+      showToast('AI reminder posted to chat!', 'success');
+    }
+
+    function loadSampleReceiptScan() {
+      document.getElementById('scannedReceiptReviewSection')?.classList.remove('hidden');
+      const items = [
+        { name: 'Wood-Fired Truffle Pizza', price: formatMoney(2200), assigned: ['u1', 'u2'] },
+        { name: 'Handmade Pappardelle', price: formatMoney(1800), assigned: ['u3'] },
+        { name: 'Sparkling San Pellegrino (x2)', price: formatMoney(1000), assigned: ['u1', 'u2', 'u3', 'u4'] }
+      ];
+      const container = document.getElementById('scannedItemsListContainer');
+      if (container) {
+        container.innerHTML = items.map(it => `
+          <div class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950 flex items-center justify-between text-xs">
+            <div><span class="font-bold">${it.name}</span><div class="text-[10px] text-slate-400">Assigned: ${it.assigned.map(uid => state.users.find(u => u.id === uid).name).join(', ')}</div></div>
+            <span class="font-black text-emerald-600">${it.price}</span>
+          </div>`).join('');
+      }
+      document.getElementById('scannedTotalAmountLabel').innerText = formatMoney(6450);
+      document.getElementById('scannedSubtotalLabel').innerText = formatMoney(5000);
+      document.getElementById('scannedTaxLabel').innerText = formatMoney(450);
+      document.getElementById('scannedTipLabel').innerText = formatMoney(1000);
+    }
+
+    function commitScannedReceiptToExpense() {
+      state.expenses.unshift({
+        id: 'e-scan-' + Date.now(),
+        groupId: state.currentGroupId,
+        payerId: state.user.id,
+        amount: 6450,
+        description: 'Bistro Bella Italia (AI OCR)',
+        category: 'DINING',
+        splitType: 'ITEM_WISE',
+        date: new Date().toISOString().split('T')[0],
+        splits: [
+          { userId: 'u1', amount: 1650 },
+          { userId: 'u2', amount: 1650 },
+          { userId: 'u3', amount: 2050 },
+          { userId: 'u4', amount: 1100 }
+        ]
+      });
+      switchTab('dashboard');
+      renderApp();
+      triggerConfettiCannon();
+      showToast('Created Item-Wise expense from AI Bill Scanner!', 'success');
+    }
+
+    function openExpenseWrappedModal() {
+      document.getElementById('wrappedTotalSpent').innerText = formatMoney(13200);
+      openModal('expenseWrappedModal');
+      triggerConfettiCannon();
+    }
+
+    function changeGroup(gid) { state.currentGroupId = gid; renderApp(); }
+
+    function triggerGeolocationDiscovery() {
+      showToast('Location discovered: Tokyo, Japan (GPS)', 'success');
+    }
+
+    function toggleLocationSharing(el) {
+      showToast(el.checked ? 'Location sharing activated for group' : 'Location sharing paused', 'info');
+    }
+
+    // Init Theme & Currency Selector
+    if (localStorage.getItem('THEME') === 'dark' || (!localStorage.getItem('THEME') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    const curSel = document.getElementById('currencySelector');
+    if (curSel && state.selectedCurrency) curSel.value = state.selectedCurrency;
+    const curFlag = document.getElementById('currencyFlag');
+    if (curFlag && CURRENCIES[state.selectedCurrency]) curFlag.innerText = CURRENCIES[state.selectedCurrency].flag;
+
+    // Startup App
+    renderApp();
+    // =========================================================================
+// REALISTIC SNAPCHAT 3D BITMOJI RIG & ANIMATION LOOP (Three.js WebGL)
+// =========================================================================
+
+let blinkClock = 0;
+let isBlinking = false;
+let blinkProgress = 0;
+let leftEyelidMesh = null;
+let rightEyelidMesh = null;
+let headGroup = null;
+let torsoGroup = null;
+let leftArmGroup = null;
+let rightArmGroup = null;
+
+function init3DAvatarStudio() {
+  const canvas = document.getElementById('avatar3dCanvas');
+  const container = document.getElementById('canvas3dContainer');
+  if (!canvas || !container) return;
+
+  scene3D = new THREE.Scene();
+  camera3D = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
+  camera3D.position.set(0, 0.95, 3.4);
+
+  renderer3D = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  renderer3D.setSize(container.clientWidth, container.clientHeight);
+  renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer3D.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer3D.toneMappingExposure = 1.15;
+
+  // 4-Point Cinematic Lighting for Soft Cartoon-Realistic Finish
+  scene3D.add(new THREE.AmbientLight(0xffffff, 0.85));
+  const keyLight = new THREE.DirectionalLight(0xffedd5, 1.3);
+  keyLight.position.set(2.5, 4, 3.5);
+  scene3D.add(keyLight);
+
+  const fillLight = new THREE.DirectionalLight(0xe0f2fe, 0.65);
+  fillLight.position.set(-2.5, 2, 2.5);
+  scene3D.add(fillLight);
+
+  const rimLight = new THREE.PointLight(0x06b6d4, 1.8, 10);
+  rimLight.position.set(-2.2, 3, -2.5);
+  scene3D.add(rimLight);
+
+  build3DAvatarRig();
+
+  // Natural Blinking & Breathing Loop
+  let clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const time = clock.getElapsedTime();
+
+    // 1. Natural Blinking (blinks naturally every ~3.5 seconds)
+    blinkClock += 0.016;
+    if (blinkClock > 3.4) {
+      blinkProgress += 0.18;
+      if (leftEyelidMesh && rightEyelidMesh) {
+        const scaleY = Math.sin(blinkProgress) * 1.0;
+        leftEyelidMesh.scale.y = Math.max(0.04, scaleY);
+        rightEyelidMesh.scale.y = Math.max(0.04, scaleY);
+      }
+      if (blinkProgress >= Math.PI) {
+        blinkProgress = 0;
+        blinkClock = 0;
+        if (leftEyelidMesh && rightEyelidMesh) {
+          leftEyelidMesh.scale.y = 0.04;
+          rightEyelidMesh.scale.y = 0.04;
+        }
+      }
+    }
+
+    // 2. Organic Idle Breathing & Sway
+    if (avatarGroup) {
+      avatarGroup.position.y = Math.sin(time * 2.2) * 0.02;
+      if (headGroup) {
+        headGroup.rotation.z = Math.sin(time * 0.9) * 0.035;
+        headGroup.rotation.x = Math.sin(time * 1.5) * 0.018;
+      }
+      if (!isDragging3D) {
+        avatarGroup.rotation.y = Math.sin(time * 0.7) * 0.09;
+      }
+    }
+    renderer3D.render(scene3D, camera3D);
+  }
+  animate();
+}
+
+function build3DAvatarRig() {
+  if (avatarGroup) scene3D.remove(avatarGroup);
+  avatarGroup = new THREE.Group();
+
+  const conf = state.user.bitmoji3D;
+  const isFemale = state.user.gender === 'female';
+  const pose = conf.pose || 'chill';
+
+  // PBR Skin & Fabric Materials
+  const skinMat = new THREE.MeshStandardMaterial({ color: conf.skin || '#fbc39e', roughness: 0.62, metalness: 0.04 });
+  const topMat = new THREE.MeshStandardMaterial({ color: conf.topColor || '#059669', roughness: 0.72, metalness: 0.05 });
+  const pantsMat = new THREE.MeshStandardMaterial({ color: conf.pantsColor || '#1e293b', roughness: 0.68, metalness: 0.05 });
+  const hairMat = new THREE.MeshStandardMaterial({ color: conf.hairColor || '#3d1e14', roughness: 0.65, metalness: 0.12 });
+  const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const irisMat = new THREE.MeshStandardMaterial({ color: conf.eyeColor || '#451a03', roughness: 0.3, metalness: 0.15 });
+  const pupilMat = new THREE.MeshBasicMaterial({ color: 0x09090b });
+  const catchlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+  // 1. SCULPTED HEAD & JAWLINE
+  headGroup = new THREE.Group();
+  headGroup.position.set(0, 1.44, 0);
+
+  const headCranium = new THREE.Mesh(new THREE.SphereGeometry(isFemale ? 0.38 : 0.42, 32, 32), skinMat);
+  headCranium.scale.set(isFemale ? 0.94 : 1.0, 1.02, isFemale ? 0.96 : 1.02);
+  headGroup.add(headCranium);
+
+  const cheekSculpt = new THREE.Mesh(new THREE.SphereGeometry(isFemale ? 0.33 : 0.36, 24, 24), skinMat);
+  cheekSculpt.position.set(0, -0.06, 0.04);
+  cheekSculpt.scale.set(1.05, 0.9, 0.95);
+  headGroup.add(cheekSculpt);
+
+  const chin = new THREE.Mesh(new THREE.SphereGeometry(isFemale ? 0.11 : 0.14, 16, 16), skinMat);
+  chin.position.set(0, -0.28, 0.22);
+  chin.scale.set(isFemale ? 0.9 : 1.2, 0.8, 1.0);
+  headGroup.add(chin);
+
+  // EARS + GOLD STUDS
+  [-1, 1].forEach(side => {
+    const ear = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), skinMat);
+    ear.position.set(side * (isFemale ? 0.37 : 0.41), -0.01, 0.01);
+    ear.scale.set(0.35, 1.0, 0.7);
+    ear.rotation.y = side * 0.25;
+    headGroup.add(ear);
+
+    if (conf.earrings) {
+      const stud = new THREE.Mesh(new THREE.SphereGeometry(0.022, 12, 12), new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.85, roughness: 0.2 }));
+      stud.position.set(side * (isFemale ? 0.38 : 0.42), -0.08, 0.01);
+      headGroup.add(stud);
+    }
+  });
+
+  // BUTTON NOSE
+  const noseBridge = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.038, 0.11, 12), skinMat);
+  noseBridge.position.set(0, 0.03, 0.36);
+  noseBridge.rotation.x = -0.3;
+  headGroup.add(noseBridge);
+
+  const noseTip = new THREE.Mesh(new THREE.SphereGeometry(0.042, 16, 16), skinMat);
+  noseTip.position.set(0, -0.04, 0.40);
+  noseTip.scale.set(1.1, 0.85, 1.0);
+  headGroup.add(noseTip);
+
+  // EYES WITH SPECULAR SPARKLES
+  [-1, 1].forEach(side => {
+    const eyeWhite = new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 20), eyeWhiteMat);
+    eyeWhite.position.set(side * 0.13, 0.04, 0.33);
+    eyeWhite.scale.set(1.0, 0.95, 0.8);
+    headGroup.add(eyeWhite);
+
+    const iris = new THREE.Mesh(new THREE.CylinderGeometry(0.046, 0.046, 0.012, 24), irisMat);
+    iris.rotation.x = Math.PI / 2;
+    iris.position.set(side * 0.13, 0.04, 0.395);
+    headGroup.add(iris);
+
+    const pupil = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.015, 20), pupilMat);
+    pupil.rotation.x = Math.PI / 2;
+    pupil.position.set(side * 0.13, 0.04, 0.40);
+    headGroup.add(pupil);
+
+    // Specular Catchlights (Pixar/Snapchat alive gleam)
+    const catchlight1 = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), catchlightMat);
+    catchlight1.position.set(side * 0.13 + 0.016, 0.055, 0.408);
+    headGroup.add(catchlight1);
+  });
+
+  // EYELIDS FOR BLINKING
+  const eyelidGeom = new THREE.SphereGeometry(0.08, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+  leftEyelidMesh = new THREE.Mesh(eyelidGeom, skinMat);
+  leftEyelidMesh.position.set(-0.13, 0.04, 0.33);
+  leftEyelidMesh.rotation.x = Math.PI;
+  leftEyelidMesh.scale.set(1.02, 0.04, 0.85);
+  headGroup.add(leftEyelidMesh);
+
+  rightEyelidMesh = new THREE.Mesh(eyelidGeom, skinMat);
+  rightEyelidMesh.position.set(0.13, 0.04, 0.33);
+  rightEyelidMesh.rotation.x = Math.PI;
+  rightEyelidMesh.scale.set(1.02, 0.04, 0.85);
+  headGroup.add(rightEyelidMesh);
+
+  // SMILE WITH TEETH PEEK
+  const lipColor = (conf.makeupEnabled && conf.lipstick) ? conf.lipstick : (isFemale ? '#d97760' : '#b8634e');
+  const lipMat = new THREE.MeshStandardMaterial({ color: lipColor, roughness: 0.35 });
+  const smileArc = new THREE.Mesh(new THREE.TorusGeometry(0.065, 0.015, 10, 24, Math.PI * 0.72), lipMat);
+  smileArc.rotation.z = Math.PI * 0.14;
+  smileArc.rotation.y = Math.PI;
+  smileArc.position.set(0, -0.17, 0.37);
+  headGroup.add(smileArc);
+
+  const teeth = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.015, 0.02), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+  teeth.position.set(0, -0.15, 0.365);
+  headGroup.add(teeth);
+
+  avatarGroup.add(headGroup);
+
+  // 2. DELTOID SHOULDERS, ARMS & SCULPTED HANDS
+  const shoulderX = isFemale ? 0.28 : 0.36;
+  const shoulderY = 0.88;
+  [-1, 1].forEach(side => {
+    const shoulder = new THREE.Mesh(new THREE.SphereGeometry(isFemale ? 0.095 : 0.115, 16, 16), topMat);
+    shoulder.position.set(side * shoulderX, shoulderY, 0);
+    avatarGroup.add(shoulder);
+  });
+
+  leftArmGroup = new THREE.Group();
+  leftArmGroup.position.set(-shoulderX, shoulderY, 0);
+  rightArmGroup = new THREE.Group();
+  rightArmGroup.position.set(shoulderX, shoulderY, 0);
+
+  // Poses: Peace ✌️, Drip 😎, Wave 👋, Stance 🧍
+  if (pose === 'peace') {
+    buildArmSegment(leftArmGroup, topMat, skinMat, isFemale, 0.15, 0.25, 'resting');
+    buildArmSegment(rightArmGroup, topMat, skinMat, isFemale, -1.8, 1.2, 'peace');
+  } else if (pose === 'wave') {
+    buildArmSegment(leftArmGroup, topMat, skinMat, isFemale, 0.15, 0.25, 'resting');
+    buildArmSegment(rightArmGroup, topMat, skinMat, isFemale, -1.5, 0.9, 'wave');
+  } else if (pose === 'chill') {
+    buildArmSegment(leftArmGroup, topMat, skinMat, isFemale, 0.25, 0.45, 'pocket');
+    buildArmSegment(rightArmGroup, topMat, skinMat, isFemale, -0.25, -0.45, 'pocket');
+  } else {
+    buildArmSegment(leftArmGroup, topMat, skinMat, isFemale, 0.15, 0.20, 'resting');
+    buildArmSegment(rightArmGroup, topMat, skinMat, isFemale, -0.15, -0.20, 'resting');
+  }
+
+  avatarGroup.add(leftArmGroup);
+  avatarGroup.add(rightArmGroup);
+  scene3D.add(avatarGroup);
+}
+  </script>
+</body>
+</html>
