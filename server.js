@@ -117,14 +117,31 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`\n======================================================`);
-  console.log(`⚡ SplitSmart Local Server running at http://127.0.0.1:${PORT}`);
-  console.log(`✓ API Endpoints active:`);
-  console.log(`  - POST /api/create-order  (PayPal Orders v2)`);
-  console.log(`  - POST /api/capture-order (PayPal Order Capture)`);
-  console.log(`  - POST /api/scan-receipt  (Gemini Multimodal OCR)`);
-  console.log(`  - POST /api/settle-agent  (Min-Cash-Flow Agent)`);
-  console.log(`  - GET/POST /api/state     (Persistent Ledger)`);
-  console.log(`======================================================\n`);
+let currentPort = Number(PORT);
+
+function startServer(portToTry) {
+  server.listen(portToTry, '127.0.0.1', () => {
+    console.log(`\n======================================================`);
+    console.log(`⚡ SplitSmart Local Server running at http://127.0.0.1:${portToTry}`);
+    console.log(`✓ API Endpoints active:`);
+    console.log(`  - POST /api/create-order  (PayPal Orders v2)`);
+    console.log(`  - POST /api/capture-order (PayPal Order Capture)`);
+    console.log(`  - POST /api/payouts       (PayPal Payouts API)`);
+    console.log(`  - POST /api/scan-receipt  (Gemini Multimodal OCR)`);
+    console.log(`  - POST /api/settle-agent  (Min-Cash-Flow Agent)`);
+    console.log(`  - GET/POST /api/state     (Persistent Ledger)`);
+    console.log(`======================================================\n`);
+  });
+}
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    currentPort++;
+    console.warn(`⚠️  Port in use, automatically trying http://127.0.0.1:${currentPort}...`);
+    startServer(currentPort);
+  } else {
+    console.error('Server error:', err);
+  }
 });
+
+startServer(currentPort);
