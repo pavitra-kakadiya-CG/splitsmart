@@ -48,3 +48,4 @@ CREATE POLICY "Allow public read on splitsmart_state"
 CREATE POLICY "Allow public update on splitsmart_state"
   ON splitsmart_state FOR ALL
   USING (true);
+

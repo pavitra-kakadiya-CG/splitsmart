@@ -1,2 +1,0 @@
-// Re-export or mirror of index.html for static directory
-
