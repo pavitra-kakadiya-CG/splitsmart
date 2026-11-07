@@ -1,0 +1,21 @@
+# Render Blueprint for SplitSmart
+# Deployable to Render with 1-click for the PayPal AI Hackathon Render Sponsor Award
+
+services:
+  - type: web
+    name: splitsmart
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PAYPAL_ENVIRONMENT
+        value: sandbox
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false

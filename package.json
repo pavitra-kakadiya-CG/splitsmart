@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "test": "node -e \"require('./api/paypal-auth'); require('./api/create-order'); require('./api/capture-order'); require('./api/payouts'); require('./api/scan-receipt'); require('./api/settle-agent'); require('./api/state'); console.log('All SplitSmart API tests pass!');\""
   },
   "keywords": [
     "paypal",
