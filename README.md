@@ -73,6 +73,7 @@ All serverless endpoints run inside the `/api/` directory (compatible with **Ver
 | :--- | :--- | :--- |
 | `/api/create-order` | `POST` | Authenticates via PayPal OAuth2 and creates an Order v2 with exact owed amount. Keeps `PAYPAL_CLIENT_SECRET` safe on server. |
 | `/api/capture-order` | `POST` | Captures approved PayPal Sandbox order, records capture ID, payer info, and updates balance. |
+| `/api/payouts` | `POST` | Disburses peer-to-peer funds to individual sandbox emails via PayPal Payouts API. |
 | `/api/scan-receipt` | `POST` | Sends receipt image to Gemini 1.5 Flash Vision. Verifies that `itemsSum + tax + tip === total`. |
 | `/api/settle-agent` | `POST` | Analyzes natural language trip queries, runs Min-Cash-Flow graph reduction, and formats PayPal payment requests. |
 | `/api/state` | `GET/POST` | Manages persistent ledger storage across sessions (groups, expenses, settlements). |
@@ -83,7 +84,7 @@ All serverless endpoints run inside the `/api/` directory (compatible with **Ver
 
 ### 1. Clone & Navigate
 ```bash
-git clone https://github.com/your-username/splitsmart.git
+git clone https://github.com/pavitra-kakadiya-CG/splitsmart.git
 cd splitsmart
 ```
 
