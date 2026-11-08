@@ -1,12 +1,12 @@
 # ⚡ SplitSmart
 
-> **Autonomous Agentic Social Finance, 3D Bitmojis & Real PayPal Sandbox Settlements**  
+> **Autonomous Agentic Social Finance, Dynamic Financial Avatars & Real PayPal Sandbox Settlements**  
 > *Built for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com/) on Devpost.*
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)
 ![PayPal Developer](https://img.shields.io/badge/PayPal-Sandbox%20Orders%20v2-0070ba.svg?logo=paypal)
-![Google Gemini](https://img.shields.io/badge/AI-Gemini%201.5%20Flash%20Vision-7c3aed.svg?logo=google)
-![Three.js WebGL](https://img.shields.io/badge/WebGL-Three.js%203D%20Bitmojis-black.svg?logo=three.js)
+![Google Gemini](https://img.shields.io/badge/AI-Gemini%203.5%20%2F%20Flash%20Vision-7c3aed.svg?logo=google)
+![Vector Identity](https://img.shields.io/badge/Avatar-Dynamic%20Financial%20Persona-0070ba.svg)
 ![Platform](https://img.shields.io/badge/Vercel-Serverless%20API-black.svg?logo=vercel)
 
 ---
@@ -15,9 +15,9 @@
 
 SplitSmart reimagines social expense sharing as an **Agentic Commerce Platform**:
 1. **Real PayPal Sandbox Payments**: Zero mock balance tricks. Uses the official PayPal JavaScript SDK with server-side order creation (`/api/create-order`) and order capture (`/api/capture-order`). The client secret lives strictly on the server.
-2. **Multimodal AI Receipt Scanner**: Upload any bill photo or receipt snapshot. Google Gemini 1.5 Flash extracts line items, subtotal, tax, and tip. An automated server-side mathematical verification engine checks that numbers balance before rendering.
+2. **Multimodal AI Receipt Scanner**: Upload any bill photo or receipt snapshot. Google Gemini multimodal vision extracts line items, subtotal, tax, and tip. An automated server-side mathematical verification engine checks that numbers balance before rendering.
 3. **Autonomous Settle-Up Agent (Headline Feature)**: Tell the agent *"settle everything from Tokyo"* (or *"settle Goa trip"*). The AI agent computes the **Min-Cash-Flow** graph reduction to eliminate redundant transfers, and generates 1-click PayPal Sandbox payment cards.
-4. **Interactive 3D WebGL Bitmojis**: Realistic, procedural Three.js 3D avatars with 360° spin, blinking eye physics, customizable hair/makeup/shoes, and an in-app **PayPal Sandbox Wardrobe Store**.
+4. **Dynamic Financial Persona Studio**: Sharp vector-rendered avatar that reacts in real-time to your financial health (Zero-Debt Legend, Chief Creditor, or In-Debt Stress), paired with a Gemini AI Persona Stylist and an in-app **PayPal Sandbox Digital Collectibles Store**.
 5. **Persistent Financial Ledger**: State persists across page refreshes using serverless JSON storage (`/api/state`) and local storage. When you pay a friend via PayPal, the debt actually disappears from the ledger.
 
 ---
@@ -36,7 +36,7 @@ sequenceDiagram
     Note over User,UI: 1. Multimodal AI Receipt Scanning
     User->>UI: Uploads bill snapshot
     UI->>Server: POST /api/scan-receipt (base64 image)
-    Server->>Gemini: Gemini 1.5 Flash Multimodal Vision
+    Server->>Gemini: Gemini Multimodal Vision
     Gemini-->>Server: Structured JSON (items, subtotal, tax, tip)
     Server->>Server: Validate receipt math (subtotal + tax + tip == total)
     Server-->>UI: Verified items & proportional split matrix
@@ -103,7 +103,7 @@ GEMINI_API_KEY=your_gemini_api_key
 PORT=3000
 ```
 
-> **Note for Judges**: Even if `.env` credentials are not supplied initially, SplitSmart is built with resilient fallback handlers so the entire app, 3D Bitmoji engine, receipt scanner, and greedy optimizer can be evaluated out-of-the-box without crashing.
+> **Note for Judges**: Even if `.env` credentials are not supplied initially, SplitSmart is built with resilient fallback handlers so the entire app, Dynamic Financial Persona Studio, receipt scanner, and greedy optimizer can be evaluated out-of-the-box without crashing.
 
 ### 3. Run Locally (Zero Dependencies Required)
 SplitSmart runs directly on Node.js using native HTTP and Web APIs:

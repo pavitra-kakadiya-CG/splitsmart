@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>SplitSmart - Agentic Social Finance, 3D Bitmojis & PayPal Settlements</title>
+  <title>SplitSmart - Autonomous Agentic Social Finance & PayPal Settlements</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,7 +15,6 @@
           colors: {
             brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10b981', 600: '#059669', 700: '#047857' },
             paypal: { blue: '#0070ba', dark: '#003087', light: '#009cde', gold: '#ffc439', goldHover: '#f6b728' },
-            snap: { yellow: '#fffc00', dark: '#111111' },
             gemini: { 500: '#7c3aed', 600: '#6d28d9', light: '#f3e8ff' }
           }
         }
@@ -23,8 +22,6 @@
     }
   </script>
 
-  <!-- Three.js CDN for 3D WebGL Bitmoji Avatars -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <!-- Google Fonts: Plus Jakarta Sans -->
@@ -87,7 +84,7 @@
         </div>
       </div>
 
-      <!-- Header Controls: Currency, PayPal Balance, AI Status, 3D Bitmoji, Settings -->
+      <!-- Header Controls: Currency, PayPal Balance, AI Status, Persona Studio, Settings -->
       <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
         <!-- GLOBAL CURRENCY SELECTOR (Desktop/Tablet) -->
         <div class="hidden sm:flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-2 py-1 shadow-2xs shrink-0">
@@ -138,12 +135,12 @@
           </button>
         </div>
 
-        <!-- 3D Realistic Bitmoji Studio Trigger (Visible on all screens) -->
-        <button onclick="switchTab('avatar')" class="relative group p-0.5 rounded-full ring-2 ring-amber-400 hover:ring-amber-500 transition-all shrink-0" title="Snapchat 3D Bitmoji Studio">
-          <div id="navBitmojiAvatarContainer" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-tr from-amber-100 to-rose-200 text-sm sm:text-base shadow-2xs">
-            👻
+        <!-- SplitSmart Persona Studio Trigger (Visible on all screens) -->
+        <button onclick="switchTab('avatar')" class="relative group p-0.5 rounded-full ring-2 ring-emerald-500 hover:ring-emerald-400 transition-all shrink-0" title="SplitSmart Persona Studio">
+          <div id="navPersonaAvatarContainer" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-800 shadow-2xs">
+            ✨
           </div>
-          <span class="absolute -bottom-1 -right-1 text-[8px] bg-amber-400 text-slate-900 font-black rounded-full px-1 shadow-2xs">3D</span>
+          <span id="navAvatarMoodBadge" class="absolute -bottom-1 -right-1 text-[8px] bg-emerald-500 text-white font-black rounded-full px-1 shadow-2xs">✨</span>
         </button>
 
         <!-- Mobile Consolidated Settings & Tools Menu Trigger (md:hidden) -->
@@ -209,7 +206,7 @@
   <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
   <main class="max-w-6xl mx-auto px-3 sm:px-3.5 py-3 sm:py-4 space-y-4">
 
-    <!-- ==================== SNAPSHOTS STORY TRAY (44px) ==================== -->
+    <!-- ==================== TRIP MOMENTS TRAY ==================== -->
     <section class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 py-2.5 px-3 shadow-2xs">
       <div class="flex items-center space-x-3 overflow-x-auto scrollbar-none touch-scroll py-0.5" id="snapshotsTrayContainer"></div>
     </section>
@@ -220,9 +217,9 @@
         <span>📊</span>
         <span>Expenses & Ledger</span>
       </button>
-      <button onclick="switchTab('avatar')" id="navTabBtn-avatar" class="flex-1 py-2 px-3 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center justify-center space-x-1.5 font-bold text-amber-600 dark:text-amber-400">
-        <span>👻</span>
-        <span>3D Avatar Studio</span>
+      <button onclick="switchTab('avatar')" id="navTabBtn-avatar" class="flex-1 py-2 px-3 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center justify-center space-x-1.5 font-bold text-emerald-600 dark:text-emerald-400">
+        <span>✨</span>
+        <span>Persona Studio</span>
       </button>
       <button onclick="switchTab('agent')" id="navTabBtn-agent" class="flex-1 py-2 px-3 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 whitespace-nowrap flex items-center justify-center space-x-1.5 font-bold text-indigo-600 dark:text-indigo-400">
         <span>🤖</span>
@@ -328,12 +325,12 @@
           <span class="text-[10px] font-black uppercase text-slate-400 block">Total Group Spend</span>
           <span id="statTotalSpend" class="text-lg font-black text-slate-900 dark:text-white">$0.00</span>
         </div>
-        <div onclick="switchTab('avatar')" class="p-3.5 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-slate-900 dark:to-slate-800 border border-amber-200 dark:border-amber-900/60 shadow-2xs cursor-pointer hover:border-amber-400 transition-all">
+        <div onclick="switchTab('avatar')" class="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-slate-800 border border-emerald-200 dark:border-emerald-900/60 shadow-2xs cursor-pointer hover:border-emerald-400 transition-all">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] font-black uppercase text-amber-600">3D Bitmoji Drip</span>
-            <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 font-bold">Studio</span>
+            <span class="text-[10px] font-black uppercase text-emerald-600">Financial Persona</span>
+            <span id="statPersonaMoodBadge" class="text-[9px] px-1.5 py-0.2 rounded bg-emerald-200 text-emerald-900 font-bold">Settled</span>
           </div>
-          <span class="text-xs font-black text-slate-800 dark:text-slate-100 block mt-1">Open 3D Avatar Studio 👗</span>
+          <span id="statPersonaTitle" class="text-xs font-black text-slate-800 dark:text-slate-100 block mt-1">Open Persona Studio ✨</span>
         </div>
       </div>
 
@@ -662,7 +659,7 @@
       </div>
     </section>
 
-    <!-- ==================== VIEW 6: 3D AVATAR CUSTOMIZATION STUDIO ==================== -->
+    <!-- ==================== VIEW 6: SPLITSMART FINANCIAL PERSONA STUDIO ==================== -->
     <section id="viewAvatar" class="hidden space-y-4">
       <div class="bg-white dark:bg-slate-900 rounded-3xl w-full overflow-hidden flex flex-col shadow-xl border border-slate-200 dark:border-slate-800">
         
@@ -673,149 +670,118 @@
               <span>←</span>
               <span class="hidden sm:inline">Ledger</span>
             </button>
-            <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#fffc00] via-amber-400 to-orange-500 text-slate-950 flex items-center justify-center font-black text-lg shadow-sm shrink-0">
-              👻
+            <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-indigo-600 text-white flex items-center justify-center font-black text-lg shadow-sm shrink-0">
+              ✨
             </div>
             <div class="min-w-0">
               <div class="flex items-center space-x-2">
-                <h3 class="text-sm sm:text-base font-black tracking-tight truncate">Snapchat 3D Bitmoji Studio</h3>
-                <span class="hidden sm:inline-flex text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 shrink-0">Snap 3D Engine</span>
+                <h3 class="text-sm sm:text-base font-black tracking-tight truncate">SplitSmart Persona Studio</h3>
+                <span class="hidden sm:inline-flex text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 shrink-0">Dynamic Financial Identity</span>
               </div>
-              <p class="text-[10px] text-slate-500 truncate hidden sm:block">Full-Body 3D Cartoon Avatar • Hairstyles • Tops, Bottoms, Sarees & Ethnic Fashion</p>
+              <p class="text-[10px] text-slate-500 truncate hidden sm:block">Reactive Illustrated Avatar • Ledger-Driven Emotions • Gemini AI Stylist • PayPal Badges</p>
             </div>
           </div>
 
           <div class="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+            <!-- AI Stylist -->
+            <button onclick="runAIPersonaStylist()" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-black shadow-xs flex items-center space-x-1 transition-all" title="Let Gemini AI style your avatar based on group spending habits">
+              <span>✨</span>
+              <span class="hidden sm:inline">AI Stylist</span>
+            </button>
+
             <!-- Surprise Me / Randomizer -->
-            <button onclick="randomizeAvatarLook()" class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-xs font-black shadow-xs flex items-center space-x-1 transition-all" title="Generate Random Matching Outfit">
+            <button onclick="randomizePersonaLook()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center space-x-1 transition-all" title="Randomize Look">
               <span>🎲</span>
               <span class="hidden sm:inline">Surprise Me</span>
             </button>
 
             <!-- Reset -->
-            <button onclick="resetAvatarToDefault()" class="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-all" title="Reset to Clean Default">
+            <button onclick="resetPersonaToDefault()" class="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-all" title="Reset to Clean Default">
               <span>🔄</span>
-              <span class="hidden md:inline ml-1">Reset</span>
-            </button>
-
-            <!-- Favorites Toggle -->
-            <button onclick="toggleFavoritesDrawer()" id="favDrawerBtn" class="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-300 text-xs font-bold transition-all" title="Saved Looks">
-              <span>⭐</span>
-              <span class="hidden md:inline ml-1">Favorites</span>
             </button>
 
             <!-- Save Button -->
-            <button onclick="saveAvatarProfile()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md flex items-center space-x-1 transition-all">
+            <button onclick="savePersonaProfile()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md flex items-center space-x-1 transition-all">
               <span>💾</span>
               <span>Save Look</span>
             </button>
           </div>
         </div>
 
-        <!-- Studio Body: 2 Columns (3D Viewport on Left, Category Wardrobe on Right) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 p-3 sm:p-4">
+        <!-- Studio Body: 2 Columns (Hero Persona Viewport on Left, Category Wardrobe on Right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 p-3 sm:p-5">
           
-          <!-- Left: Interactive 3D Canvas Rig & Poses -->
-          <div class="lg:col-span-5 flex flex-col justify-between p-3 bg-gradient-to-b from-slate-100 via-amber-50/20 to-slate-200/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 text-center relative overflow-hidden space-y-2">
+          <!-- Left: Interactive Vector Persona & Dynamic Financial Emotion Card (5 cols) -->
+          <div class="lg:col-span-5 flex flex-col justify-between p-4 bg-gradient-to-b from-slate-100 via-emerald-50/20 to-slate-200/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 text-center relative overflow-hidden space-y-3">
             
-            <!-- Viewport Top Overlay: Gender & Camera Presets -->
-            <div class="w-full flex items-center justify-between z-10 gap-1 flex-wrap">
-              <!-- Gender Selector -->
-              <div class="flex items-center bg-white/90 dark:bg-slate-800/90 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700 shadow-2xs">
-                <button onclick="setAvatarGender('female')" id="genderBtn-female" class="px-2 py-1 rounded-lg text-xs font-black bg-rose-500 text-white shadow-2xs">👩 Female</button>
-                <button onclick="setAvatarGender('male')" id="genderBtn-male" class="px-2 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white">👨 Male</button>
-              </div>
+            <!-- Financial Status Live Badge -->
+            <div class="flex items-center justify-between z-10">
+              <span id="personaEmotionBadge" class="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 flex items-center space-x-1 shadow-2xs">
+                <span>✨</span>
+                <span id="personaEmotionBadgeText">Settled Legend</span>
+              </span>
+              <span class="text-[10px] font-bold text-slate-400">Reactive Ledger</span>
+            </div>
 
-              <!-- Camera View Presets -->
-              <div class="flex items-center space-x-1 bg-white/80 dark:bg-slate-800/80 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700 text-[10px] font-bold">
-                <button onclick="setCameraAngle('face')" id="camBtn-face" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" title="Face Close-up">👁️ Face</button>
-                <button onclick="setCameraAngle('front')" id="camBtn-front" class="px-1.5 py-0.5 rounded-lg bg-amber-500 text-white font-black shadow-2xs" title="Full Front View">🧍 Front</button>
-                <button onclick="setCameraAngle('threeQuarter')" id="camBtn-threeQuarter" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" title="3/4 Fashion View">📐 3/4</button>
-                <button onclick="setCameraAngle('side')" id="camBtn-side" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" title="Side Profile">👤 Side</button>
-                <button onclick="setCameraAngle('back')" id="camBtn-back" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" title="Back View">🔙 Back</button>
-              </div>
-
-              <!-- Zoom Controls -->
-              <div class="flex items-center space-x-0.5 bg-white/80 dark:bg-slate-800/80 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700 text-xs">
-                <button onclick="zoomAvatar(1)" class="w-6 h-6 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" title="Zoom In">+</button>
-                <button onclick="zoomAvatar(-1)" class="w-6 h-6 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" title="Zoom Out">-</button>
+            <!-- Vector Avatar SVG Hero Viewport -->
+            <div class="w-full py-4 flex flex-col items-center justify-center relative" id="personaAvatarHeroContainer">
+              <div id="personaVectorDisplay" class="transition-transform duration-300 hover:scale-105"></div>
+              
+              <!-- Floating Speech / Status Bubble -->
+              <div id="personaSpeechBubble" class="mt-2 max-w-xs px-3.5 py-2 rounded-2xl bg-white/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-md text-xs font-semibold text-slate-700 dark:text-slate-200 italic">
+                "Zero debts across Tokyo. Perfect financial peace."
               </div>
             </div>
 
-            <!-- 3D Canvas Viewport (Full-Body Head-to-Toe Viewport) -->
-            <div class="w-full h-[420px] sm:h-[480px] md:h-[540px] flex items-center justify-center relative cursor-grab active:cursor-grabbing rounded-2xl bg-radial from-slate-100/50 to-transparent dark:from-slate-900/40" id="canvas3dContainer">
-              <canvas id="avatar3dCanvas" class="w-full h-full rounded-2xl"></canvas>
-              <span class="absolute bottom-2 right-2 text-[9px] font-bold text-slate-400 bg-white/70 dark:bg-slate-900/70 px-2 py-0.5 rounded-full pointer-events-none">👆 Drag to spin 360°</span>
+            <!-- Dynamic Call-to-Action based on Financial State -->
+            <div id="personaActionContainer" class="z-10 pt-1">
+              <!-- Dynamically populated: e.g. Settle debt via PayPal, or Share Persona -->
             </div>
 
-            <!-- Viewport Bottom: Facial Expressions & Poses -->
-            <div class="space-y-1.5 z-10 text-xs text-left">
-              <!-- Expressions Row -->
-              <div class="flex items-center space-x-1 overflow-x-auto scrollbar-none py-0.5">
-                <span class="text-[10px] font-black uppercase text-slate-400 shrink-0">Face:</span>
-                <button onclick="setAvatarExpression('smile')" id="exprBtn-smile" class="shrink-0 px-2 py-1 rounded-xl bg-white dark:bg-slate-800 border border-amber-300 text-amber-700 dark:text-amber-400 font-black shadow-2xs">😊 Smile</button>
-                <button onclick="setAvatarExpression('wink')" id="exprBtn-wink" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">😉 Wink</button>
-                <button onclick="setAvatarExpression('cool')" id="exprBtn-cool" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">😎 Cool</button>
-                <button onclick="setAvatarExpression('excited')" id="exprBtn-excited" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">🤩 Happy</button>
-                <button onclick="setAvatarExpression('neutral')" id="exprBtn-neutral" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">😐 Neutral</button>
+            <!-- Interactive Emotion Preview Tester (Judge Testing Bar) -->
+            <div class="pt-2 border-t border-slate-200/80 dark:border-slate-800/80 text-left space-y-1.5 z-10">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Test Live Financial Emotions:</span>
+                <span class="text-[9px] text-emerald-600 font-bold">1-Click Preview</span>
               </div>
-
-              <!-- Poses Row -->
-              <div class="flex items-center space-x-1 overflow-x-auto scrollbar-none py-0.5">
-                <span class="text-[10px] font-black uppercase text-slate-400 shrink-0">Pose:</span>
-                <button onclick="triggerAvatarPose('model')" id="poseBtn-model" class="shrink-0 px-2 py-1 rounded-xl bg-white dark:bg-slate-800 border border-emerald-300 text-emerald-700 dark:text-emerald-400 font-black shadow-2xs">🧍 Model</button>
-                <button onclick="triggerAvatarPose('wave')" id="poseBtn-wave" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">👋 Wave</button>
-                <button onclick="triggerAvatarPose('dance')" id="poseBtn-dance" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">💃 Dance</button>
-                <button onclick="triggerAvatarPose('hand_on_hip')" id="poseBtn-hand_on_hip" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">💅 Hip</button>
-                <button onclick="triggerAvatarPose('celebrate')" id="poseBtn-celebrate" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">🙌 Woohoo</button>
+              <div class="grid grid-cols-4 gap-1 text-[10px] font-bold">
+                <button onclick="setPersonaMoodPreview('settled')" id="moodBtn-settled" class="py-1 px-1.5 rounded-lg bg-emerald-500 text-white font-black text-center truncate">✨ Settled</button>
+                <button onclick="setPersonaMoodPreview('creditor')" id="moodBtn-creditor" class="py-1 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-center truncate">🏆 Creditor</button>
+                <button onclick="setPersonaMoodPreview('debt')" id="moodBtn-debt" class="py-1 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-center truncate">⚠️ In Debt</button>
+                <button onclick="setPersonaMoodPreview('party')" id="moodBtn-party" class="py-1 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-center truncate">🎉 Baller</button>
               </div>
             </div>
           </div>
 
-          <!-- Right: Wardrobe, Ethnic Outfits, Hairstyles & Face Studio -->
-          <div class="lg:col-span-7 flex flex-col space-y-2.5">
+          <!-- Right: Wardrobe, Outfits, Hair & Accessories (7 cols) -->
+          <div class="lg:col-span-7 flex flex-col space-y-3">
             
-            <!-- Category Primary Tabs (7 Categories) -->
+            <!-- Category Primary Tabs -->
             <div class="flex items-center space-x-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold overflow-x-auto scrollbar-none touch-scroll">
-              <button onclick="switchStudioCategory('face')" id="scat-face" class="shrink-0 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-2xs whitespace-nowrap font-black">👤 Face & Skin</button>
-              <button onclick="switchStudioCategory('hair')" id="scat-hair" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">💇 Hairstyles</button>
-              <button onclick="switchStudioCategory('tops')" id="scat-tops" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👕 Tops</button>
-              <button onclick="switchStudioCategory('bottoms')" id="scat-bottoms" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👖 Bottoms</button>
-              <button onclick="switchStudioCategory('ethnic')" id="scat-ethnic" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">🥻 Sarees & Ethnic</button>
-              <button onclick="switchStudioCategory('shoes')" id="scat-shoes" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👟 Footwear</button>
-              <button onclick="switchStudioCategory('accessories')" id="scat-accessories" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👓 Accessories</button>
-            </div>
-
-            <!-- Fashion Style Filter Pills -->
-            <div class="flex items-center space-x-1.5 overflow-x-auto scrollbar-none touch-scroll py-0.5 text-[11px] font-bold">
-              <span class="text-slate-400 uppercase text-[9px] font-black tracking-wider shrink-0">Style:</span>
-              <button onclick="setStudioFashionFilter('all')" id="ffilter-all" class="shrink-0 px-2 py-0.5 rounded-lg bg-amber-500 text-white font-extrabold shadow-2xs">All</button>
-              <button onclick="setStudioFashionFilter('casual')" id="ffilter-casual" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Casual</button>
-              <button onclick="setStudioFashionFilter('streetwear')" id="ffilter-streetwear" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Streetwear</button>
-              <button onclick="setStudioFashionFilter('luxury')" id="ffilter-luxury" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Luxury</button>
-              <button onclick="setStudioFashionFilter('traditional')" id="ffilter-traditional" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Traditional 🇮🇳</button>
-              <button onclick="setStudioFashionFilter('partywear')" id="ffilter-partywear" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Partywear</button>
-              <button onclick="setStudioFashionFilter('sporty')" id="ffilter-sporty" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Sporty</button>
-              <button onclick="setStudioFashionFilter('minimalist')" id="ffilter-minimalist" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Minimalist</button>
+              <button onclick="switchPersonaTab('vibe')" id="pcat-vibe" class="shrink-0 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-2xs whitespace-nowrap font-black">🎨 Persona Vibe</button>
+              <button onclick="switchPersonaTab('expression')" id="pcat-expression" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👤 Face & Emotion</button>
+              <button onclick="switchPersonaTab('hair')" id="pcat-hair" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">💇 Hairstyles</button>
+              <button onclick="switchPersonaTab('outfit')" id="pcat-outfit" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👔 Outfits</button>
+              <button onclick="switchPersonaTab('accessories')" id="pcat-accessories" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">🕶️ Accessories</button>
+              <button onclick="switchPersonaTab('colors')" id="pcat-colors" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">🎨 Color Studio</button>
+              <button onclick="switchPersonaTab('paypal')" id="pcat-paypal" class="shrink-0 py-1.5 px-3 rounded-xl text-sky-600 dark:text-sky-400 whitespace-nowrap font-black">💎 PayPal Badges</button>
             </div>
 
             <!-- Dynamic Options Panel Container -->
-            <div id="studioOptionsContainer" class="flex-1 overflow-y-auto max-h-[380px] sm:max-h-[440px] pr-1 space-y-3">
-              <!-- Rendered dynamically by renderStudioPanel() -->
-            </div>
+            <div id="personaOptionsContainer" class="flex-1 overflow-y-auto max-h-[380px] sm:max-h-[440px] pr-1 space-y-3"></div>
 
-            <!-- Color Customizer Palette Bar (Always at bottom of right panel) -->
-            <div id="studioColorPaletteBar" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 space-y-1.5 text-xs">
-              <!-- Rendered by renderColorPaletteBar() -->
-            </div>
-
-            <!-- Favorites Drawer (Collapsible) -->
-            <div id="studioFavoritesDrawer" class="hidden p-3 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 space-y-2 text-xs">
-              <div class="flex items-center justify-between">
-                <span class="font-black text-amber-900 dark:text-amber-200">⭐ Your Favorite Looks</span>
-                <button onclick="saveCurrentLookToFavorites()" class="text-[10px] font-bold bg-amber-200 dark:bg-amber-900 text-amber-950 dark:text-amber-100 px-2 py-0.5 rounded-full hover:bg-amber-300">+ Add Current Look</button>
+            <!-- Quick Personality Badge Card -->
+            <div id="personaAITitleCard" class="p-3 rounded-2xl bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30 border border-purple-200 dark:border-purple-800/60 flex items-center justify-between text-xs">
+              <div class="flex items-center space-x-2.5">
+                <span class="text-xl">🤖</span>
+                <div>
+                  <span id="personaAITitle" class="font-black text-purple-900 dark:text-purple-200 block">The Tokyo Gastronome</span>
+                  <span id="personaAISubtitle" class="text-[10px] text-purple-700 dark:text-purple-300">Spends 65% on Izakaya food & sake. Settles instantly with PayPal.</span>
+                </div>
               </div>
-              <div id="favoritesListGrid" class="flex items-center space-x-2 overflow-x-auto scrollbar-none py-1"></div>
+              <button onclick="runAIPersonaStylist()" class="px-2.5 py-1 rounded-xl bg-purple-600 text-white font-extrabold text-[11px] shadow-2xs hover:bg-purple-700 shrink-0">
+                Regenerate
+              </button>
             </div>
           </div>
         </div>
@@ -925,7 +891,7 @@
       </div>
       <div>
         <h3 class="text-base font-black tracking-tight">PayPal Sandbox Checkout</h3>
-        <p class="text-xs text-slate-500">Unlock 3D Bitmoji Outfit</p>
+        <p class="text-xs text-slate-500">Unlock Digital Persona Collectible</p>
       </div>
 
       <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 text-left space-y-1 text-xs">
@@ -1202,9 +1168,9 @@
       <span class="text-lg leading-none">📊</span>
       <span class="text-[10px] mt-1 font-bold leading-none">Ledger</span>
     </button>
-    <button onclick="switchTab('avatar')" id="mobileNavTabBtn-avatar" class="flex flex-col items-center justify-center flex-1 py-1 text-slate-400 dark:text-slate-500 hover:text-amber-500 transition-all font-medium">
-      <span class="text-lg leading-none">👻</span>
-      <span class="text-[10px] mt-1 font-bold leading-none">3D Avatar</span>
+    <button onclick="switchTab('avatar')" id="mobileNavTabBtn-avatar" class="flex flex-col items-center justify-center flex-1 py-1 text-slate-400 dark:text-slate-500 hover:text-emerald-500 transition-all font-medium">
+      <span class="text-lg leading-none">✨</span>
+      <span class="text-[10px] mt-1 font-bold leading-none">Persona</span>
     </button>
     <button onclick="switchTab('agent')" id="mobileNavTabBtn-agent" class="flex flex-col items-center justify-center flex-1 py-1 text-slate-400 dark:text-slate-500 hover:text-indigo-600 transition-all font-medium">
       <span class="text-lg leading-none">🤖</span>
@@ -1361,79 +1327,24 @@
         }
       ],
 
-      // 3D Avatar Customization State (Snapchat Bitmoji 3D Engine)
-      avatarConfig: {
-        gender: 'female',
-        faceShape: 'chiseled',
-        skinTone: 'ivory',
-        skinColor: 0xfcd0a1,
-        eyeColor: 0x3b82f6,
-        eyebrowShape: 'sharp_arch',
-        noseShape: 'sculpted',
-        lipShape: 'smile',
-        lipstick: 0xd88874,
-        blush: true,
-        blushColor: 0xf43f5e,
-        freckles: false,
-        beautyMark: false,
+      // SplitSmart Dynamic Financial Persona State
+      personaConfig: {
+        vibe: 'minimalist',
         expression: 'smile',
-        colorTarget: 'top',
-        
-        hairStyle: 'straight_long',
-        hairColor: 0x3d2314,
-        hairHighlight: null,
-        
-        outfitCategory: 'separates',
-        topStyle: 'hoodie',
-        topColor: 0x10b981,
-        pantsStyle: 'jeans',
-        pantsColor: 0x1e3a8a,
-        dressStyle: 'saree',
-        dressColor: 0xbe123c,
-        shoesStyle: 'sneakers',
-        shoesColor: 0xffffff,
-        
-        glasses: 'none',
-        glassesColor: 0x111111,
-        headwear: 'none',
-        headwearColor: 0x0070ba,
-        earrings: 'gold_hoops',
-        necklace: 'gold_chain',
-        watch: 'smartwatch',
-        bag: 'crossbody',
-        
-        pose: 'model',
-        activeCategory: 'face',
-        fashionFilter: 'all',
-        cameraView: 'front'
-      },
-      avatarFavorites: [],
-
-      wardrobeCatalog: {
-        outfits: [
-          { id: 'w1', name: 'Emerald Streetwear Top', priceCents: 0, owned: true, color: 0x10b981 },
-          { id: 'w2', name: 'Cyberpunk Purple Hoodie', priceCents: 299, owned: false, color: 0x7c3aed },
-          { id: 'w3', name: 'Rose Gold Evening Top', priceCents: 499, owned: false, color: 0xf43f5e }
-        ],
-        hair: [
-          { id: 'h1', name: 'Espresso Brown', color: 0x271911 },
-          { id: 'h2', name: 'Platinum Blonde', color: 0xfef08a },
-          { id: 'h3', name: 'Neon Cyber Blue', color: 0x06b6d4 }
-        ],
-        makeup: [
-          { id: 'm1', name: 'Ruby Glam Lip', lipstick: 0xe11d48, blush: 0xfb7185 },
-          { id: 'm2', name: 'Soft Nude Peach', lipstick: 0xfca5a5, blush: 0xfecdd3 },
-          { id: 'm3', name: 'Gold Aviators 🕶️', glasses: true }
-        ],
-        shoes: [
-          { id: 's1', name: 'Classic White Kicks', style: 'sneakers', color: 0xffffff },
-          { id: 's2', name: 'Midnight High Heels 👠', style: 'heels', color: 0x0f172a },
-          { id: 's3', name: 'Golden Runway Heels ✨', style: 'heels', color: 0xf59e0b }
-        ],
-        paypal: [
-          { id: 'pp1', name: 'Official PayPal Blue Hoodie', priceCents: 199, owned: false, color: 0x0070ba },
-          { id: 'pp2', name: 'PayPal Gold VIP Jacket', priceCents: 399, owned: false, color: 0xffc439 }
-        ]
+        hairStyle: 'modern_fade',
+        hairColor: '#0f172a',
+        skinTone: 'warm',
+        skinColor: '#fcd34d',
+        outfitStyle: 'hoodie',
+        outfitColor: '#059669',
+        outfitSecColor: '#10b981',
+        accessory: 'none',
+        activeTab: 'vibe',
+        aiTitle: 'The Tokyo Gastronome',
+        aiSubtitle: 'Balances izakaya feasts with integer-precise PayPal settlements.',
+        aiQuote: 'Zero debts across Tokyo. Perfect financial peace.',
+        mood: 'settled',
+        overrideMood: null
       },
 
       pendingWardrobePurchase: null,
@@ -1452,6 +1363,7 @@
           if (parsed.settlements) state.settlements = parsed.settlements;
           if (parsed.paypalBalance !== undefined) state.paypalBalance = parsed.paypalBalance;
           if (parsed.paypalTransactions) state.paypalTransactions = parsed.paypalTransactions;
+          if (parsed.personaConfig) state.personaConfig = parsed.personaConfig;
         } catch (e) {
           console.warn('Could not parse local state:', e);
         }
@@ -1490,7 +1402,7 @@
         settlements: state.settlements,
         paypalBalance: state.paypalBalance,
         paypalTransactions: state.paypalTransactions,
-        avatarConfig: state.avatarConfig
+        personaConfig: state.personaConfig
       }));
 
       // 2. Sync to /api/state asynchronously
@@ -2351,1978 +2263,672 @@
       showToast(`Added ${currentScannedData.merchant} to group expenses!`, 'success');
     }
 
-    // ==================== 3D BITMOJI STUDIO ENGINE (SNAPCHAT 3D CARTOON AVATAR) ====================
-    let scene3D, camera3D, renderer3D, avatarGroup;
-    let isDragging = false, prevMouseX = 0, prevMouseY = 0;
-    let blinkTimer = 0, isBlinking = false;
-    let eyeMeshLeft = null, eyeMeshRight = null;
-    let armMeshLeft = null, armMeshRight = null;
+    // ==================== SPLITSMART FINANCIAL PERSONA STUDIO ENGINE ====================
+    // Dynamic Vector Avatar System reacting in real-time to group financial ledger state
 
-    // --- Catalogs & Presets ---
-    const SKIN_TONES = [
-      { id: 'porcelain', name: 'Porcelain Fair', color: 0xffe0bd, hex: '#ffe0bd' },
-      { id: 'ivory', name: 'Warm Ivory', color: 0xfcd0a1, hex: '#fcd0a1' },
-      { id: 'golden', name: 'Golden Honey', color: 0xf1c27d, hex: '#f1c27d' },
-      { id: 'honey', name: 'Honey Bronze', color: 0xe0ac69, hex: '#e0ac69' },
-      { id: 'caramel', name: 'Almond Caramel', color: 0xc68642, hex: '#c68642' },
-      { id: 'espresso', name: 'Deep Espresso', color: 0x8d5524, hex: '#8d5524' },
-      { id: 'mocha', name: 'Rich Mocha', color: 0x51341c, hex: '#51341c' }
+    const PERSONA_PALETTES = {
+      skins: [
+        { id: 'ivory', name: 'Ivory Light', hex: '#fed7aa' },
+        { id: 'warm', name: 'Warm Beige', hex: '#fcd34d' },
+        { id: 'honey', name: 'Golden Honey', hex: '#f59e0b' },
+        { id: 'bronze', name: 'Caramel Bronze', hex: '#d97706' },
+        { id: 'espresso', name: 'Rich Espresso', hex: '#78350f' },
+        { id: 'deep', name: 'Deep Ebony', hex: '#451a03' }
+      ],
+      hairs: [
+        { id: 'jet_black', name: 'Jet Black', hex: '#0f172a' },
+        { id: 'dark_brown', name: 'Dark Chocolate', hex: '#3d2314' },
+        { id: 'caramel', name: 'Caramel Gold', hex: '#b45309' },
+        { id: 'platinum', name: 'Silver Platinum', hex: '#cbd5e1' },
+        { id: 'burgundy', name: 'Royal Burgundy', hex: '#831843' },
+        { id: 'cyber_cyan', name: 'Cyber Cyan', hex: '#06b6d4' }
+      ],
+      outfits: [
+        { id: 'emerald', name: 'SplitSmart Emerald', hex: '#059669', sec: '#10b981' },
+        { id: 'paypal_blue', name: 'PayPal Blue', hex: '#003087', sec: '#0070ba' },
+        { id: 'midnight', name: 'Midnight Charcoal', hex: '#1e293b', sec: '#334155' },
+        { id: 'crimson', name: 'Velvet Crimson', hex: '#9f1239', sec: '#e11d48' },
+        { id: 'gold', name: 'Royal Gold', hex: '#d97706', sec: '#fbbf24' },
+        { id: 'violet', name: 'AI Indigo', hex: '#4f46e5', sec: '#818cf8' }
+      ]
+    };
+
+    const PERSONA_VIBES = [
+      { id: 'minimalist', name: 'Tech Minimalist', icon: '⚡', desc: 'Clean emerald hoodie & focused energy', outfit: 'hoodie', hair: 'modern_fade', acc: 'none', color: '#059669' },
+      { id: 'baller', name: 'High-Roller Creditor', icon: '🏆', desc: 'Tailored suit, gold aviators & creditor crown', outfit: 'suit', hair: 'executive', acc: 'gold_aviators', color: '#003087' },
+      { id: 'foodie', name: 'Tokyo Gastronome', icon: '🍱', desc: 'Flight bomber jacket, beanie & hungry smile', outfit: 'bomber', hair: 'beanie', acc: 'none', color: '#d97706' },
+      { id: 'traditional', name: 'Heritage Splendor', icon: '👑', desc: 'Silk embroidered kurta with royal turban', outfit: 'kurta', hair: 'turban', acc: 'gold_chain', color: '#9f1239' },
+      { id: 'cyberpunk', name: 'FinTech Futurist', icon: '🤖', desc: 'Moto leather jacket & glowing cyber visor', outfit: 'leather', hair: 'modern_fade', acc: 'cyber_visor', color: '#4f46e5' }
     ];
 
-    const FACE_SHAPES = [
-      { id: 'chiseled', name: 'Chiseled Jaw', desc: 'Sharp jaw angles & sculpted chin', icon: '💎' },
-      { id: 'oval', name: 'Classic Oval', desc: 'Balanced sleek aesthetic', icon: '🥚' },
-      { id: 'heart', name: 'Sweetheart', desc: 'High cheekbones & tapered chin', icon: '💖' },
-      { id: 'square', name: 'Defined Square', desc: 'Strong architectural jawline', icon: '🔲' },
-      { id: 'soft', name: 'Soft Contoured', desc: 'Smooth natural angles', icon: '✨' }
+    const PERSONA_EXPRESSIONS = [
+      { id: 'smile', name: 'Serene Smile', icon: '😊', desc: 'Relaxed and squared away' },
+      { id: 'smirk', name: 'Confident Smirk', icon: '😏', desc: 'Knows debts will be settled' },
+      { id: 'wink', name: 'Playful Wink', icon: '😉', desc: 'Friendly group energy' },
+      { id: 'cool', name: 'Boss Sunglasses', icon: '😎', desc: 'Unbothered creditor mood' },
+      { id: 'sweating', name: 'Debt Stress', icon: '😰', desc: 'Needs to settle via PayPal' },
+      { id: 'excited', name: 'Big Win Cheer', icon: '🤩', desc: 'Celebrates instant capture' }
     ];
 
-    const NOSE_SHAPES = [
-      { id: 'sculpted', name: 'Sculpted Bridge', desc: 'Straight bridge & refined tip', icon: '👃' },
-      { id: 'narrow', name: 'Sleek Narrow', desc: 'Slim refined aesthetic bridge', icon: '✨' },
-      { id: 'straight', name: 'Architectural Straight', desc: 'Clean straight profile', icon: '📐' },
-      { id: 'button', name: 'Delicate Petite', desc: 'Subtle slope with lifted tip', icon: '💎' }
+    const PERSONA_HAIRSTYLES = [
+      { id: 'modern_fade', name: 'Textured Fade', icon: '💇‍♂️' },
+      { id: 'curly_afro', name: 'Curly Waves', icon: '🌀' },
+      { id: 'sleek_ponytail', name: 'Chic Ponytail', icon: '👱‍♀️' },
+      { id: 'executive', name: 'Sharp Part', icon: '👔' },
+      { id: 'beanie', name: 'Folded Beanie', icon: '🧢' },
+      { id: 'turban', name: 'Regal Turban', icon: '👳' },
+      { id: 'buzz', name: 'Athletic Buzz', icon: '⚡' }
     ];
 
-    const EYEBROW_SHAPES = [
-      { id: 'sharp_arch', name: 'Sharp High Arch', desc: 'Defined clean arch', icon: '📐' },
-      { id: 'sleek_straight', name: 'Sleek Straight', desc: 'Modern minimalist taper', icon: '➖' },
-      { id: 'feathered', name: 'Soft Feathered', desc: 'Natural elegant contour', icon: '🪶' },
-      { id: 'bold', name: 'Bold Structured', desc: 'Strong statement brow', icon: '⚡' }
+    const PERSONA_OUTFITS = [
+      { id: 'hoodie', name: 'SplitSmart Hoodie', icon: '🧥', desc: 'Comfortable everyday builder' },
+      { id: 'suit', name: 'Italian Tailored Suit', icon: '👔', desc: 'Executive boardroom finish' },
+      { id: 'kurta', name: 'Embroidered Silk Kurta', icon: '🥻', desc: 'Traditional festive heritage' },
+      { id: 'leather', name: 'Moto Leather Jacket', icon: '🏍️', desc: 'Edgy streetwear classic' },
+      { id: 'tee', name: 'Casual Cotton Crew', icon: '👕', desc: 'Minimalist Tokyo traveler' },
+      { id: 'bomber', name: 'Tokyo Flight Bomber', icon: '✈️', desc: 'Vintage warm aviation fit' }
     ];
 
-    const EYE_COLORS = [
-      { id: 'blue', name: 'Sapphire Blue', color: 0x3b82f6, hex: '#3b82f6' },
-      { id: 'green', name: 'Emerald Green', color: 0x10b981, hex: '#10b981' },
-      { id: 'brown', name: 'Amber Brown', color: 0x78350f, hex: '#78350f' },
-      { id: 'black', name: 'Obsidian Black', color: 0x1f2937, hex: '#1f2937' },
-      { id: 'violet', name: 'Amethyst Violet', color: 0x8b5cf6, hex: '#8b5cf6' },
-      { id: 'hazel', name: 'Honey Hazel', color: 0xd97706, hex: '#d97706' }
+    const PERSONA_ACCESSORIES = [
+      { id: 'none', name: 'Clean (None)', icon: '✨' },
+      { id: 'gold_aviators', name: '24K Gold Aviators', icon: '🕶️' },
+      { id: 'designer_frames', name: 'Acetate Frames', icon: '👓' },
+      { id: 'cyber_visor', name: 'Cyber Neon Visor', icon: '🥽' },
+      { id: 'gold_chain', name: 'Cuban Link Chain', icon: '⛓️' },
+      { id: 'crown', name: 'VIP Creditor Crown', icon: '👑' }
     ];
 
-    const LIP_COLORS = [
-      { id: 'natural', name: 'Natural Nude', color: 0xd88874, hex: '#d88874' },
-      { id: 'soft_rose', name: 'Soft Rosewood', color: 0xd94b68, hex: '#d94b68' },
-      { id: 'ruby', name: 'Ruby Glam', color: 0xc01a38, hex: '#c01a38' },
-      { id: 'berry', name: 'Deep Berry', color: 0x9f1239, hex: '#9f1239' },
-      { id: 'caramel', name: 'Warm Terracotta', color: 0xa85526, hex: '#a85526' },
-      { id: 'plum', name: 'Satin Plum', color: 0x581c4a, hex: '#581c4a' }
+    const PAYPAL_COLLECTIBLES = [
+      { id: 'pp_crown', name: 'PayPal 24K Gold Crown', priceCents: 299, icon: '👑', desc: 'Official Sandbox Creditor Crown', badge: 'VIP' },
+      { id: 'pp_visor', name: 'Cyberpunk Neon Visor', priceCents: 199, icon: '🥽', desc: 'Glows in low-light dark mode', badge: 'HOT' },
+      { id: 'pp_kurta', name: 'Royal Gold Silk Kurta', priceCents: 399, icon: '🥻', desc: 'Bespoke hand-crafted traditional piece', badge: 'ELITE' }
     ];
 
-    const HAIRSTYLES = [
-      { id: 'pixie', name: 'Chic Pixie Cut', length: 'short', style: 'casual', icon: '💇' },
-      { id: 'buzz', name: 'Modern Fade Buzz', length: 'short', style: 'streetwear', icon: '✂️' },
-      { id: 'crop', name: 'Messy Textured Crop', length: 'short', style: 'aesthetic', icon: '⚡' },
-      { id: 'bob', name: 'Sleek Parisian Bob', length: 'medium', style: 'luxury', icon: '💁' },
-      { id: 'wavy_bob', name: 'Tousled Wavy Bob', length: 'medium', style: 'casual', icon: '🌊' },
-      { id: 'straight_long', name: 'Flowing Silk Straight', length: 'long', style: 'luxury', icon: '✨' },
-      { id: 'curtain_bangs', name: 'Retro Curtain Bangs', length: 'long', style: 'aesthetic', icon: '🌸' },
-      { id: 'beach_waves', name: 'Golden Beach Waves', length: 'long', style: 'casual', icon: '🏖️' },
-      { id: 'ponytail', name: 'High Runway Ponytail', length: 'updo', style: 'sporty', icon: '🐎' },
-      { id: 'top_bun', name: 'Messy Top Bun', length: 'updo', style: 'casual', icon: '🍡' },
-      { id: 'twin_braids', name: 'Boho Twin Braids', length: 'updo', style: 'aesthetic', icon: '🎀' },
-      { id: 'afro', name: 'Voluminous Fluffy Afro', length: 'textured', style: 'streetwear', icon: '👑' },
-      { id: 'curly_coils', name: 'Defined Spiral Curls', length: 'textured', style: 'partywear', icon: '🌀' }
-    ];
+    function computeFinancialMood() {
+      const conf = state.personaConfig;
+      if (conf.overrideMood) return conf.overrideMood;
 
-    const HAIR_COLORS = [
-      { id: 'black', name: 'Jet Obsidian', color: 0x111111, hex: '#111111' },
-      { id: 'espresso', name: 'Dark Espresso', color: 0x3d2314, hex: '#3d2314' },
-      { id: 'blonde', name: 'Honey Blonde', color: 0xd97706, hex: '#d97706' },
-      { id: 'platinum', name: 'Platinum Ice', color: 0xfef08a, hex: '#fef08a' },
-      { id: 'auburn', name: 'Auburn Ginger', color: 0x991b1b, hex: '#991b1b' },
-      { id: 'pink', name: 'Pastel Bubblegum', color: 0xf472b6, hex: '#f472b6' },
-      { id: 'cyan', name: 'Cyberpunk Cyan', color: 0x06b6d4, hex: '#06b6d4' },
-      { id: 'lavender', name: 'Lavender Mist', color: 0xc084fc, hex: '#c084fc' }
-    ];
-
-    const TOPS = [
-      { id: 'tshirt', name: 'Classic Crewneck Tee', style: 'casual', desc: 'Everyday comfort cotton tee', defaultColor: 0x10b981 },
-      { id: 'crop_top', name: 'Streetwear Crop Top', style: 'streetwear', desc: 'Fitted cropped silhouette with bare midriff', defaultColor: 0xf43f5e },
-      { id: 'hoodie', name: 'Oversized Kangaroo Hoodie', style: 'streetwear', desc: 'Heavyweight fleece with 3D front pouch & hood', defaultColor: 0x3b82f6 },
-      { id: 'blouse', name: 'Silk Evening Blouse', style: 'luxury', desc: 'Draped V-neck satin with cuffed sleeves', defaultColor: 0xfbbf24 },
-      { id: 'sweater', name: 'Cozy Cable Knit Sweater', style: 'minimalist', desc: 'Thick ribbed collar and cuffs', defaultColor: 0xec4899 },
-      { id: 'jacket', name: 'Vintage Denim Street Jacket', style: 'casual', desc: 'Classic indigo wash with metal buttons', defaultColor: 0x0284c7 },
-      { id: 'blazer', name: 'Executive Luxury Blazer', style: 'formal', desc: 'Structured shoulder silhouette and tailored lapels', defaultColor: 0x0f172a },
-      { id: 'biker_leather', name: 'Rebel Biker Leather Jacket', style: 'streetwear', desc: 'Asymmetrical zip with silver hardware', defaultColor: 0x18181b }
-    ];
-
-    const BOTTOMS = [
-      { id: 'jeans', name: 'Classic Indigo Denim Jeans', style: 'casual', desc: 'Five-pocket straight leg fit', defaultColor: 0x1e3a8a },
-      { id: 'cargo', name: 'Tactical Utility Cargo Pants', style: 'streetwear', desc: 'Side flap box pockets with relaxed drape', defaultColor: 0x3f6212 },
-      { id: 'wide_leg', name: 'High-Rise Wide-Leg Trousers', style: 'luxury', desc: 'Tailored drape flowing down to shoes', defaultColor: 0x475569 },
-      { id: 'tennis_skirt', name: 'Pleated Tennis Skirt', style: 'sporty', desc: 'Flared athletic skirt with bare legs', defaultColor: 0xffffff },
-      { id: 'shorts', name: 'Biker / Denim Cutoff Shorts', style: 'casual', desc: 'High-waisted summer shorts', defaultColor: 0x0284c7 },
-      { id: 'leggings', name: 'Sleek Matte Leather Leggings', style: 'partywear', desc: 'Skin-tight sculpting silhouette', defaultColor: 0x09090b }
-    ];
-
-    const DRESSES_AND_ETHNIC = [
-      { 
-        id: 'saree', 
-        name: 'Royal Banarasi Silk Saree 🥻', 
-        style: 'traditional', 
-        desc: 'Grand Indian saree with gold zari border and draped 3D pallu across shoulder', 
-        defaultColor: 0xbe123c, 
-        isEthnic: true 
-      },
-      { 
-        id: 'lehenga', 
-        name: 'Festive Designer Lehenga Choli 💃', 
-        style: 'traditional', 
-        desc: 'Embroidered cropped choli top + wide flared circular skirt with gold borders', 
-        defaultColor: 0x7c3aed, 
-        isEthnic: true 
-      },
-      { 
-        id: 'kurti', 
-        name: 'Embroidered Silk Kurti & Palazzos 👘', 
-        style: 'traditional', 
-        desc: 'Long straight side-slit tunic with palazzo pants and soft dupatta drape', 
-        defaultColor: 0x059669, 
-        isEthnic: true 
-      },
-      { 
-        id: 'party_dress', 
-        name: 'Satin Cocktail Party Dress 🍸', 
-        style: 'partywear', 
-        desc: 'Sweetheart neckline bodice with flared satin evening silhouette', 
-        defaultColor: 0x0f172a, 
-        isEthnic: false 
-      },
-      { 
-        id: 'sundress', 
-        name: 'Floral A-Line Summer Sundress 🌸', 
-        style: 'casual', 
-        desc: 'Breezy spaghetti strap dress ending above knees', 
-        defaultColor: 0xf59e0b, 
-        isEthnic: false 
-      }
-    ];
-
-    const FOOTWEAR = [
-      { id: 'sneakers', name: 'Chunky Platform Street Kicks 👟', style: 'streetwear', desc: 'Thick white platform sole with color panels', defaultColor: 0xffffff },
-      { id: 'boots', name: 'Chelsea Leather Ankle Boots 👢', style: 'casual', desc: 'Sleek high-ankle shaft with sturdy heel', defaultColor: 0x3d2314 },
-      { id: 'heels', name: 'Strappy High-Fashion Stilettos 👠', style: 'partywear', desc: 'Elevated slender heel with delicate ankle strap', defaultColor: 0xe11d48 },
-      { id: 'sandals', name: 'Summer Slides & Strap Sandals 🩴', style: 'casual', desc: 'Open-toe resort slides', defaultColor: 0xd97706 },
-      { id: 'formal', name: 'Italian Oxford Loafers 👞', style: 'formal', desc: 'Burnished leather with gold bit accent', defaultColor: 0x1c1917 }
-    ];
-
-    const PALETTE_SWATCHES = [
-      { name: 'Emerald', hex: '#10b981', color: 0x10b981 },
-      { name: 'Sapphire', hex: '#3b82f6', color: 0x3b82f6 },
-      { name: 'Rose', hex: '#f43f5e', color: 0xf43f5e },
-      { name: 'Amber', hex: '#f59e0b', color: 0xf59e0b },
-      { name: 'Purple', hex: '#8b5cf6', color: 0x8b5cf6 },
-      { name: 'Crimson', hex: '#be123c', color: 0xbe123c },
-      { name: 'Royal Gold', hex: '#ffd700', color: 0xffd700 },
-      { name: 'Obsidian', hex: '#0f172a', color: 0x0f172a },
-      { name: 'Pure White', hex: '#ffffff', color: 0xffffff },
-      { name: 'Teal', hex: '#14b8a6', color: 0x14b8a6 },
-      { name: 'Coral', hex: '#fb923c', color: 0xfb923c },
-      { name: 'Indigo', hex: '#4f46e5', color: 0x4f46e5 }
-    ];
-
-    // --- 3D WebGL Studio Helpers & Initialization ---
-    function resize3DAvatarCanvas() {
-      const container = document.getElementById('canvas3dContainer');
-      if (!container || !renderer3D || !camera3D) return;
-      const w = container.clientWidth > 0 ? container.clientWidth : 480;
-      const h = container.clientHeight > 0 ? container.clientHeight : 560;
-      camera3D.aspect = w / h;
-      camera3D.updateProjectionMatrix();
-      renderer3D.setSize(w, h);
-      renderer3D.render(scene3D, camera3D);
+      const net = getUserNetBalance(state.user.id);
+      if (net > 50) return 'creditor';
+      if (net < -50) return 'debt';
+      return 'settled';
     }
 
-    function createCartoonHand(isLeft, skinMat) {
-      const handGroup = new THREE.Group();
+    function getUserNetBalance(userId) {
+      let owedToMe = 0;
+      let iOwe = 0;
+      const groupExpenses = state.expenses.filter(e => e.groupId === state.currentGroupId);
+      groupExpenses.forEach(e => {
+        if (e.payerId === userId) {
+          (e.splits || []).forEach(s => {
+            if (s.userId !== userId) owedToMe += (s.amount || 0);
+          });
+        } else {
+          (e.splits || []).forEach(s => {
+            if (s.userId === userId) iOwe += (s.amount || 0);
+          });
+        }
+      });
+      return owedToMe - iOwe;
+    }
+
+    function generateAvatarSVG(conf, options = {}) {
+      const size = options.size || 220;
+      const mood = options.overrideMood || conf.overrideMood || conf.mood || computeFinancialMood();
       
-      // Palm
-      const palm = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.08, 0.04), skinMat);
-      palm.position.y = -0.04;
-      handGroup.add(palm);
+      let auraColors = ['#10b981', '#06b6d4'];
+      if (mood === 'creditor') auraColors = ['#0070ba', '#ffc439'];
+      else if (mood === 'debt') auraColors = ['#e11d48', '#f97316'];
+      else if (mood === 'party') auraColors = ['#a855f7', '#ec4899'];
 
-      // Wrist joint
-      const wrist = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, 0.02, 12), skinMat);
-      wrist.position.y = 0.005;
-      handGroup.add(wrist);
+      const skin = conf.skinColor || '#fcd34d';
+      const hair = conf.hairColor || '#0f172a';
+      const outfit = conf.outfitColor || '#059669';
+      const outfitSec = conf.outfitSecColor || '#10b981';
 
-      // Thumb
-      const thumb = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.011, 0.046, 8), skinMat);
-      thumb.position.set(isLeft ? 0.045 : -0.045, -0.032, 0.015);
-      thumb.rotation.z = isLeft ? -0.65 : 0.65;
-      thumb.rotation.x = 0.25;
-      handGroup.add(thumb);
-      
-      const thumbTip = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), skinMat);
-      thumbTip.position.set(0, -0.023, 0);
-      thumb.add(thumbTip);
+      return `<svg viewBox="0 0 200 200" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" class="select-none inline-block">
+        <defs>
+          <linearGradient id="auraGrad-${mood}-${size}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${auraColors[0]}" />
+            <stop offset="100%" stop-color="${auraColors[1]}" />
+          </linearGradient>
+          <filter id="glow-${mood}-${size}" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
 
-      // 4 Sculpted Relaxed Fingers (Index, Middle, Ring, Pinky)
-      const fingerData = [
-        { x: (isLeft ? 0.025 : -0.025), len: 0.048, rad: 0.011, rotZ: isLeft ? -0.05 : 0.05 },
-        { x: (isLeft ? 0.008 : -0.008), len: 0.054, rad: 0.011, rotZ: 0 },
-        { x: (isLeft ? -0.008 : 0.008), len: 0.050, rad: 0.010, rotZ: isLeft ? 0.05 : -0.05 },
-        { x: (isLeft ? -0.025 : 0.025), len: 0.040, rad: 0.009, rotZ: isLeft ? 0.10 : -0.10 }
-      ];
+        <!-- Outer Financial Aura -->
+        <circle cx="100" cy="100" r="92" fill="url(#auraGrad-${mood}-${size})" opacity="0.16" />
+        <circle cx="100" cy="100" r="86" fill="url(#auraGrad-${mood}-${size})" opacity="0.30" filter="url(#glow-${mood}-${size})" />
+        <circle cx="100" cy="100" r="82" fill="#0f172a" opacity="0.06" />
 
-      fingerData.forEach(f => {
-        const finger = new THREE.Mesh(new THREE.CylinderGeometry(f.rad, f.rad * 0.85, f.len, 8), skinMat);
-        finger.position.set(f.x, -0.08 - f.len / 2, 0.008);
-        finger.rotation.z = f.rotZ;
-        finger.rotation.x = 0.18; // Relaxed natural inward curl
-        
-        const tip = new THREE.Mesh(new THREE.SphereGeometry(f.rad * 0.85, 8, 8), skinMat);
-        tip.position.y = -f.len / 2;
-        finger.add(tip);
+        <!-- Shoulders & Outfit -->
+        ${conf.outfitStyle === 'suit' ? `
+          <path d="M 36 195 Q 100 138 164 195 Z" fill="#0f172a" />
+          <polygon points="100,148 84,180 116,180" fill="#ffffff" />
+          <polygon points="100,154 94,195 100,200 106,195" fill="${outfit}" />
+          <path d="M 72 165 L 88 185 L 76 195 Z" fill="#1e293b" />
+          <path d="M 128 165 L 112 185 L 124 195 Z" fill="#1e293b" />
+        ` : conf.outfitStyle === 'kurta' ? `
+          <path d="M 36 195 Q 100 138 164 195 Z" fill="${outfit}" />
+          <path d="M 94 145 L 106 145 L 106 195 L 94 195 Z" fill="${outfitSec}" opacity="0.9" />
+          <circle cx="100" cy="160" r="2" fill="#ffd700" />
+          <circle cx="100" cy="172" r="2" fill="#ffd700" />
+          <circle cx="100" cy="184" r="2" fill="#ffd700" />
+        ` : conf.outfitStyle === 'leather' ? `
+          <path d="M 36 195 Q 100 138 164 195 Z" fill="#1e293b" />
+          <path d="M 88 152 L 100 195 L 82 195 Z" fill="#e2e8f0" opacity="0.4" />
+          <line x1="100" y1="155" x2="100" y2="195" stroke="#cbd5e1" stroke-width="2.5" />
+        ` : conf.outfitStyle === 'bomber' ? `
+          <path d="M 36 195 Q 100 138 164 195 Z" fill="${outfit}" />
+          <rect x="92" y="148" width="16" height="47" rx="3" fill="#1e293b" />
+          <circle cx="100" cy="160" r="2" fill="#ffd700" />
+        ` : `
+          <path d="M 36 195 Q 100 136 164 195 Z" fill="${outfit}" />
+          <path d="M 82 152 Q 100 172 118 152" fill="none" stroke="${outfitSec}" stroke-width="5" stroke-linecap="round" />
+          <line x1="92" y1="165" x2="92" y2="188" stroke="#ffffff" stroke-width="2" opacity="0.8" />
+          <line x1="108" y1="165" x2="108" y2="188" stroke="#ffffff" stroke-width="2" opacity="0.8" />
+        `}
 
-        handGroup.add(finger);
-      });
+        <!-- Neck -->
+        <rect x="88" y="128" width="24" height="28" rx="8" fill="${skin}" />
 
-      return handGroup;
+        <!-- Head / Jaw Shape -->
+        <ellipse cx="100" cy="98" rx="42" ry="48" fill="${skin}" />
+
+        <!-- Blush -->
+        <circle cx="74" cy="108" r="7" fill="#f43f5e" opacity="0.22" />
+        <circle cx="126" cy="108" r="7" fill="#f43f5e" opacity="0.22" />
+
+        <!-- Eyebrows -->
+        ${mood === 'debt' ? `
+          <path d="M 72 79 Q 82 85 92 81" stroke="${hair}" stroke-width="3.5" stroke-linecap="round" fill="none" />
+          <path d="M 108 81 Q 118 85 128 79" stroke="${hair}" stroke-width="3.5" stroke-linecap="round" fill="none" />
+        ` : `
+          <path d="M 72 82 Q 82 76 92 82" stroke="${hair}" stroke-width="3.5" stroke-linecap="round" fill="none" />
+          <path d="M 108 82 Q 118 76 128 82" stroke="${hair}" stroke-width="3.5" stroke-linecap="round" fill="none" />
+        `}
+
+        <!-- Eyes & Eyewear -->
+        ${conf.accessory === 'gold_aviators' || mood === 'creditor' ? `
+          <path d="M 62 89 L 96 89 Q 94 109 79 109 Q 64 109 62 89 Z" fill="#003087" opacity="0.95" stroke="#ffc439" stroke-width="2.5" />
+          <path d="M 104 89 L 138 89 Q 136 109 121 109 Q 106 109 104 89 Z" fill="#003087" opacity="0.95" stroke="#ffc439" stroke-width="2.5" />
+          <line x1="96" y1="91" x2="104" y2="91" stroke="#ffc439" stroke-width="3" />
+          <line x1="68" y1="94" x2="78" y2="104" stroke="#ffffff" stroke-width="2" opacity="0.75" stroke-linecap="round" />
+          <line x1="110" y1="94" x2="120" y2="104" stroke="#ffffff" stroke-width="2" opacity="0.75" stroke-linecap="round" />
+        ` : conf.accessory === 'designer_frames' ? `
+          <rect x="64" y="87" width="30" height="22" rx="6" fill="none" stroke="#0f172a" stroke-width="3" />
+          <rect x="106" y="87" width="30" height="22" rx="6" fill="none" stroke="#0f172a" stroke-width="3" />
+          <line x1="94" y1="96" x2="106" y2="96" stroke="#0f172a" stroke-width="3" />
+          <circle cx="79" cy="98" r="4.5" fill="#0f172a" />
+          <circle cx="121" cy="98" r="4.5" fill="#0f172a" />
+        ` : conf.accessory === 'cyber_visor' ? `
+          <path d="M 60 88 L 140 88 L 135 106 L 65 106 Z" fill="#06b6d4" opacity="0.88" stroke="#a855f7" stroke-width="2" />
+          <line x1="62" y1="97" x2="138" y2="97" stroke="#ffffff" stroke-width="1.5" opacity="0.9" />
+        ` : conf.expression === 'wink' ? `
+          <ellipse cx="80" cy="96" rx="5" ry="6.5" fill="#0f172a" />
+          <circle cx="82" cy="94" r="2" fill="#ffffff" />
+          <path d="M 113 96 Q 121 90 128 97" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round" fill="none" />
+        ` : mood === 'debt' ? `
+          <circle cx="80" cy="96" r="7.5" fill="#ffffff" stroke="#0f172a" stroke-width="2" />
+          <circle cx="81" cy="97" r="3.5" fill="#0f172a" />
+          <circle cx="120" cy="96" r="7.5" fill="#ffffff" stroke="#0f172a" stroke-width="2" />
+          <circle cx="119" cy="97" r="3.5" fill="#0f172a" />
+          <path d="M 132 82 Q 138 90 134 94 Q 130 96 128 92 Z" fill="#38bdf8" />
+        ` : `
+          <ellipse cx="80" cy="96" rx="5" ry="6.5" fill="#0f172a" />
+          <circle cx="82" cy="94" r="2" fill="#ffffff" />
+          <ellipse cx="120" cy="96" rx="5" ry="6.5" fill="#0f172a" />
+          <circle cx="122" cy="94" r="2" fill="#ffffff" />
+        `}
+
+        <!-- Mouth -->
+        ${mood === 'debt' ? `
+          <path d="M 88 123 Q 94 128 100 123 Q 106 119 112 123" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none" />
+        ` : conf.expression === 'smirk' || mood === 'creditor' ? `
+          <path d="M 88 122 Q 102 128 116 117" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round" fill="none" />
+        ` : `
+          <path d="M 85 118 Q 100 133 115 118" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round" fill="none" />
+        `}
+
+        <!-- Hairstyles & Headwear -->
+        ${conf.hairStyle === 'curly_afro' ? `
+          <circle cx="66" cy="62" r="16" fill="${hair}" />
+          <circle cx="84" cy="50" r="18" fill="${hair}" />
+          <circle cx="104" cy="48" r="19" fill="${hair}" />
+          <circle cx="124" cy="52" r="18" fill="${hair}" />
+          <circle cx="138" cy="66" r="15" fill="${hair}" />
+          <path d="M 60 76 Q 100 48 140 76 Q 100 62 60 76 Z" fill="${hair}" />
+        ` : conf.hairStyle === 'sleek_ponytail' ? `
+          <path d="M 60 85 Q 60 48 100 48 Q 140 48 140 85 Q 120 68 100 68 Q 80 68 60 85 Z" fill="${hair}" />
+          <path d="M 132 72 Q 158 78 152 118 Q 142 122 138 95 Z" fill="${hair}" />
+        ` : conf.hairStyle === 'turban' ? `
+          <path d="M 55 85 Q 52 42 100 42 Q 148 42 145 85 Z" fill="${hair}" />
+          <path d="M 65 72 Q 100 56 135 72" fill="none" stroke="#ffd700" stroke-width="3" />
+          <circle cx="100" cy="55" r="5" fill="#f43f5e" stroke="#ffd700" stroke-width="2" />
+        ` : conf.hairStyle === 'beanie' ? `
+          <path d="M 58 84 Q 56 46 100 46 Q 144 46 142 84 Z" fill="${hair}" />
+          <rect x="56" y="76" width="88" height="12" rx="4" fill="${hair}" opacity="0.85" stroke="#ffffff" stroke-width="1" />
+        ` : `
+          <path d="M 62 82 Q 62 50 100 50 Q 138 50 138 82 Q 125 64 100 64 Q 75 64 62 82 Z" fill="${hair}" />
+          <path d="M 70 56 Q 100 38 130 56 Q 100 46 70 56 Z" fill="${hair}" opacity="0.9" />
+        `}
+
+        <!-- Accessories & Badges -->
+        ${conf.accessory === 'gold_chain' ? `
+          <path d="M 80 152 Q 100 178 120 152" fill="none" stroke="#ffc439" stroke-width="3.5" stroke-linecap="round" />
+          <circle cx="100" cy="174" r="4" fill="#ffc439" stroke="#b45309" stroke-width="1" />
+        ` : ''}
+
+        <!-- Financial Floating Crown or Halo -->
+        ${mood === 'creditor' || conf.accessory === 'crown' ? `
+          <g transform="translate(82, 24)">
+            <polygon points="0,18 9,0 18,12 27,0 36,18" fill="#ffc439" stroke="#b45309" stroke-width="1.5" />
+            <circle cx="9" cy="0" r="2.5" fill="#f43f5e" />
+            <circle cx="18" cy="12" r="2.5" fill="#3b82f6" />
+            <circle cx="27" cy="0" r="2.5" fill="#10b981" />
+          </g>
+        ` : mood === 'settled' ? `
+          <ellipse cx="100" cy="34" rx="26" ry="6" fill="none" stroke="#10b981" stroke-width="3" opacity="0.85" />
+        ` : ''}
+      </svg>`;
     }
 
-    function init3DAvatarStudio() {
-      const canvas = document.getElementById('avatar3dCanvas');
-      const container = document.getElementById('canvas3dContainer');
-      if (!canvas || !container) return;
+    function renderFinancialPersona() {
+      const conf = state.personaConfig;
+      const mood = computeFinancialMood();
+      conf.mood = mood;
 
-      const w = container.clientWidth > 0 ? container.clientWidth : 480;
-      const h = container.clientHeight > 0 ? container.clientHeight : 560;
-
-      scene3D = new THREE.Scene();
-      camera3D = new THREE.PerspectiveCamera(36, w / h, 0.1, 100);
-      camera3D.position.set(0, 0.72, 4.3);
-      camera3D.lookAt(0, 0.72, 0);
-
-      renderer3D = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
-      renderer3D.setSize(w, h);
-      renderer3D.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-
-      // 5-Point Studio Lighting (Key, Fill, 2 Rims & Ground Bounce)
-      const ambientLight = new THREE.AmbientLight(0xfff8f0, 0.90);
-      scene3D.add(ambientLight);
-
-      const keyLight = new THREE.DirectionalLight(0xffeedd, 1.4);
-      keyLight.position.set(3, 4.5, 3.5);
-      scene3D.add(keyLight);
-
-      const fillLight = new THREE.DirectionalLight(0xdbeafe, 0.75);
-      fillLight.position.set(-3, 2.5, 2.5);
-      scene3D.add(fillLight);
-
-      const rimLight1 = new THREE.DirectionalLight(0x38bdf8, 1.5);
-      rimLight1.position.set(-2, 3.5, -3.5);
-      scene3D.add(rimLight1);
-
-      const rimLight2 = new THREE.DirectionalLight(0xfbbf24, 1.0);
-      rimLight2.position.set(2.5, 3.0, -3.0);
-      scene3D.add(rimLight2);
-
-      const bounceLight = new THREE.DirectionalLight(0x10b981, 0.35);
-      bounceLight.position.set(0, -2, 1);
-      scene3D.add(bounceLight);
-
-      // Studio Circular Podium Stage (Visible Full-Body Grounding)
-      const podium = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.95, 1.05, 0.08, 48),
-        new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.35, metalness: 0.3 })
-      );
-      podium.position.y = -0.54;
-      scene3D.add(podium);
-
-      // Glowing Neon Edge Ring (SplitSmart Emerald)
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(0.96, 0.012, 12, 48),
-        new THREE.MeshBasicMaterial({ color: 0x10b981 })
-      );
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = -0.50;
-      scene3D.add(ring);
-
-      // Drop Shadow Contact Disc
-      const shadowMat = new THREE.MeshBasicMaterial({ color: 0x020617, transparent: true, opacity: 0.40 });
-      const shadowDisc = new THREE.Mesh(new THREE.CircleGeometry(0.60, 32), shadowMat);
-      shadowDisc.rotation.x = -Math.PI / 2;
-      shadowDisc.position.y = -0.495;
-      scene3D.add(shadowDisc);
-
-      build3DAvatarRig();
-      setupAvatarInteraction(container);
-      animate3DAvatar();
-      renderStudioPanel();
-      renderColorPaletteBar();
-
-      // Automatically handle container size changes
-      if (window.ResizeObserver && container) {
-        const ro = new ResizeObserver(entries => {
-          for (let entry of entries) {
-            const cr = entry.contentRect;
-            if (cr.width > 20 && cr.height > 20 && renderer3D && camera3D) {
-              camera3D.aspect = cr.width / cr.height;
-              camera3D.updateProjectionMatrix();
-              renderer3D.setSize(cr.width, cr.height);
-            }
-          }
-        });
-        ro.observe(container);
-      }
-      window.addEventListener('resize', resize3DAvatarCanvas);
-    }
-
-    // --- Procedural 3D Cartoon Avatar Rig Builder ---
-    function build3DAvatarRig() {
-      if (avatarGroup) scene3D.remove(avatarGroup);
-      avatarGroup = new THREE.Group();
-      const conf = state.avatarConfig;
-      const isFemale = conf.gender === 'female';
-
-      // 1. Materials
-      const skinMat = new THREE.MeshStandardMaterial({ color: conf.skinColor, roughness: 0.46, metalness: 0.04 });
-      const hairMat = new THREE.MeshStandardMaterial({ color: conf.hairColor, roughness: 0.55, metalness: 0.08 });
-      const goldMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.85, roughness: 0.25 });
-      const silverMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.2 });
-
-      // 2. Sculpted Cranium & Face Structure
-      const headGeom = new THREE.SphereGeometry(0.31, 32, 28);
-      const head = new THREE.Mesh(headGeom, skinMat);
-      head.position.y = 1.48;
-
-      if (conf.faceShape === 'chiseled') head.scale.set(0.90, 1.04, 0.96);
-      else if (conf.faceShape === 'oval') head.scale.set(0.93, 1.02, 0.95);
-      else if (conf.faceShape === 'heart') head.scale.set(0.97, 1.00, 0.92);
-      else if (conf.faceShape === 'square') head.scale.set(1.02, 0.98, 0.98);
-      else head.scale.set(0.96, 0.98, 0.96); // soft
-      avatarGroup.add(head);
-
-      // Sculpted Defined Cheekbones (sharp highlight planes)
-      const cheekL = new THREE.Mesh(new THREE.SphereGeometry(0.085, 16, 16), skinMat);
-      cheekL.position.set(-0.155, 1.42, 0.16);
-      cheekL.scale.set(1.0, 0.70, 0.85);
-      if (conf.faceShape === 'chiseled' || conf.faceShape === 'heart') {
-        cheekL.position.x = -0.168;
-        cheekL.scale.set(1.15, 0.75, 0.90);
-      }
-      avatarGroup.add(cheekL);
-
-      const cheekR = new THREE.Mesh(new THREE.SphereGeometry(0.085, 16, 16), skinMat);
-      cheekR.position.set(0.155, 1.42, 0.16);
-      cheekR.scale.set(1.0, 0.70, 0.85);
-      if (conf.faceShape === 'chiseled' || conf.faceShape === 'heart') {
-        cheekR.position.x = 0.168;
-        cheekR.scale.set(1.15, 0.75, 0.90);
-      }
-      avatarGroup.add(cheekR);
-
-      // Sculpted Tapered Jawline Contours & Chiseled Chin
-      const jawL = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.032, 0.24, 12), skinMat);
-      jawL.position.set(-0.14, 1.25, 0.12);
-      jawL.rotation.z = -0.42;
-      jawL.rotation.y = 0.22;
-      avatarGroup.add(jawL);
-
-      const jawR = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.032, 0.24, 12), skinMat);
-      jawR.position.set(0.14, 1.25, 0.12);
-      jawR.rotation.z = 0.42;
-      jawR.rotation.y = -0.22;
-      avatarGroup.add(jawR);
-
-      const chinGeom = new THREE.BoxGeometry(0.09, 0.075, 0.11);
-      const chin = new THREE.Mesh(chinGeom, skinMat);
-      chin.position.set(0, 1.15, 0.23);
-      if (conf.faceShape === 'chiseled') {
-        chin.scale.set(0.85, 1.15, 1.10);
-      } else if (conf.faceShape === 'square') {
-        chin.scale.set(1.35, 0.90, 1.00);
-      } else if (conf.faceShape === 'heart') {
-        chin.scale.set(0.70, 1.10, 0.90);
-        chin.position.y = 1.14;
-      } else if (conf.faceShape === 'oval') {
-        chin.scale.set(1.0, 1.0, 1.0);
-      } else { // soft
-        chin.scale.set(1.10, 0.85, 0.95);
-      }
-      avatarGroup.add(chin);
-
-      // Subtle Cheeks Blush Glow
-      if (conf.blush) {
-        const blushMat = new THREE.MeshBasicMaterial({ color: conf.blushColor || 0xf43f5e, transparent: true, opacity: 0.26 });
-        const blushL = new THREE.Mesh(new THREE.SphereGeometry(0.052, 16, 16), blushMat);
-        blushL.position.set(-0.165, 1.38, 0.21);
-        blushL.scale.set(1.2, 0.55, 0.50);
-        avatarGroup.add(blushL);
-
-        const blushR = new THREE.Mesh(new THREE.SphereGeometry(0.052, 16, 16), blushMat);
-        blushR.position.set(0.165, 1.38, 0.21);
-        blushR.scale.set(1.2, 0.55, 0.50);
-        avatarGroup.add(blushR);
+      // 1. Render Main Hero Avatar SVG
+      const display = document.getElementById('personaVectorDisplay');
+      if (display) {
+        display.innerHTML = generateAvatarSVG(conf, { size: 240, overrideMood: mood });
       }
 
-      // Freckles
-      if (conf.freckles) {
-        const freckleMat = new THREE.MeshBasicMaterial({ color: 0x6b3b19 });
-        [[-0.07, 1.41, 0.33], [-0.12, 1.39, 0.30], [-0.03, 1.43, 0.34],
-         [0.07, 1.41, 0.33], [0.12, 1.39, 0.30], [0.03, 1.43, 0.34]].forEach(pt => {
-          const dot = new THREE.Mesh(new THREE.SphereGeometry(0.007, 8, 8), freckleMat);
-          dot.position.set(pt[0], pt[1], pt[2]);
-          avatarGroup.add(dot);
-        });
+      // 2. Render Header Nav Avatar Pill
+      const navAvatar = document.getElementById('navPersonaAvatarContainer');
+      if (navAvatar) {
+        navAvatar.innerHTML = generateAvatarSVG(conf, { size: 32, overrideMood: mood });
       }
 
-      // Beauty Mark
-      if (conf.beautyMark) {
-        const bDot = new THREE.Mesh(new THREE.SphereGeometry(0.010, 8, 8), new THREE.MeshBasicMaterial({ color: 0x111111 }));
-        bDot.position.set(0.12, 1.25, 0.34);
-        avatarGroup.add(bDot);
-      }
+      // 3. Update Emotional Status Badge & Texts
+      const badge = document.getElementById('personaEmotionBadge');
+      const badgeText = document.getElementById('personaEmotionBadgeText');
+      const speech = document.getElementById('personaSpeechBubble');
+      const actionContainer = document.getElementById('personaActionContainer');
+      const net = getUserNetBalance(state.user.id);
 
-      // 3. Sleek Almond Eyes (Sharp Eyeliner, Winged Lashes & Limbal Ring)
-      const scleraMat = new THREE.MeshStandardMaterial({ color: 0xfcfcfd, roughness: 0.2, metalness: 0.0 });
-      const linerMat = new THREE.MeshBasicMaterial({ color: 0x09090b });
-      const limbalMat = new THREE.MeshBasicMaterial({ color: 0x050508 });
-      const pupilMat = new THREE.MeshBasicMaterial({ color: 0x020202 });
-      const glintMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const irisMat = new THREE.MeshStandardMaterial({ color: conf.eyeColor, roughness: 0.28, metalness: 0.10 });
-
-      function buildAlmondEye(isLeft) {
-        const eyeGroup = new THREE.Group();
-        eyeGroup.position.set(isLeft ? -0.125 : 0.125, 1.50, 0.30);
-
-        // Almond contoured sclera
-        const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.042, 24, 20), scleraMat);
-        sclera.scale.set(1.24, 0.74, 0.85);
-        sclera.rotation.z = isLeft ? 0.08 : -0.08;
-        eyeGroup.add(sclera);
-
-        // Iris Disc
-        const iris = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.006, 24), irisMat);
-        iris.rotation.x = Math.PI / 2;
-        iris.position.set(0, 0, 0.034);
-        eyeGroup.add(iris);
-
-        // Limbal Ring
-        const limbal = new THREE.Mesh(new THREE.TorusGeometry(0.0285, 0.0022, 8, 24), limbalMat);
-        limbal.position.set(0, 0, 0.035);
-        eyeGroup.add(limbal);
-
-        // Pupil
-        const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.014, 16, 16), pupilMat);
-        pupil.position.set(0, 0, 0.037);
-        eyeGroup.add(pupil);
-
-        // Single Sharp Catchlight Specular Sparkle
-        const glint = new THREE.Mesh(new THREE.SphereGeometry(0.006, 8, 8), glintMat);
-        glint.position.set(isLeft ? 0.009 : -0.009, 0.009, 0.043);
-        eyeGroup.add(glint);
-
-        // Winged Upper Eyeliner Arc
-        const eyeliner = new THREE.Mesh(new THREE.TorusGeometry(0.048, 0.0055, 8, 24, Math.PI * 0.76), linerMat);
-        eyeliner.rotation.z = isLeft ? 0.12 : -0.12;
-        eyeliner.position.set(0, 0.018, 0.033);
-        eyeGroup.add(eyeliner);
-
-        // Outer Wing Flick
-        const wing = new THREE.Mesh(new THREE.ConeGeometry(0.004, 0.018, 6), linerMat);
-        wing.position.set(isLeft ? -0.048 : 0.048, 0.026, 0.030);
-        wing.rotation.z = isLeft ? 0.95 : -0.95;
-        eyeGroup.add(wing);
-
-        // Subtle Upper Crease
-        const crease = new THREE.Mesh(new THREE.TorusGeometry(0.044, 0.0022, 6, 20, Math.PI * 0.60), linerMat);
-        crease.position.set(0, 0.034, 0.028);
-        crease.rotation.z = isLeft ? 0.10 : -0.10;
-        eyeGroup.add(crease);
-
-        return eyeGroup;
-      }
-
-      if (conf.expression === 'wink') {
-        const winkArc = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.007, 8, 20, Math.PI * 0.9), linerMat);
-        winkArc.position.set(-0.125, 1.50, 0.32);
-        winkArc.rotation.z = Math.PI + 0.15;
-        avatarGroup.add(winkArc);
-        eyeMeshLeft = null;
-      } else {
-        eyeMeshLeft = buildAlmondEye(true);
-        avatarGroup.add(eyeMeshLeft);
-      }
-
-      eyeMeshRight = buildAlmondEye(false);
-      avatarGroup.add(eyeMeshRight);
-
-      // 4. Sharp Arched Eyebrows
-      const browMat = new THREE.MeshStandardMaterial({ color: conf.hairColor, roughness: 0.72, metalness: 0.02 });
-      const browThick = conf.eyebrowShape === 'bold' ? 0.015 : 0.009;
-      const isArch = conf.eyebrowShape === 'sharp_arch';
-
-      const browHeadL = new THREE.Mesh(new THREE.CylinderGeometry(browThick, browThick * 1.1, 0.065, 8), browMat);
-      browHeadL.rotation.z = isArch ? 0.35 : 0.15;
-      browHeadL.position.set(-0.085, 1.595, 0.325);
-      avatarGroup.add(browHeadL);
-
-      const browTailL = new THREE.Mesh(new THREE.CylinderGeometry(browThick * 1.1, browThick * 0.35, 0.068, 8), browMat);
-      browTailL.rotation.z = isArch ? -0.55 : -0.25;
-      browTailL.position.set(-0.145, 1.605, 0.315);
-      if (isArch) browTailL.position.y += 0.008;
-      avatarGroup.add(browTailL);
-
-      const browHeadR = new THREE.Mesh(new THREE.CylinderGeometry(browThick, browThick * 1.1, 0.065, 8), browMat);
-      browHeadR.rotation.z = isArch ? -0.35 : -0.15;
-      browHeadR.position.set(0.085, 1.595, 0.325);
-      avatarGroup.add(browHeadR);
-
-      const browTailR = new THREE.Mesh(new THREE.CylinderGeometry(browThick * 1.1, browThick * 0.35, 0.068, 8), browMat);
-      browTailR.rotation.z = isArch ? 0.55 : 0.25;
-      browTailR.position.set(0.145, 1.605, 0.315);
-      if (isArch) browTailR.position.y += 0.008;
-      avatarGroup.add(browTailR);
-
-      if (conf.expression === 'excited' || conf.expression === 'happy') {
-        browHeadL.position.y += 0.02; browTailL.position.y += 0.02;
-        browHeadR.position.y += 0.02; browTailR.position.y += 0.02;
-      } else if (conf.expression === 'cool') {
-        browHeadL.position.y -= 0.015; browTailL.position.y -= 0.015;
-        browHeadR.position.y += 0.018; browTailR.position.y += 0.018;
-      }
-
-      // 5. Sculpted Sharp Nose Profile (Bridge + Refined Tip + Nostril Wings)
-      const bridgeLen = 0.16;
-      const bridgeTopW = conf.noseShape === 'narrow' ? 0.012 : 0.016;
-      const bridgeBotW = conf.noseShape === 'narrow' ? 0.018 : 0.024;
-      const bridgeMesh = new THREE.Mesh(new THREE.CylinderGeometry(bridgeTopW, bridgeBotW, bridgeLen, 12), skinMat);
-      bridgeMesh.position.set(0, 1.45, 0.33);
-      bridgeMesh.rotation.x = -0.18;
-      avatarGroup.add(bridgeMesh);
-
-      const tipRadius = conf.noseShape === 'narrow' ? 0.016 : (conf.noseShape === 'button' ? 0.022 : (conf.noseShape === 'straight' ? 0.019 : 0.020));
-      const tipMesh = new THREE.Mesh(new THREE.SphereGeometry(tipRadius, 16, 16), skinMat);
-      tipMesh.position.set(0, 1.37, 0.37);
-      if (conf.noseShape === 'button') tipMesh.position.y += 0.01;
-      avatarGroup.add(tipMesh);
-
-      const nostrilL = new THREE.Mesh(new THREE.SphereGeometry(tipRadius * 0.65, 12, 12), skinMat);
-      nostrilL.position.set(-0.024, 1.365, 0.35);
-      avatarGroup.add(nostrilL);
-
-      const nostrilR = new THREE.Mesh(new THREE.SphereGeometry(tipRadius * 0.65, 12, 12), skinMat);
-      nostrilR.position.set(0.024, 1.365, 0.35);
-      avatarGroup.add(nostrilR);
-
-      // 6. Sculpted Cupid's Bow Lips & Satin Gloss Finish
-      const lipColor = (conf.lipstick !== undefined && conf.lipstick !== null) ? conf.lipstick : (isFemale ? 0xd88874 : 0xcc7b65);
-      const lipMat = new THREE.MeshStandardMaterial({ color: lipColor, roughness: 0.32, metalness: 0.06 });
-
-      const lipLobeL = new THREE.Mesh(new THREE.SphereGeometry(0.026, 16, 12), lipMat);
-      lipLobeL.scale.set(1.2, 0.65, 0.85);
-      lipLobeL.position.set(-0.022, 1.282, 0.355);
-      avatarGroup.add(lipLobeL);
-
-      const lipLobeR = new THREE.Mesh(new THREE.SphereGeometry(0.026, 16, 12), lipMat);
-      lipLobeR.scale.set(1.2, 0.65, 0.85);
-      lipLobeR.position.set(0.022, 1.282, 0.355);
-      avatarGroup.add(lipLobeR);
-
-      const upperCenter = new THREE.Mesh(new THREE.SphereGeometry(0.020, 12, 12), lipMat);
-      upperCenter.scale.set(1.1, 0.55, 0.80);
-      upperCenter.position.set(0, 1.278, 0.357);
-      avatarGroup.add(upperCenter);
-
-      const lowerLip = new THREE.Mesh(new THREE.SphereGeometry(0.036, 16, 14), lipMat);
-      lowerLip.scale.set(1.5, 0.72, 0.88);
-      lowerLip.position.set(0, 1.256, 0.352);
-      avatarGroup.add(lowerLip);
-
-      const cornerL = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), lipMat);
-      cornerL.position.set(-0.052, 1.272, 0.344);
-      avatarGroup.add(cornerL);
-
-      const cornerR = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), lipMat);
-      cornerR.position.set(0.052, 1.272, 0.344);
-      avatarGroup.add(cornerR);
-
-      if (conf.expression === 'smile' || conf.expression === 'excited' || conf.expression === 'happy') {
-        cornerL.position.y += 0.012; cornerL.position.x -= 0.008;
-        cornerR.position.y += 0.012; cornerR.position.x += 0.008;
-        lowerLip.scale.x = 1.65;
-      }
-
-      // 7. Ears & Jewelry
-      const earGeom = new THREE.SphereGeometry(0.08, 16, 16);
-      const earL = new THREE.Mesh(earGeom, skinMat);
-      earL.position.set(-0.36, 1.48, 0);
-      earL.scale.set(0.3, 1, 0.6);
-      avatarGroup.add(earL);
-
-      const earR = new THREE.Mesh(earGeom, skinMat);
-      earR.position.set(0.36, 1.48, 0);
-      earR.scale.set(0.3, 1, 0.6);
-      avatarGroup.add(earR);
-
-      if (conf.earrings === 'gold_hoops') {
-        const hoopGeom = new THREE.TorusGeometry(0.045, 0.012, 8, 20);
-        const hoopL = new THREE.Mesh(hoopGeom, goldMat);
-        hoopL.position.set(-0.38, 1.42, 0);
-        avatarGroup.add(hoopL);
-
-        const hoopR = new THREE.Mesh(hoopGeom, goldMat);
-        hoopR.position.set(0.38, 1.42, 0);
-        avatarGroup.add(hoopR);
-      } else if (conf.earrings === 'pearl_studs') {
-        const pearlMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.3 });
-        const pearlL = new THREE.Mesh(new THREE.SphereGeometry(0.024, 12, 12), pearlMat);
-        pearlL.position.set(-0.38, 1.46, 0.02);
-        avatarGroup.add(pearlL);
-
-        const pearlR = new THREE.Mesh(new THREE.SphereGeometry(0.024, 12, 12), pearlMat);
-        pearlR.position.set(0.38, 1.46, 0.02);
-        avatarGroup.add(pearlR);
-      }
-
-      // 8. Neck & Necklaces
-      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 0.25, 20), skinMat);
-      neck.position.set(0, 1.15, 0);
-      avatarGroup.add(neck);
-
-      if (conf.necklace === 'gold_chain') {
-        const chain = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.015, 8, 24), goldMat);
-        chain.rotation.x = Math.PI / 2 + 0.2;
-        chain.position.set(0, 1.05, 0.03);
-        avatarGroup.add(chain);
-      } else if (conf.necklace === 'pearl_choker') {
-        const pChokerMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.2 });
-        const pChoker = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.018, 8, 24), pChokerMat);
-        pChoker.rotation.x = Math.PI / 2;
-        pChoker.position.set(0, 1.12, 0);
-        avatarGroup.add(pChoker);
-      }
-
-      // 9. Procedural 3D Hairstyles
-      const hairBase = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 24), hairMat);
-      hairBase.position.set(0, 1.58, -0.04);
-      avatarGroup.add(hairBase);
-
-      const hStyle = conf.hairStyle || 'straight_long';
-      if (hStyle === 'straight_long' || hStyle === 'curtain_bangs' || hStyle === 'beach_waves') {
-        // Long flowing locks down back
-        const longBack = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.85, 20), hairMat);
-        longBack.position.set(0, 1.18, -0.20);
-        avatarGroup.add(longBack);
-
-        // Front locks framing shoulders
-        const lockL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.05, 0.70, 16), hairMat);
-        lockL.position.set(-0.32, 1.18, 0.12);
-        lockL.rotation.z = -0.12;
-        avatarGroup.add(lockL);
-
-        const lockR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.05, 0.70, 16), hairMat);
-        lockR.position.set(0.32, 1.18, 0.12);
-        lockR.rotation.z = 0.12;
-        avatarGroup.add(lockR);
-
-        if (hStyle === 'curtain_bangs') {
-          const bangL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 0.28, 12), hairMat);
-          bangL.position.set(-0.16, 1.62, 0.32);
-          bangL.rotation.z = -0.4;
-          avatarGroup.add(bangL);
-
-          const bangR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 0.28, 12), hairMat);
-          bangR.position.set(0.16, 1.62, 0.32);
-          bangR.rotation.z = 0.4;
-          avatarGroup.add(bangR);
+      const moodConfig = {
+        settled: {
+          badge: '✨ Settled Legend',
+          badgeClass: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300',
+          speech: `"${conf.aiQuote || 'Zero debts across Tokyo. Perfect financial peace.'}"`,
+          action: `<button onclick="triggerConfettiCannon(); showToast('🎉 All settled! No outstanding group debts.', 'success')" class="px-4 py-2 rounded-2xl bg-emerald-600 text-white font-extrabold text-xs shadow-md hover:bg-emerald-700 transition-all">✨ Perfect Balance ($0.00)</button>`
+        },
+        creditor: {
+          badge: `🏆 Chief Creditor (+${formatMoney(Math.abs(net))})`,
+          badgeClass: 'bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-sky-300 border border-sky-300 dark:border-sky-800',
+          speech: `"Group members owe you ${formatMoney(Math.abs(net))}. Feeling like a boss."`,
+          action: `<button onclick="generatePayPalMeLink()" class="px-4 py-2 rounded-2xl bg-[#0070ba] text-white font-black text-xs shadow-md hover:bg-[#003087] transition-all">📢 Request Repayment via PayPal</button>`
+        },
+        debt: {
+          badge: `⚠️ In Debt (${formatMoney(Math.abs(net))})`,
+          badgeClass: 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 border border-rose-300 dark:border-rose-800 animate-pulse',
+          speech: `"Uh oh, you owe ${formatMoney(Math.abs(net))}! Settle with PayPal to fix your persona's mood."`,
+          action: `<button onclick="openPayPalWalletModal()" class="paypal-btn px-4 py-2 rounded-2xl font-black text-xs shadow-md">⚡ 1-Click Settle via PayPal Sandbox</button>`
+        },
+        party: {
+          badge: '🎉 Baller Party Mode',
+          badgeClass: 'bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300',
+          speech: `"Celebrating another successful trip settlement. Drinks on the ledger!"`,
+          action: `<button onclick="triggerConfettiCannon()" class="px-4 py-2 rounded-2xl bg-purple-600 text-white font-extrabold text-xs shadow-md">🎊 Celebrate with Confetti</button>`
         }
-      } else if (hStyle === 'bob' || hStyle === 'wavy_bob') {
-        const bobL = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.10, 0.42, 16), hairMat);
-        bobL.position.set(-0.35, 1.35, 0.04);
-        avatarGroup.add(bobL);
-
-        const bobR = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.10, 0.42, 16), hairMat);
-        bobR.position.set(0.35, 1.35, 0.04);
-        avatarGroup.add(bobR);
-      } else if (hStyle === 'ponytail') {
-        const tie = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.015, 8, 16), goldMat);
-        tie.position.set(0, 1.72, -0.38);
-        avatarGroup.add(tie);
-
-        const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.04, 0.65, 16), hairMat);
-        tail.position.set(0, 1.42, -0.46);
-        tail.rotation.x = -0.35;
-        avatarGroup.add(tail);
-      } else if (hStyle === 'top_bun') {
-        const bun = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), hairMat);
-        bun.position.set(0, 1.95, -0.05);
-        avatarGroup.add(bun);
-
-        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.02, 8, 20), goldMat);
-        ring.rotation.x = Math.PI / 2;
-        ring.position.set(0, 1.86, -0.05);
-        avatarGroup.add(ring);
-      } else if (hStyle === 'twin_braids') {
-        const bL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 0.70, 12), hairMat);
-        bL.position.set(-0.28, 1.15, 0.18);
-        avatarGroup.add(bL);
-
-        const bR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 0.70, 12), hairMat);
-        bR.position.set(0.28, 1.15, 0.18);
-        avatarGroup.add(bR);
-      } else if (hStyle === 'afro') {
-        const afro = new THREE.Mesh(new THREE.SphereGeometry(0.50, 24, 24), hairMat);
-        afro.position.set(0, 1.62, -0.04);
-        avatarGroup.add(afro);
-      } else if (hStyle === 'pixie' || hStyle === 'crop') {
-        const cropTufts = new THREE.Mesh(new THREE.SphereGeometry(0.44, 16, 16), hairMat);
-        cropTufts.position.set(0, 1.68, 0.02);
-        cropTufts.scale.set(0.9, 0.6, 1.0);
-        avatarGroup.add(cropTufts);
-      }
-
-      // 10. Accessories: Eyewear & Headwear
-      if (conf.glasses === 'sunglasses') {
-        const frameMat = goldMat;
-        const lensMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.95, roughness: 0.1 });
-
-        const lensL = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 24), lensMat);
-        lensL.rotation.x = Math.PI / 2;
-        lensL.position.set(-0.14, 1.50, 0.42);
-        avatarGroup.add(lensL);
-
-        const lensR = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 24), lensMat);
-        lensR.rotation.x = Math.PI / 2;
-        lensR.position.set(0.14, 1.50, 0.42);
-        avatarGroup.add(lensR);
-
-        const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.015, 0.02), frameMat);
-        bridge.position.set(0, 1.52, 0.42);
-        avatarGroup.add(bridge);
-      } else if (conf.glasses === 'spectacles') {
-        const wireMat = silverMat;
-        const lensMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, roughness: 0.1 });
-
-        const sLensL = new THREE.Mesh(new THREE.TorusGeometry(0.10, 0.012, 8, 24), wireMat);
-        sLensL.position.set(-0.14, 1.50, 0.42);
-        avatarGroup.add(sLensL);
-
-        const sLensR = new THREE.Mesh(new THREE.TorusGeometry(0.10, 0.012, 8, 24), wireMat);
-        sLensR.position.set(0.14, 1.50, 0.42);
-        avatarGroup.add(sLensR);
-
-        const sBridge = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.012, 0.015), wireMat);
-        sBridge.position.set(0, 1.52, 0.42);
-        avatarGroup.add(sBridge);
-      }
-
-      if (conf.headwear === 'snapback_cap') {
-        const capMat = new THREE.MeshStandardMaterial({ color: conf.headwearColor || 0x0070ba, roughness: 0.6 });
-        const capDome = new THREE.Mesh(new THREE.SphereGeometry(0.44, 20, 20), capMat);
-        capDome.position.set(0, 1.68, -0.05);
-        avatarGroup.add(capDome);
-
-        const visor = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.03, 0.28), capMat);
-        visor.position.set(0, 1.58, 0.44);
-        visor.rotation.x = 0.12;
-        avatarGroup.add(visor);
-      } else if (conf.headwear === 'bucket_hat') {
-        const bHatMat = new THREE.MeshStandardMaterial({ color: conf.headwearColor || 0x1e293b, roughness: 0.6 });
-        const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.42, 0.28, 24), bHatMat);
-        crown.position.set(0, 1.82, -0.02);
-        avatarGroup.add(crown);
-
-        const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.58, 0.04, 24), bHatMat);
-        brim.position.set(0, 1.66, -0.02);
-        brim.rotation.x = 0.05;
-        avatarGroup.add(brim);
-      } else if (conf.headwear === 'beanie') {
-        const beanieMat = new THREE.MeshStandardMaterial({ color: conf.headwearColor || 0xec4899, roughness: 0.7 });
-        const bDome = new THREE.Mesh(new THREE.SphereGeometry(0.45, 20, 20), beanieMat);
-        bDome.position.set(0, 1.70, -0.10);
-        avatarGroup.add(bDome);
-      }
-
-      // 11. Complete Wardrobe: Articulated Torso, Dresses, Sarees & Bottoms
-      if (conf.outfitCategory === 'dress_ethnic') {
-        const dressMat = new THREE.MeshStandardMaterial({ color: conf.dressColor, roughness: 0.45, metalness: 0.15 });
-        const goldZariMat = goldMat;
-        const dStyle = conf.dressStyle || 'saree';
-
-        if (dStyle === 'saree') {
-          // Indian Royal Silk Saree:
-          // Fitted cropped choli blouse
-          const choli = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.25, 0.38, 24), dressMat);
-          choli.position.y = 0.82;
-          avatarGroup.add(choli);
-
-          // Bare Midriff
-          const midriff = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.24, 0.18, 20), skinMat);
-          midriff.position.y = 0.55;
-          avatarGroup.add(midriff);
-
-          // Pleated long saree skirt
-          const sareeSkirt = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.34, 0.85, 24), dressMat);
-          sareeSkirt.position.y = 0.12;
-          avatarGroup.add(sareeSkirt);
-
-          // Shimmering Gold Zari Hem Border
-          const goldHem = new THREE.Mesh(new THREE.TorusGeometry(0.33, 0.025, 8, 32), goldZariMat);
-          goldHem.rotation.x = Math.PI / 2;
-          goldHem.position.y = -0.28;
-          avatarGroup.add(goldHem);
-
-          // 3D Diagonal Pallu Drape across torso & flowing over left shoulder down the back!
-          const palluFront = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.65, 0.05), dressMat);
-          palluFront.position.set(-0.06, 0.76, 0.22);
-          palluFront.rotation.z = -0.48;
-          palluFront.rotation.y = 0.15;
-          avatarGroup.add(palluFront);
-
-          const palluBack = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.82, 0.04), dressMat);
-          palluBack.position.set(-0.24, 0.62, -0.16);
-          avatarGroup.add(palluBack);
-
-          const palluGoldBorder = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.82, 0.05), goldZariMat);
-          palluGoldBorder.position.set(-0.34, 0.62, -0.16);
-          avatarGroup.add(palluGoldBorder);
-
-        } else if (dStyle === 'lehenga') {
-          // Festive Designer Lehenga Choli:
-          const choli = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.25, 0.38, 24), dressMat);
-          choli.position.y = 0.82;
-          avatarGroup.add(choli);
-
-          const choliGold = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.02, 8, 24), goldZariMat);
-          choliGold.rotation.x = Math.PI / 2;
-          choliGold.position.y = 0.64;
-          avatarGroup.add(choliGold);
-
-          const midriff = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.24, 0.18, 20), skinMat);
-          midriff.position.y = 0.54;
-          avatarGroup.add(midriff);
-
-          // Grand wide flared lehenga skirt
-          const lehengaSkirt = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.48, 0.82, 32), dressMat);
-          lehengaSkirt.position.y = 0.14;
-          avatarGroup.add(lehengaSkirt);
-
-          const lehengaZari1 = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.025, 8, 32), goldZariMat);
-          lehengaZari1.rotation.x = Math.PI / 2;
-          lehengaZari1.position.y = -0.24;
-          avatarGroup.add(lehengaZari1);
-
-          // Draped dupatta
-          const dupatta = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.80, 0.03), dressMat);
-          dupatta.position.set(0.25, 0.65, 0.14);
-          dupatta.rotation.z = 0.25;
-          avatarGroup.add(dupatta);
-
-        } else if (dStyle === 'kurti') {
-          // Traditional Indian Kurti Tunic with side slits
-          const kurti = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.95, 24), dressMat);
-          kurti.position.y = 0.48;
-          avatarGroup.add(kurti);
-
-          // Churidar pants visible below
-          const churiL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.55, 16), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 }));
-          churiL.position.set(-0.12, -0.15, 0);
-          avatarGroup.add(churiL);
-
-          const churiR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.55, 16), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 }));
-          churiR.position.set(0.12, -0.15, 0);
-          avatarGroup.add(churiR);
-
-          // Dupatta around neck
-          const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.04, 8, 24), dressMat);
-          scarf.rotation.x = Math.PI / 2;
-          scarf.position.set(0, 0.95, 0.05);
-          avatarGroup.add(scarf);
-
-        } else {
-          // Party Dress & Sundress
-          const dressTop = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.25, 0.45, 24), dressMat);
-          dressTop.position.y = 0.78;
-          avatarGroup.add(dressTop);
-
-          const dressSkirt = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.44, 0.65, 24), dressMat);
-          dressSkirt.position.y = 0.24;
-          avatarGroup.add(dressSkirt);
-
-          // Bare skin legs below dress
-          const bLegL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.065, 0.45, 16), skinMat);
-          bLegL.position.set(-0.12, -0.20, 0);
-          avatarGroup.add(bLegL);
-
-          const bLegR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.065, 0.45, 16), skinMat);
-          bLegR.position.set(0.12, -0.20, 0);
-          avatarGroup.add(bLegR);
-        }
-
-      } else {
-        // Separates: Tops & Bottoms
-        const topMat = new THREE.MeshStandardMaterial({ color: conf.topColor, roughness: 0.45, metalness: 0.08 });
-        const pantsMat = new THREE.MeshStandardMaterial({ color: conf.pantsColor, roughness: 0.65, metalness: 0.05 });
-        const tStyle = conf.topStyle || 'hoodie';
-
-        if (tStyle === 'crop_top') {
-          const cTop = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.25, 0.42, 24), topMat);
-          cTop.position.y = 0.82;
-          avatarGroup.add(cTop);
-
-          const bareBelly = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.24, 0.20, 20), skinMat);
-          bareBelly.position.y = 0.52;
-          avatarGroup.add(bareBelly);
-        } else if (tStyle === 'hoodie') {
-          // Oversized Hoodie with Kangaroo pocket & hood
-          const hTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.29, 0.72, 24), topMat);
-          hTorso.position.y = 0.65;
-          avatarGroup.add(hTorso);
-
-          const pocket = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.18, 0.08), topMat);
-          pocket.position.set(0, 0.52, 0.28);
-          avatarGroup.add(pocket);
-
-          const hood = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.08, 8, 20), topMat);
-          hood.rotation.x = Math.PI / 2;
-          hood.position.set(0, 0.98, -0.15);
-          avatarGroup.add(hood);
-        } else if (tStyle === 'blazer') {
-          const bTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.30, 0.28, 0.74, 24), topMat);
-          bTorso.position.y = 0.65;
-          avatarGroup.add(bTorso);
-
-          const lapelL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 0.04), new THREE.MeshStandardMaterial({ color: 0x050505 }));
-          lapelL.position.set(-0.10, 0.80, 0.27);
-          avatarGroup.add(lapelL);
-
-          const lapelR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 0.04), new THREE.MeshStandardMaterial({ color: 0x050505 }));
-          lapelR.position.set(0.10, 0.80, 0.27);
-          avatarGroup.add(lapelR);
-        } else {
-          // T-Shirt / Blouse / Sweater / Jacket
-          const tTorso = new THREE.Mesh(
-            isFemale ? new THREE.CylinderGeometry(0.26, 0.28, 0.70, 24) : new THREE.CylinderGeometry(0.33, 0.28, 0.72, 24),
-            topMat
-          );
-          tTorso.position.y = 0.65;
-          avatarGroup.add(tTorso);
-        }
-
-        // Bottoms
-        const bStyle = conf.pantsStyle || 'jeans';
-        if (bStyle === 'tennis_skirt') {
-          const skirt = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.44, 0.34, 24), pantsMat);
-          skirt.position.y = 0.22;
-          avatarGroup.add(skirt);
-
-          const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.065, 0.50, 16), skinMat);
-          legL.position.set(-0.14, -0.15, 0);
-          avatarGroup.add(legL);
-
-          const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.065, 0.50, 16), skinMat);
-          legR.position.set(0.14, -0.15, 0);
-          avatarGroup.add(legR);
-        } else if (bStyle === 'shorts') {
-          const sLegL = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.10, 0.22, 16), pantsMat);
-          sLegL.position.set(-0.14, 0.22, 0);
-          avatarGroup.add(sLegL);
-
-          const sLegR = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.10, 0.22, 16), pantsMat);
-          sLegR.position.set(0.14, 0.22, 0);
-          avatarGroup.add(sLegR);
-
-          const bareL = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.065, 0.52, 16), skinMat);
-          bareL.position.set(-0.14, -0.15, 0);
-          avatarGroup.add(bareL);
-
-          const bareR = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.065, 0.52, 16), skinMat);
-          bareR.position.set(0.14, -0.15, 0);
-          avatarGroup.add(bareR);
-        } else {
-          // Jeans, Cargos, Wide-Leg, Leggings
-          const legRadius = bStyle === 'wide_leg' ? 0.15 : (bStyle === 'leggings' ? 0.085 : 0.11);
-          const pLegL = new THREE.Mesh(new THREE.CylinderGeometry(legRadius, legRadius * 0.95, 0.68, 16), pantsMat);
-          pLegL.position.set(-0.15, -0.05, 0);
-          avatarGroup.add(pLegL);
-
-          const pLegR = new THREE.Mesh(new THREE.CylinderGeometry(legRadius, legRadius * 0.95, 0.68, 16), pantsMat);
-          pLegR.position.set(0.15, -0.05, 0);
-          avatarGroup.add(pLegR);
-
-          // 3D Cargo Pockets
-          if (bStyle === 'cargo') {
-            const pocketL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.14, 0.10), pantsMat);
-            pocketL.position.set(-0.25, 0.02, 0);
-            avatarGroup.add(pocketL);
-
-            const pocketR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.14, 0.10), pantsMat);
-            pocketR.position.set(0.25, 0.02, 0);
-            avatarGroup.add(pocketR);
-          }
-        }
-      }
-
-      // 12. Articulated Arms & Poses
-      const topMatArm = new THREE.MeshStandardMaterial({
-        color: conf.outfitCategory === 'dress_ethnic' ? conf.dressColor : conf.topColor,
-        roughness: 0.5
-      });
-      const armMat = (conf.topStyle === 'crop_top' || conf.dressStyle === 'sundress') ? skinMat : topMatArm;
-      const armRadius = isFemale ? 0.075 : 0.095;
-      const armGeom = new THREE.CylinderGeometry(armRadius, armRadius * 0.85, 0.62, 16);
-
-      armMeshLeft = new THREE.Mesh(armGeom, armMat);
-      armMeshRight = new THREE.Mesh(armGeom, armMat);
-
-      // Natural Standing Pose with Relaxed Arms
-      armMeshLeft.position.set(isFemale ? -0.36 : -0.42, 0.72, 0);
-      armMeshLeft.rotation.z = 0.14;
-      armMeshLeft.rotation.x = 0.04;
-
-      armMeshRight.position.set(isFemale ? 0.36 : 0.42, 0.72, 0);
-      armMeshRight.rotation.z = -0.14;
-      armMeshRight.rotation.x = 0.04;
-
-      // Custom Pose Articulation
-      if (conf.pose === 'wave') {
-        armMeshRight.position.set(0.40, 0.95, 0.15);
-        armMeshRight.rotation.z = -2.2;
-        armMeshRight.rotation.x = 0.35;
-      } else if (conf.pose === 'hand_on_hip') {
-        armMeshLeft.position.set(-0.34, 0.65, 0.05);
-        armMeshLeft.rotation.z = -0.75;
-        armMeshLeft.rotation.y = 0.45;
-      } else if (conf.pose === 'dance') {
-        armMeshRight.position.set(0.38, 0.85, 0.15);
-        armMeshRight.rotation.z = -1.6;
-        armMeshLeft.position.set(-0.35, 0.50, 0.20);
-        armMeshLeft.rotation.z = 0.65;
-      } else if (conf.pose === 'celebrate') {
-        armMeshRight.position.set(0.42, 0.95, 0.10);
-        armMeshRight.rotation.z = -2.3;
-        armMeshLeft.position.set(-0.42, 0.95, 0.10);
-        armMeshLeft.rotation.z = 2.3;
-      }
-
-      avatarGroup.add(armMeshLeft);
-      avatarGroup.add(armMeshRight);
-
-      // Fully Modeled Hands with Thumbs & 4 Articulated Fingers
-      const handL = createCartoonHand(true, skinMat);
-      handL.position.set(0, -0.31, 0);
-      armMeshLeft.add(handL);
-
-      const handR = createCartoonHand(false, skinMat);
-      handR.position.set(0, -0.31, 0);
-      armMeshRight.add(handR);
-
-      // Smartwatch on left wrist
-      if (conf.watch === 'smartwatch') {
-        const watchBand = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.015, 8, 16), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3 }));
-        watchBand.position.set(0, -0.22, 0);
-        watchBand.rotation.x = Math.PI / 2;
-        armMeshLeft.add(watchBand);
-
-        const screen = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.06, 0.02), new THREE.MeshStandardMaterial({ color: 0x06b6d4, metalness: 0.8 }));
-        screen.position.set(0, -0.22, 0.08);
-        armMeshLeft.add(screen);
-      }
-
-      // Crossbody Handbag
-      if (conf.bag === 'crossbody') {
-        const bagMat = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.4 });
-        const purse = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.10), bagMat);
-        purse.position.set(0.32, 0.40, 0.12);
-        avatarGroup.add(purse);
-
-        const strap = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.85, 0.01), bagMat);
-        strap.position.set(0.05, 0.72, 0.16);
-        strap.rotation.z = -0.58;
-        avatarGroup.add(strap);
-      }
-
-      // 13. Footwear
-      const shoeMat = new THREE.MeshStandardMaterial({ color: conf.shoesColor, roughness: 0.35 });
-      const fStyle = conf.shoesStyle || 'sneakers';
-
-      if (fStyle === 'sneakers') {
-        // Chunky Platform Sneakers
-        const soleMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-        const soleL = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.06, 0.34), soleMat);
-        soleL.position.set(-0.15, -0.45, 0.08);
-        avatarGroup.add(soleL);
-
-        const soleR = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.06, 0.34), soleMat);
-        soleR.position.set(0.15, -0.45, 0.08);
-        avatarGroup.add(soleR);
-
-        const upperL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.28), shoeMat);
-        upperL.position.set(-0.15, -0.39, 0.08);
-        avatarGroup.add(upperL);
-
-        const upperR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.28), shoeMat);
-        upperR.position.set(0.15, -0.39, 0.08);
-        avatarGroup.add(upperR);
-
-      } else if (fStyle === 'heels') {
-        // High-Fashion Strappy Stilettos
-        const soleL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.03, 0.28), shoeMat);
-        soleL.position.set(-0.15, -0.42, 0.06);
-        avatarGroup.add(soleL);
-
-        const soleR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.03, 0.28), shoeMat);
-        soleR.position.set(0.15, -0.42, 0.06);
-        avatarGroup.add(soleR);
-
-        // Elevated Stiletto Heels
-        const stilettoGeom = new THREE.CylinderGeometry(0.015, 0.01, 0.12, 8);
-        const heelL = new THREE.Mesh(stilettoGeom, shoeMat);
-        heelL.position.set(-0.15, -0.46, -0.04);
-        avatarGroup.add(heelL);
-
-        const heelR = new THREE.Mesh(stilettoGeom, shoeMat);
-        heelR.position.set(0.15, -0.46, -0.04);
-        avatarGroup.add(heelR);
-
-        // Ankle Straps
-        const strapL = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.012, 8, 16), shoeMat);
-        strapL.rotation.x = Math.PI / 2;
-        strapL.position.set(-0.15, -0.36, 0);
-        avatarGroup.add(strapL);
-
-        const strapR = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.012, 8, 16), shoeMat);
-        strapR.rotation.x = Math.PI / 2;
-        strapR.position.set(0.15, -0.36, 0);
-        avatarGroup.add(strapR);
-
-      } else if (fStyle === 'boots') {
-        // Chelsea Leather Ankle Boots
-        const bootGeom = new THREE.CylinderGeometry(0.11, 0.10, 0.25, 16);
-        const bootL = new THREE.Mesh(bootGeom, shoeMat);
-        bootL.position.set(-0.15, -0.35, 0.04);
-        avatarGroup.add(bootL);
-
-        const bootR = new THREE.Mesh(bootGeom, shoeMat);
-        bootR.position.set(0.15, -0.35, 0.04);
-        avatarGroup.add(bootR);
-
-      } else {
-        // Slides & Oxford Loafers
-        const shoeGeom = new THREE.BoxGeometry(0.15, 0.08, 0.30);
-        const sL = new THREE.Mesh(shoeGeom, shoeMat);
-        sL.position.set(-0.15, -0.42, 0.08);
-        avatarGroup.add(sL);
-
-        const sR = new THREE.Mesh(shoeGeom, shoeMat);
-        sR.position.set(0.15, -0.42, 0.08);
-        avatarGroup.add(sR);
-      }
-
-      scene3D.add(avatarGroup);
-    }
-
-    // --- Interactive Orbit & Animation Loop ---
-    function setupAvatarInteraction(container) {
-      container.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        prevMouseX = e.clientX;
-        prevMouseY = e.clientY;
-      });
-
-      window.addEventListener('mouseup', () => { isDragging = false; });
-
-      container.addEventListener('mousemove', (e) => {
-        if (!isDragging || !avatarGroup) return;
-        const deltaX = e.clientX - prevMouseX;
-        avatarGroup.rotation.y += deltaX * 0.015;
-        prevMouseX = e.clientX;
-      });
-
-      let initialPinchDistance = null;
-
-      container.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 1) {
-          isDragging = true;
-          prevMouseX = e.touches[0].clientX;
-        } else if (e.touches.length === 2) {
-          isDragging = false;
-          initialPinchDistance = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-        }
-      }, { passive: true });
-
-      window.addEventListener('touchend', () => {
-        isDragging = false;
-        initialPinchDistance = null;
-      });
-
-      container.addEventListener('touchmove', (e) => {
-        if (e.touches.length === 1 && isDragging && avatarGroup) {
-          if (e.cancelable) e.preventDefault();
-          const deltaX = e.touches[0].clientX - prevMouseX;
-          avatarGroup.rotation.y += deltaX * 0.015;
-          prevMouseX = e.touches[0].clientX;
-        } else if (e.touches.length === 2 && initialPinchDistance) {
-          if (e.cancelable) e.preventDefault();
-          const currentDistance = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-          const diff = currentDistance - initialPinchDistance;
-          if (Math.abs(diff) > 12) {
-            zoomAvatar(diff > 0 ? 0.35 : -0.35);
-            initialPinchDistance = currentDistance;
-          }
-        }
-      }, { passive: false });
-
-      // Mouse wheel zoom
-      container.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        zoomAvatar(e.deltaY > 0 ? -1 : 1);
-      }, { passive: false });
-    }
-
-    function animate3DAvatar() {
-      requestAnimationFrame(animate3DAvatar);
-      if (!scene3D || !camera3D || !renderer3D) return;
-
-      currentAnimFrame++;
-      const time = Date.now() * 0.002;
-
-      // Subtle breathing motion
-      if (avatarGroup && !isDragging) {
-        avatarGroup.position.y = Math.sin(time) * 0.02;
-      }
-
-      // Natural eye blinking
-      blinkTimer++;
-      if (blinkTimer > 180) {
-        isBlinking = true;
-        if (eyeMeshLeft) eyeMeshLeft.scale.y = 0.08;
-        if (eyeMeshRight) eyeMeshRight.scale.y = 0.08;
-        if (blinkTimer > 192) {
-          if (eyeMeshLeft) eyeMeshLeft.scale.y = 1;
-          if (eyeMeshRight) eyeMeshRight.scale.y = 1;
-          blinkTimer = 0;
-          isBlinking = false;
-        }
-      }
-
-      // Wave arm animation
-      if (state.avatarConfig.pose === 'wave' && armMeshRight) {
-        armMeshRight.rotation.z = -2.2 + Math.sin(time * 6) * 0.25;
-      }
-
-      renderer3D.render(scene3D, camera3D);
-    }
-
-    // --- Camera View Presets & Zoom ---
-    function setCameraAngle(angle) {
-      if (!camera3D || !avatarGroup) return;
-      state.avatarConfig.cameraView = angle;
-      avatarGroup.rotation.y = 0;
-      avatarGroup.rotation.x = 0;
-
-      if (angle === 'face') {
-        camera3D.position.set(0, 1.48, 1.35);
-        camera3D.lookAt(0, 1.45, 0);
-      } else if (angle === 'front') {
-        camera3D.position.set(0, 0.72, 4.3);
-        camera3D.lookAt(0, 0.72, 0);
-      } else if (angle === 'threeQuarter') {
-        camera3D.position.set(2.4, 0.72, 3.4);
-        camera3D.lookAt(0, 0.72, 0);
-      } else if (angle === 'side') {
-        camera3D.position.set(4.0, 0.72, 0);
-        camera3D.lookAt(0, 0.72, 0);
-      } else if (angle === 'back') {
-        camera3D.position.set(0, 0.72, -4.3);
-        camera3D.lookAt(0, 0.72, 0);
-      }
-
-      ['face', 'front', 'threeQuarter', 'side', 'back'].forEach(a => {
-        const btn = document.getElementById(`camBtn-${a}`);
-        if (btn) {
-          btn.className = (a === angle)
-            ? 'px-1.5 py-0.5 rounded-lg bg-amber-500 text-white font-black shadow-2xs'
-            : 'px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300';
-        }
-      });
-    }
-
-    function zoomAvatar(direction) {
-      if (!camera3D) return;
-      const step = 0.35;
-      const targetPos = camera3D.position.clone().sub(new THREE.Vector3(0, 0.72, 0));
-      const dist = targetPos.length();
-      const newDist = Math.max(1.2, Math.min(5.8, dist - direction * step));
-      targetPos.normalize().multiplyScalar(newDist);
-      camera3D.position.copy(targetPos.add(new THREE.Vector3(0, 0.72, 0)));
-    }
-
-    // --- Avatar Controls & Real-Time Actions ---
-    function setAvatarGender(gender) {
-      state.avatarConfig.gender = gender;
-      document.getElementById('genderBtn-female').className = gender === 'female' ? 'px-2 py-1 rounded-lg text-xs font-black bg-rose-500 text-white shadow-2xs' : 'px-2 py-1 rounded-lg text-xs font-bold text-slate-500';
-      document.getElementById('genderBtn-male').className = gender === 'male' ? 'px-2 py-1 rounded-lg text-xs font-black bg-blue-500 text-white shadow-2xs' : 'px-2 py-1 rounded-lg text-xs font-bold text-slate-500';
-      build3DAvatarRig();
-    }
-
-    function setAvatarExpression(expr) {
-      state.avatarConfig.expression = expr;
-      ['smile', 'wink', 'cool', 'excited', 'neutral'].forEach(e => {
-        const btn = document.getElementById(`exprBtn-${e}`);
-        if (btn) {
-          btn.className = e === expr 
-            ? 'shrink-0 px-2 py-1 rounded-xl bg-white dark:bg-slate-800 border border-amber-300 text-amber-700 dark:text-amber-400 font-black shadow-2xs'
-            : 'shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold';
-        }
-      });
-      build3DAvatarRig();
-    }
-
-    function triggerAvatarPose(pose) {
-      state.avatarConfig.pose = pose;
-      ['model', 'wave', 'dance', 'hand_on_hip', 'celebrate'].forEach(p => {
-        const btn = document.getElementById(`poseBtn-${p}`);
-        if (btn) {
-          btn.className = p === pose 
-            ? 'shrink-0 px-2 py-1 rounded-xl bg-white dark:bg-slate-800 border border-emerald-300 text-emerald-700 dark:text-emerald-400 font-black shadow-2xs'
-            : 'shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold';
-        }
-      });
-      build3DAvatarRig();
-
-      if (pose === 'dance') {
-        let step = 0;
-        const interval = setInterval(() => {
-          step++;
-          if (avatarGroup) {
-            avatarGroup.position.y = Math.abs(Math.sin(step * 0.5)) * 0.08;
-            avatarGroup.rotation.y += 0.15;
-          }
-          if (step > 25) { clearInterval(interval); if (avatarGroup) avatarGroup.position.y = 0; }
-        }, 30);
-      }
-    }
-
-    // --- Studio Navigation & Panel Renderer ---
-    function switchStudioCategory(cat) {
-      state.avatarConfig.activeCategory = cat;
-      // Automatically frame camera to close-up for face/hair, and full-body for clothing
-      if (cat === 'face' || cat === 'hair') {
-        setCameraAngle('face');
-      } else {
-        setCameraAngle('front');
-      }
-
-      ['face', 'hair', 'tops', 'bottoms', 'ethnic', 'shoes', 'accessories'].forEach(c => {
-        const btn = document.getElementById(`scat-${c}`);
-        if (btn) {
-          btn.className = c === cat 
-            ? 'shrink-0 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-2xs whitespace-nowrap font-black border border-amber-300 dark:border-amber-600'
-            : 'shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap font-medium';
-        }
-      });
-
-      // Contextual default color target
-      if (cat === 'hair') state.avatarConfig.colorTarget = 'hair';
-      else if (cat === 'face') state.avatarConfig.colorTarget = 'lipstick';
-      else if (cat === 'bottoms') state.avatarConfig.colorTarget = 'bottom';
-      else if (cat === 'ethnic') state.avatarConfig.colorTarget = 'dress';
-      else if (cat === 'shoes') state.avatarConfig.colorTarget = 'shoes';
-      else state.avatarConfig.colorTarget = 'top';
-
-      renderStudioPanel();
-      renderColorPaletteBar();
-    }
-
-    function setStudioFashionFilter(filter) {
-      state.avatarConfig.fashionFilter = filter;
-      ['all', 'casual', 'streetwear', 'luxury', 'traditional', 'partywear', 'sporty', 'minimalist'].forEach(f => {
-        const btn = document.getElementById(`ffilter-${f}`);
-        if (btn) {
-          btn.className = f === filter
-            ? 'shrink-0 px-2 py-0.5 rounded-lg bg-amber-500 text-white font-extrabold shadow-2xs'
-            : 'shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium';
-        }
-      });
-      renderStudioPanel();
-    }
-
-    function renderStudioPanel() {
-      const container = document.getElementById('studioOptionsContainer');
-      if (!container) return;
-      const cat = state.avatarConfig.activeCategory || 'face';
-      const filter = state.avatarConfig.fashionFilter || 'all';
-      const conf = state.avatarConfig;
-
-      if (cat === 'face') {
-        container.innerHTML = `
-          <!-- Sculpted Face Shapes & Jawlines -->
-          <div class="space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black uppercase text-slate-400">Sculpted Face Shape & Jawline:</span>
-              <span class="text-[9px] font-bold text-amber-600">Defined 3D Contours</span>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              ${FACE_SHAPES.map(s => `
-                <button onclick="equipFaceOption('faceShape', '${s.id}')" class="p-2 rounded-xl border text-left transition-all ${conf.faceShape === s.id ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/50 shadow-xs' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-amber-300'}">
-                  <div class="flex items-center justify-between">
-                    <span class="text-base">${s.icon}</span>
-                    ${conf.faceShape === s.id ? '<span class="text-[8px] bg-amber-500 text-white font-black px-1.5 py-0.5 rounded-full">✓ Active</span>' : ''}
-                  </div>
-                  <span class="block text-xs font-black mt-1 text-slate-900 dark:text-white truncate">${s.name}</span>
-                  <span class="block text-[9px] text-slate-500 leading-tight">${s.desc}</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Sculpted Nose Profile -->
-          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black uppercase text-slate-400">Sculpted Nose Profile:</span>
-              <span class="text-[9px] font-bold text-amber-600">Bridge & Tip Definition</span>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              ${NOSE_SHAPES.map(n => `
-                <button onclick="equipFaceOption('noseShape', '${n.id}')" class="p-2 rounded-xl border text-left transition-all ${conf.noseShape === n.id ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/50 shadow-xs' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-amber-300'}">
-                  <div class="flex items-center justify-between">
-                    <span class="text-base">${n.icon}</span>
-                    ${conf.noseShape === n.id ? '<span class="text-[8px] bg-amber-500 text-white font-black px-1.5 py-0.5 rounded-full">✓</span>' : ''}
-                  </div>
-                  <span class="block text-xs font-black mt-1 text-slate-900 dark:text-white truncate">${n.name}</span>
-                  <span class="block text-[9px] text-slate-500 leading-tight">${n.desc}</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Eyebrows & Arch -->
-          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black uppercase text-slate-400">Eyebrows & Arch:</span>
-              <span class="text-[9px] font-bold text-amber-600">Sharp Editorial Angles</span>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              ${EYEBROW_SHAPES.map(b => `
-                <button onclick="equipFaceOption('eyebrowShape', '${b.id}')" class="p-2 rounded-xl border text-left transition-all ${conf.eyebrowShape === b.id ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/50 shadow-xs' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-amber-300'}">
-                  <div class="flex items-center justify-between">
-                    <span class="text-base">${b.icon}</span>
-                    ${conf.eyebrowShape === b.id ? '<span class="text-[8px] bg-amber-500 text-white font-black px-1.5 py-0.5 rounded-full">✓</span>' : ''}
-                  </div>
-                  <span class="block text-xs font-black mt-1 text-slate-900 dark:text-white truncate">${b.name}</span>
-                  <span class="block text-[9px] text-slate-500 leading-tight">${b.desc}</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Eye Iris Colors -->
-          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-[10px] font-black uppercase text-slate-400">Eye Iris Color:</span>
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              ${EYE_COLORS.map(e => `
-                <button onclick="equipFaceOption('eyeColor', '${e.id}', ${e.color})" class="p-1.5 rounded-xl border transition-all ${conf.eyeColor === e.color ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold'} flex items-center space-x-1.5">
-                  <div class="w-5 h-5 rounded-full border-2 border-white shadow-xs shrink-0" style="background-color: ${e.hex}"></div>
-                  <span class="text-[10px] truncate text-slate-900 dark:text-white">${e.name.split(' ')[0]}</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Sculpted Lips & Satin Gloss -->
-          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-[10px] font-black uppercase text-slate-400">Sculpted Lips & Satin Gloss:</span>
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              ${LIP_COLORS.map(l => `
-                <button onclick="equipFaceOption('lipstick', '${l.id}', ${l.color})" class="p-1.5 rounded-xl border transition-all ${conf.lipstick === l.color ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold'} flex items-center space-x-1.5">
-                  <div class="w-5 h-5 rounded-full border-2 border-white/60 shadow-xs shrink-0" style="background-color: ${l.hex}"></div>
-                  <span class="text-[10px] truncate text-slate-900 dark:text-white">${l.name.split(' ')[0]}</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Skin Tone & Undertone -->
-          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-[10px] font-black uppercase text-slate-400">Skin Tone & Undertone:</span>
-            <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
-              ${SKIN_TONES.map(t => `
-                <button onclick="equipFaceOption('skinTone', '${t.id}', ${t.color})" class="p-1.5 rounded-2xl border-2 ${conf.skinColor === t.color ? 'border-amber-500 scale-105 shadow-md bg-amber-50/50 dark:bg-amber-950/30 ring-2 ring-amber-400/40' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'} flex flex-col items-center transition-all">
-                  <div class="w-8 h-8 rounded-full shadow-inner border border-white/40" style="background-color: ${t.hex}"></div>
-                  <span class="text-[9px] font-bold mt-1 truncate max-w-[50px]">${t.name.split(' ')[0]}</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Facial Accents & Glow -->
-          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-[10px] font-black uppercase text-slate-400">Facial Accents & Glow:</span>
-            <div class="grid grid-cols-3 gap-2">
-              <button onclick="toggleFaceDetail('blush')" class="p-2 rounded-xl border ${conf.blush ? 'border-pink-500 bg-pink-50 dark:bg-pink-950/40 ring-1 ring-pink-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'} text-center font-bold text-xs transition-all">
-                <span>🌸 Cheek Glow ${conf.blush ? '✓' : ''}</span>
-              </button>
-              <button onclick="toggleFaceDetail('freckles')" class="p-2 rounded-xl border ${conf.freckles ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/40 ring-1 ring-amber-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'} text-center font-bold text-xs transition-all">
-                <span>✨ Freckles ${conf.freckles ? '✓' : ''}</span>
-              </button>
-              <button onclick="toggleFaceDetail('beautyMark')" class="p-2 rounded-xl border ${conf.beautyMark ? 'border-slate-900 dark:border-white bg-slate-200 dark:bg-slate-700 ring-1 ring-slate-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'} text-center font-bold text-xs transition-all">
-                <span>💄 Beauty Mark ${conf.beautyMark ? '✓' : ''}</span>
-              </button>
-            </div>
-          </div>
-        `;
-      } else if (cat === 'hair') {
-        const filteredHair = filter === 'all' ? HAIRSTYLES : HAIRSTYLES.filter(h => h.style === filter || h.length === filter);
-        container.innerHTML = `
-          <!-- Hair Colors Palette -->
-          <div class="space-y-1.5">
-            <span class="text-[10px] font-black uppercase text-slate-400">Hair Color & Dye:</span>
-            <div class="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
-              ${HAIR_COLORS.map(c => `
-                <button onclick="equipHairColor(${c.color})" class="p-1 rounded-xl border-2 ${conf.hairColor === c.color ? 'border-amber-500 scale-105' : 'border-slate-200 dark:border-slate-700'} flex flex-col items-center">
-                  <div class="w-6 h-6 rounded-full border border-white/40 shadow-xs" style="background-color: ${c.hex}"></div>
-                  <span class="text-[8px] font-bold mt-0.5 truncate">${c.name.split(' ')[0]}</span>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-
-          <!-- Hairstyles Grid -->
-          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-[10px] font-black uppercase text-slate-400">Hair Styles (13 3D Cuts):</span>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              ${filteredHair.map(h => `
-                <button onclick="equipHairstyle('${h.id}')" class="p-2.5 rounded-2xl border text-left space-y-1 hover:border-amber-300 transition-all ${conf.hairStyle === h.id ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 shadow-xs' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">
-                  <div class="flex items-center justify-between">
-                    <span class="text-base">${h.icon}</span>
-                    <span class="text-[9px] uppercase font-bold text-amber-600">${h.length}</span>
-                  </div>
-                  <span class="font-extrabold text-xs block truncate text-slate-900 dark:text-white">${h.name}</span>
-                  <div class="pt-0.5 flex items-center justify-between text-[10px] font-bold text-amber-600">
-                    <span>${conf.hairStyle === h.id ? '✓ Equipped' : 'Equip'}</span>
-                  </div>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      } else if (cat === 'tops') {
-        const filteredTops = filter === 'all' ? TOPS : TOPS.filter(t => t.style === filter);
-        container.innerHTML = `
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            ${filteredTops.map(t => `
-              <div onclick="equipTop('${t.id}')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border cursor-pointer ${conf.outfitCategory === 'separates' && conf.topStyle === t.id ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-xs' : 'border-slate-200 dark:border-slate-700'} hover:border-emerald-400 transition-all space-y-1 text-xs">
-                <div class="flex items-center justify-between">
-                  <span class="font-black text-slate-900 dark:text-white">${t.name}</span>
-                  <span class="text-[9px] uppercase font-bold bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300">${t.style}</span>
-                </div>
-                <p class="text-[10px] text-slate-500">${t.desc}</p>
-                <div class="pt-1 flex items-center justify-between text-[11px] font-black text-emerald-600">
-                  <span>${conf.outfitCategory === 'separates' && conf.topStyle === t.id ? '✓ Equipped' : 'Equip'}</span>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      } else if (cat === 'bottoms') {
-        const filteredBottoms = filter === 'all' ? BOTTOMS : BOTTOMS.filter(b => b.style === filter);
-        container.innerHTML = `
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            ${filteredBottoms.map(b => `
-              <div onclick="equipBottom('${b.id}')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border cursor-pointer ${conf.outfitCategory === 'separates' && conf.pantsStyle === b.id ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-xs' : 'border-slate-200 dark:border-slate-700'} hover:border-emerald-400 transition-all space-y-1 text-xs">
-                <div class="flex items-center justify-between">
-                  <span class="font-black text-slate-900 dark:text-white">${b.name}</span>
-                  <span class="text-[9px] uppercase font-bold bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300">${b.style}</span>
-                </div>
-                <p class="text-[10px] text-slate-500">${b.desc}</p>
-                <div class="pt-1 flex items-center justify-between text-[11px] font-black text-emerald-600">
-                  <span>${conf.outfitCategory === 'separates' && conf.pantsStyle === b.id ? '✓ Equipped' : 'Equip'}</span>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      } else if (cat === 'ethnic') {
-        container.innerHTML = `
-          <div class="space-y-2">
-            <div class="p-2.5 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-xs">
-              <span class="font-black text-rose-800 dark:text-rose-300 block">🇮🇳 Traditional Indian & Designer Dresses</span>
-              <p class="text-[10px] text-rose-700 dark:text-rose-400">Complete one-piece outfits with gold embroidery, flared lehengas, and silk sarees.</p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              ${DRESSES_AND_ETHNIC.map(d => `
-                <div onclick="equipDressEthnic('${d.id}')" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border cursor-pointer ${conf.outfitCategory === 'dress_ethnic' && conf.dressStyle === d.id ? 'border-rose-500 bg-rose-50/40 dark:bg-rose-950/20 shadow-xs' : 'border-slate-200 dark:border-slate-700'} hover:border-rose-400 transition-all space-y-1.5 text-xs">
-                  <div class="flex items-center justify-between">
-                    <span class="font-black text-slate-900 dark:text-white">${d.name}</span>
-                    ${d.isEthnic ? '<span class="text-[8px] bg-rose-100 text-rose-900 dark:bg-rose-900 dark:text-rose-100 px-1.5 py-0.2 rounded font-black">Ethnic</span>' : ''}
-                  </div>
-                  <p class="text-[10px] text-slate-500 leading-relaxed">${d.desc}</p>
-                  <div class="pt-1 flex items-center justify-between text-[11px] font-black text-rose-600">
-                    <span>${conf.outfitCategory === 'dress_ethnic' && conf.dressStyle === d.id ? '✓ Wearing' : 'Wear Outfit'}</span>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      } else if (cat === 'shoes') {
-        const filteredFootwear = filter === 'all' ? FOOTWEAR : FOOTWEAR.filter(f => f.style === filter);
-        container.innerHTML = `
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            ${filteredFootwear.map(f => `
-              <div onclick="equipFootwear('${f.id}')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border cursor-pointer ${conf.shoesStyle === f.id ? 'border-amber-500 bg-amber-50/30 dark:bg-amber-950/20 shadow-xs' : 'border-slate-200 dark:border-slate-700'} hover:border-amber-400 transition-all space-y-1 text-xs">
-                <div class="flex items-center justify-between">
-                  <span class="font-black text-slate-900 dark:text-white">${f.name}</span>
-                  <span class="text-[9px] uppercase font-bold text-slate-400">${f.style}</span>
-                </div>
-                <p class="text-[10px] text-slate-500">${f.desc}</p>
-                <div class="pt-1 flex items-center justify-between text-[11px] font-black text-amber-600">
-                  <span>${conf.shoesStyle === f.id ? '✓ Equipped' : 'Equip'}</span>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      } else if (cat === 'accessories') {
-        container.innerHTML = `
-          <div class="space-y-3">
-            <!-- Eyewear -->
-            <div class="space-y-1.5">
-              <span class="text-[10px] font-black uppercase text-slate-400">Eyewear:</span>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <button onclick="equipAccessory('glasses', 'none')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.glasses === 'none' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">None</button>
-                <button onclick="equipAccessory('glasses', 'sunglasses')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.glasses === 'sunglasses' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🕶️ Aviators ${conf.glasses === 'sunglasses' ? '✓' : ''}</button>
-                <button onclick="equipAccessory('glasses', 'spectacles')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.glasses === 'spectacles' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">👓 Spectacles ${conf.glasses === 'spectacles' ? '✓' : ''}</button>
-                <button onclick="equipAccessory('glasses', 'cat_eye')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.glasses === 'cat_eye' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🐱 Cat-Eye ${conf.glasses === 'cat_eye' ? '✓' : ''}</button>
-              </div>
-            </div>
-
-            <!-- Headwear -->
-            <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <span class="text-[10px] font-black uppercase text-slate-400">Headwear & Caps:</span>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <button onclick="equipAccessory('headwear', 'none')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.headwear === 'none' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">None</button>
-                <button onclick="equipAccessory('headwear', 'snapback_cap')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.headwear === 'snapback_cap' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🧢 Snapback ${conf.headwear === 'snapback_cap' ? '✓' : ''}</button>
-                <button onclick="equipAccessory('headwear', 'bucket_hat')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.headwear === 'bucket_hat' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🪣 Bucket Hat ${conf.headwear === 'bucket_hat' ? '✓' : ''}</button>
-                <button onclick="equipAccessory('headwear', 'beanie')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.headwear === 'beanie' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🧶 Beanie ${conf.headwear === 'beanie' ? '✓' : ''}</button>
-              </div>
-            </div>
-
-            <!-- Jewelry -->
-            <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <span class="text-[10px] font-black uppercase text-slate-400">Jewelry:</span>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <button onclick="equipAccessory('earrings', conf.earrings === 'gold_hoops' ? 'none' : 'gold_hoops')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.earrings === 'gold_hoops' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">✨ Gold Hoops ${conf.earrings === 'gold_hoops' ? '✓' : ''}</button>
-                <button onclick="equipAccessory('earrings', conf.earrings === 'pearl_studs' ? 'none' : 'pearl_studs')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.earrings === 'pearl_studs' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🦪 Pearl Studs ${conf.earrings === 'pearl_studs' ? '✓' : ''}</button>
-                <button onclick="equipAccessory('necklace', conf.necklace === 'gold_chain' ? 'none' : 'gold_chain')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.necklace === 'gold_chain' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">⛓️ Gold Chain ${conf.necklace === 'gold_chain' ? '✓' : ''}</button>
-                <button onclick="equipAccessory('necklace', conf.necklace === 'pearl_choker' ? 'none' : 'pearl_choker')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.necklace === 'pearl_choker' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">📿 Pearl Choker ${conf.necklace === 'pearl_choker' ? '✓' : ''}</button>
-              </div>
-            </div>
-
-            <!-- Bags & Smartwatch -->
-            <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-              <span class="text-[10px] font-black uppercase text-slate-400">Tech & Handbag:</span>
-              <div class="grid grid-cols-2 gap-2">
-                <button onclick="equipAccessory('watch', conf.watch === 'smartwatch' ? 'none' : 'smartwatch')" class="p-2.5 rounded-xl border font-bold text-xs transition-all ${conf.watch === 'smartwatch' ? 'border-cyan-500 bg-cyan-50/50 dark:bg-cyan-950/30 ring-2 ring-cyan-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">⌚ Apple Smartwatch ${conf.watch === 'smartwatch' ? '✓' : ''}</button>
-                <button onclick="equipAccessory('bag', conf.bag === 'crossbody' ? 'none' : 'crossbody')" class="p-2.5 rounded-xl border font-bold text-xs transition-all ${conf.bag === 'crossbody' ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">👜 Crossbody Handbag ${conf.bag === 'crossbody' ? '✓' : ''}</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-    }
-
-    // --- Color Customizer Palette Bar ---
-    function setColorTarget(target) {
-      state.avatarConfig.colorTarget = target;
-      renderColorPaletteBar();
-    }
-
-    function renderColorPaletteBar() {
-      const bar = document.getElementById('studioColorPaletteBar');
-      if (!bar) return;
-      const curTarget = state.avatarConfig.colorTarget || 'top';
-      const targetLabels = {
-        hair: '💇 Hair',
-        lipstick: '💄 Lips',
-        top: '👕 Top',
-        bottom: '👖 Pants',
-        dress: '🥻 Saree / Dress',
-        shoes: '👟 Shoes'
       };
 
-      bar.innerHTML = `
-        <div class="flex items-center justify-between flex-wrap gap-1">
-          <div class="flex items-center space-x-1 overflow-x-auto scrollbar-none py-0.5 text-[10px]">
-            <span class="font-black text-slate-400 uppercase mr-1 shrink-0">🎨 Recolor:</span>
-            ${Object.keys(targetLabels).map(t => `
-              <button onclick="setColorTarget('${t}')" class="px-2 py-0.5 rounded-lg font-bold shrink-0 transition-all ${curTarget === t ? 'bg-amber-500 text-white shadow-2xs font-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">
-                ${targetLabels[t]}
+      const curMood = moodConfig[mood] || moodConfig.settled;
+      if (badge && badgeText) {
+        badge.className = `text-[10px] font-black uppercase px-2.5 py-1 rounded-full flex items-center space-x-1 shadow-2xs ${curMood.badgeClass}`;
+        badgeText.innerText = curMood.badge;
+      }
+      if (speech) speech.innerText = curMood.speech;
+      if (actionContainer) actionContainer.innerHTML = curMood.action;
+
+      // Update Dashboard Metric
+      const statBadge = document.getElementById('statPersonaMoodBadge');
+      const statTitle = document.getElementById('statPersonaTitle');
+      if (statBadge) statBadge.innerText = curMood.badge.split(' ')[1] || 'Settled';
+      if (statTitle) statTitle.innerText = `${conf.aiTitle || 'Persona Studio'} ✨`;
+
+      // Update AI Title Card
+      const aiTitleEl = document.getElementById('personaAITitle');
+      const aiSubtitleEl = document.getElementById('personaAISubtitle');
+      if (aiTitleEl) aiTitleEl.innerText = conf.aiTitle || 'The Tokyo Gastronome';
+      if (aiSubtitleEl) aiSubtitleEl.innerText = conf.aiSubtitle || 'Balances izakaya feasts with integer-precise PayPal settlements.';
+
+      // Render Options Container
+      renderPersonaOptions();
+    }
+
+    function switchPersonaTab(tabId) {
+      state.personaConfig.activeTab = tabId;
+      ['vibe', 'expression', 'hair', 'outfit', 'accessories', 'colors', 'paypal'].forEach(t => {
+        const btn = document.getElementById(`pcat-${t}`);
+        if (btn) {
+          if (t === tabId) {
+            btn.className = 'shrink-0 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-2xs whitespace-nowrap font-black';
+          } else {
+            btn.className = 'shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap hover:text-slate-800 dark:hover:text-slate-200';
+          }
+        }
+      });
+      renderPersonaOptions();
+    }
+
+    function renderPersonaOptions() {
+      const container = document.getElementById('personaOptionsContainer');
+      if (!container) return;
+
+      const tab = state.personaConfig.activeTab || 'vibe';
+      const conf = state.personaConfig;
+
+      if (tab === 'vibe') {
+        container.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${PERSONA_VIBES.map(v => `
+              <div onclick="applyPersonaVibe('${v.id}')" class="p-3 rounded-2xl border cursor-pointer transition-all flex items-start space-x-3 ${conf.vibe === v.id ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-400/40 shadow-xs' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-emerald-300'}">
+                <span class="text-2xl">${v.icon}</span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <span class="font-black text-xs text-slate-900 dark:text-slate-100">${v.name}</span>
+                    ${conf.vibe === v.id ? '<span class="text-[9px] bg-emerald-500 text-white font-black px-1.5 py-0.2 rounded-full">ACTIVE</span>' : ''}
+                  </div>
+                  <p class="text-[10px] text-slate-500 mt-0.5">${v.desc}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (tab === 'expression') {
+        container.innerHTML = `
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            ${PERSONA_EXPRESSIONS.map(e => `
+              <button onclick="equipPersonaOption('expression', '${e.id}')" class="p-3 rounded-2xl border text-left transition-all ${conf.expression === e.id ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-400/40 shadow-xs font-black' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'}">
+                <span class="text-xl block mb-1">${e.icon}</span>
+                <span class="text-xs font-bold text-slate-900 dark:text-slate-100 block leading-tight">${e.name}</span>
+                <span class="text-[9px] text-slate-400 block mt-0.5">${e.desc}</span>
               </button>
             `).join('')}
           </div>
-          <span class="text-[10px] text-slate-400 hidden sm:inline">12 Designer Tones</span>
-        </div>
-        <div class="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-1">
-          ${PALETTE_SWATCHES.map(s => `
-            <button onclick="applyStudioColor(${s.color})" class="w-6 h-6 rounded-full border-2 border-white/70 shadow-xs shrink-0 hover:scale-115 transition-transform" style="background-color: ${s.hex}" title="${s.name}"></button>
-          `).join('')}
-        </div>
-      `;
-    }
+        `;
+      } else if (tab === 'hair') {
+        container.innerHTML = `
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            ${PERSONA_HAIRSTYLES.map(h => `
+              <button onclick="equipPersonaOption('hairStyle', '${h.id}')" class="p-3 rounded-2xl border text-center transition-all ${conf.hairStyle === h.id ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-400/40 shadow-xs font-black' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'}">
+                <span class="text-xl block mb-1">${h.icon}</span>
+                <span class="text-xs font-bold text-slate-900 dark:text-slate-100">${h.name}</span>
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else if (tab === 'outfit') {
+        container.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${PERSONA_OUTFITS.map(o => `
+              <button onclick="equipPersonaOption('outfitStyle', '${o.id}')" class="p-3 rounded-2xl border text-left flex items-center space-x-3 transition-all ${conf.outfitStyle === o.id ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-400/40 shadow-xs font-black' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'}">
+                <span class="text-2xl">${o.icon}</span>
+                <div class="flex-1">
+                  <span class="text-xs font-black text-slate-900 dark:text-slate-100 block">${o.name}</span>
+                  <span class="text-[10px] text-slate-500 block">${o.desc}</span>
+                </div>
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else if (tab === 'accessories') {
+        container.innerHTML = `
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            ${PERSONA_ACCESSORIES.map(a => `
+              <button onclick="equipPersonaOption('accessory', '${a.id}')" class="p-3 rounded-2xl border text-center transition-all ${conf.accessory === a.id ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-400/40 shadow-xs font-black' : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900'}">
+                <span class="text-xl block mb-1">${a.icon}</span>
+                <span class="text-xs font-bold text-slate-900 dark:text-slate-100">${a.name}</span>
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else if (tab === 'colors') {
+        container.innerHTML = `
+          <div class="space-y-3">
+            <!-- Skin Tone Palette -->
+            <div>
+              <span class="text-[11px] font-black uppercase text-slate-400 block mb-1.5">Skin Tone:</span>
+              <div class="flex items-center space-x-2">
+                ${PERSONA_PALETTES.skins.map(s => `
+                  <button onclick="equipPersonaOption('skinColor', '${s.hex}')" class="w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${conf.skinColor === s.hex ? 'border-emerald-500 ring-2 ring-emerald-400 scale-105' : 'border-slate-300 dark:border-slate-700'}" style="background-color: ${s.hex}" title="${s.name}"></button>
+                `).join('')}
+              </div>
+            </div>
 
-    function applyStudioColor(color) {
-      const target = state.avatarConfig.colorTarget || 'top';
-      if (target === 'hair') state.avatarConfig.hairColor = color;
-      else if (target === 'bottom') state.avatarConfig.pantsColor = color;
-      else if (target === 'dress') state.avatarConfig.dressColor = color;
-      else if (target === 'shoes') state.avatarConfig.shoesColor = color;
-      else if (target === 'lipstick') state.avatarConfig.lipstick = color;
-      else state.avatarConfig.topColor = color;
+            <!-- Hair Color Palette -->
+            <div>
+              <span class="text-[11px] font-black uppercase text-slate-400 block mb-1.5">Hair Color:</span>
+              <div class="flex items-center space-x-2">
+                ${PERSONA_PALETTES.hairs.map(h => `
+                  <button onclick="equipPersonaOption('hairColor', '${h.hex}')" class="w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${conf.hairColor === h.hex ? 'border-emerald-500 ring-2 ring-emerald-400 scale-105' : 'border-slate-300 dark:border-slate-700'}" style="background-color: ${h.hex}" title="${h.name}"></button>
+                `).join('')}
+              </div>
+            </div>
 
-      build3DAvatarRig();
-      renderStudioPanel();
-      showToast('Updated color in real time!', 'info');
-    }
-
-    // --- Item Equippers with Instant Real-Time 3D Update ---
-    function equipFaceOption(prop, val, color) {
-      state.avatarConfig[prop] = val;
-      if (color !== undefined) {
-        if (prop === 'skinTone') state.avatarConfig.skinColor = color;
-        else if (prop === 'eyeColor') state.avatarConfig.eyeColor = color;
-        else if (prop === 'lipstick') state.avatarConfig.lipstick = color;
+            <!-- Outfit Primary Color -->
+            <div>
+              <span class="text-[11px] font-black uppercase text-slate-400 block mb-1.5">Outfit Color:</span>
+              <div class="flex items-center space-x-2">
+                ${PERSONA_PALETTES.outfits.map(o => `
+                  <button onclick="equipPersonaColorPair('${o.hex}', '${o.sec}')" class="w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${conf.outfitColor === o.hex ? 'border-emerald-500 ring-2 ring-emerald-400 scale-105' : 'border-slate-300 dark:border-slate-700'}" style="background-color: ${o.hex}" title="${o.name}"></button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (tab === 'paypal') {
+        container.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="p-3 rounded-2xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-xs">
+              <span class="font-black text-sky-900 dark:text-sky-200 block">💎 PayPal Sandbox Collectibles</span>
+              <p class="text-[11px] text-sky-700 dark:text-sky-300 mt-0.5">Unlock verified digital accessories using official PayPal sandbox smart payment buttons.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              ${PAYPAL_COLLECTIBLES.map(p => `
+                <div class="p-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2 flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-2xl">${p.icon}</span>
+                      <span class="text-[9px] font-black bg-sky-100 text-[#0070ba] dark:bg-sky-950 dark:text-sky-300 px-1.5 py-0.5 rounded-full">${p.badge}</span>
+                    </div>
+                    <span class="text-xs font-black text-slate-800 dark:text-slate-100 block mt-1">${p.name}</span>
+                    <span class="text-[10px] text-slate-400 block">${p.desc}</span>
+                  </div>
+                  <button onclick="openPayPalWardrobeCheckout('${p.id}', '${p.name}', ${p.priceCents})" class="w-full py-1.5 rounded-xl paypal-btn font-extrabold text-[11px] shadow-xs text-center">
+                    Unlock $${(p.priceCents / 100).toFixed(2)}
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
       }
-      build3DAvatarRig();
-      renderStudioPanel();
-      showToast(`Updated ${prop}: ${val}`, 'info');
     }
 
-    function toggleFaceDetail(detail) {
-      state.avatarConfig[detail] = !state.avatarConfig[detail];
-      build3DAvatarRig();
-      renderStudioPanel();
-      showToast(`${detail} ${state.avatarConfig[detail] ? 'enabled' : 'disabled'}`, 'info');
+    function applyPersonaVibe(vibeId) {
+      const vibe = PERSONA_VIBES.find(v => v.id === vibeId);
+      if (!vibe) return;
+      const conf = state.personaConfig;
+      conf.vibe = vibeId;
+      conf.outfitStyle = vibe.outfit;
+      conf.hairStyle = vibe.hair;
+      conf.accessory = vibe.acc;
+      conf.outfitColor = vibe.color;
+      renderFinancialPersona();
+      showToast(`Equipped ${vibe.name} persona!`, 'info');
     }
 
-    function equipHairColor(color) {
-      state.avatarConfig.hairColor = color;
-      build3DAvatarRig();
-      renderStudioPanel();
-      showToast('Updated hair color', 'info');
+    function equipPersonaOption(prop, value) {
+      state.personaConfig[prop] = value;
+      renderFinancialPersona();
     }
 
-    function equipHairstyle(styleId) {
-      state.avatarConfig.hairStyle = styleId;
-      build3DAvatarRig();
-      renderStudioPanel();
-      const hObj = HAIRSTYLES.find(h => h.id === styleId);
-      showToast(`Equipped hairstyle: ${hObj ? hObj.name : styleId}`, 'info');
+    function equipPersonaColorPair(hex, sec) {
+      state.personaConfig.outfitColor = hex;
+      state.personaConfig.outfitSecColor = sec;
+      renderFinancialPersona();
     }
 
-    function equipTop(topId) {
-      state.avatarConfig.outfitCategory = 'separates';
-      state.avatarConfig.topStyle = topId;
-      const topObj = TOPS.find(t => t.id === topId);
-      if (topObj && topObj.defaultColor) state.avatarConfig.topColor = topObj.defaultColor;
-      build3DAvatarRig();
-      renderStudioPanel();
-      showToast(`Equipped top: ${topObj ? topObj.name : topId}`, 'info');
-    }
-
-    function equipBottom(bottomId) {
-      state.avatarConfig.outfitCategory = 'separates';
-      state.avatarConfig.pantsStyle = bottomId;
-      const botObj = BOTTOMS.find(b => b.id === bottomId);
-      if (botObj && botObj.defaultColor) state.avatarConfig.pantsColor = botObj.defaultColor;
-      build3DAvatarRig();
-      renderStudioPanel();
-      showToast(`Equipped bottom: ${botObj ? botObj.name : bottomId}`, 'info');
-    }
-
-    function equipDressEthnic(dressId) {
-      state.avatarConfig.outfitCategory = 'dress_ethnic';
-      state.avatarConfig.dressStyle = dressId;
-      const dObj = DRESSES_AND_ETHNIC.find(d => d.id === dressId);
-      if (dObj && dObj.defaultColor) state.avatarConfig.dressColor = dObj.defaultColor;
-      build3DAvatarRig();
-      renderStudioPanel();
-      showToast(`Equipped ${dObj?.name || 'outfit'}!`, 'success');
-    }
-
-    function equipFootwear(shoeId) {
-      state.avatarConfig.shoesStyle = shoeId;
-      const fObj = FOOTWEAR.find(f => f.id === shoeId);
-      if (fObj && fObj.defaultColor) state.avatarConfig.shoesColor = fObj.defaultColor;
-      build3DAvatarRig();
-      renderStudioPanel();
-      showToast(`Equipped footwear: ${fObj ? fObj.name : shoeId}`, 'info');
-    }
-
-    function equipAccessory(type, val) {
-      state.avatarConfig[type] = val;
-      build3DAvatarRig();
-      renderStudioPanel();
-      showToast(`Updated accessory: ${val}`, 'info');
-    }
-
-    // --- Surprise Me (Random Outfit Generator) ---
-    function randomizeAvatarLook() {
-      const conf = state.avatarConfig;
-      conf.faceShape = FACE_SHAPES[Math.floor(Math.random() * FACE_SHAPES.length)].id;
-      conf.noseShape = NOSE_SHAPES[Math.floor(Math.random() * NOSE_SHAPES.length)].id;
-      conf.eyebrowShape = EYEBROW_SHAPES[Math.floor(Math.random() * EYEBROW_SHAPES.length)].id;
-
-      const randomTone = SKIN_TONES[Math.floor(Math.random() * SKIN_TONES.length)];
-      conf.skinTone = randomTone.id;
-      conf.skinColor = randomTone.color;
-
-      const randomEye = EYE_COLORS[Math.floor(Math.random() * EYE_COLORS.length)];
-      conf.eyeColor = randomEye.color;
-
-      const randomLip = LIP_COLORS[Math.floor(Math.random() * LIP_COLORS.length)];
-      conf.lipstick = randomLip.color;
-
-      conf.hairStyle = HAIRSTYLES[Math.floor(Math.random() * HAIRSTYLES.length)].id;
-      conf.hairColor = HAIR_COLORS[Math.floor(Math.random() * HAIR_COLORS.length)].color;
-
-      const isEthnic = Math.random() > 0.45;
-      if (isEthnic) {
-        conf.outfitCategory = 'dress_ethnic';
-        const dObj = DRESSES_AND_ETHNIC[Math.floor(Math.random() * DRESSES_AND_ETHNIC.length)];
-        conf.dressStyle = dObj.id;
-        conf.dressColor = dObj.defaultColor;
-      } else {
-        conf.outfitCategory = 'separates';
-        conf.topStyle = TOPS[Math.floor(Math.random() * TOPS.length)].id;
-        conf.topColor = PALETTE_SWATCHES[Math.floor(Math.random() * PALETTE_SWATCHES.length)].color;
-        conf.pantsStyle = BOTTOMS[Math.floor(Math.random() * BOTTOMS.length)].id;
-        conf.pantsColor = PALETTE_SWATCHES[Math.floor(Math.random() * PALETTE_SWATCHES.length)].color;
-      }
-
-      conf.shoesStyle = FOOTWEAR[Math.floor(Math.random() * FOOTWEAR.length)].id;
-      conf.shoesColor = PALETTE_SWATCHES[Math.floor(Math.random() * PALETTE_SWATCHES.length)].color;
-
-      // Random accessories
-      conf.glasses = Math.random() > 0.5 ? (Math.random() > 0.5 ? 'sunglasses' : 'spectacles') : 'none';
-      conf.headwear = Math.random() > 0.6 ? (Math.random() > 0.5 ? 'snapback_cap' : 'bucket_hat') : 'none';
-      conf.earrings = Math.random() > 0.4 ? 'gold_hoops' : 'none';
-      conf.necklace = Math.random() > 0.5 ? 'gold_chain' : 'none';
-      conf.watch = Math.random() > 0.4 ? 'smartwatch' : 'none';
-      conf.bag = Math.random() > 0.6 ? 'crossbody' : 'none';
-
-      conf.expression = ['smile', 'wink', 'cool', 'excited'][Math.floor(Math.random() * 4)];
-      conf.pose = ['model', 'wave', 'dance', 'hand_on_hip', 'celebrate'][Math.floor(Math.random() * 5)];
-
-      build3DAvatarRig();
-      renderStudioPanel();
-      renderColorPaletteBar();
-      triggerConfettiCannon();
-      showToast('🎲 Generated a fresh randomized 3D look!', 'success');
-    }
-
-    // --- Reset & Favorites ---
-    function resetAvatarToDefault() {
-      state.avatarConfig.faceShape = 'chiseled';
-      state.avatarConfig.eyebrowShape = 'sharp_arch';
-      state.avatarConfig.noseShape = 'sculpted';
-      state.avatarConfig.skinTone = 'ivory';
-      state.avatarConfig.skinColor = 0xfcd0a1;
-      state.avatarConfig.eyeColor = 0x3b82f6;
-      state.avatarConfig.lipstick = 0xd88874;
-      state.avatarConfig.blush = true;
-      state.avatarConfig.freckles = false;
-      state.avatarConfig.beautyMark = false;
-
-      state.avatarConfig.outfitCategory = 'separates';
-      state.avatarConfig.topStyle = 'hoodie';
-      state.avatarConfig.topColor = 0x10b981;
-      state.avatarConfig.pantsStyle = 'jeans';
-      state.avatarConfig.pantsColor = 0x1e3a8a;
-      state.avatarConfig.shoesStyle = 'sneakers';
-      state.avatarConfig.shoesColor = 0xffffff;
-      state.avatarConfig.hairStyle = 'straight_long';
-      state.avatarConfig.hairColor = 0x3d2314;
-      state.avatarConfig.glasses = 'none';
-      state.avatarConfig.headwear = 'none';
-      state.avatarConfig.earrings = 'gold_hoops';
-      state.avatarConfig.necklace = 'none';
-      state.avatarConfig.watch = 'none';
-      state.avatarConfig.bag = 'none';
-      state.avatarConfig.expression = 'smile';
-      state.avatarConfig.pose = 'model';
-      state.avatarConfig.colorTarget = 'top';
-
-      setCameraAngle('front');
-      build3DAvatarRig();
-      renderStudioPanel();
-      renderColorPaletteBar();
-      showToast('Reset avatar to default clean look', 'info');
-    }
-
-    function toggleFavoritesDrawer() {
-      const drawer = document.getElementById('studioFavoritesDrawer');
-      if (!drawer) return;
-      drawer.classList.toggle('hidden');
-      renderFavoritesList();
-    }
-
-    function saveCurrentLookToFavorites() {
-      if (!state.avatarFavorites) state.avatarFavorites = [];
-      const outfitName = state.avatarConfig.outfitCategory === 'dress_ethnic' 
-        ? state.avatarConfig.dressStyle.toUpperCase() 
-        : `${state.avatarConfig.topStyle} + ${state.avatarConfig.pantsStyle}`;
-      state.avatarFavorites.push({
-        id: 'fav-' + Date.now(),
-        name: `Look #${state.avatarFavorites.length + 1} (${outfitName})`,
-        config: JSON.parse(JSON.stringify(state.avatarConfig))
+    function setPersonaMoodPreview(mood) {
+      state.personaConfig.overrideMood = mood;
+      ['settled', 'creditor', 'debt', 'party'].forEach(m => {
+        const btn = document.getElementById(`moodBtn-${m}`);
+        if (btn) {
+          if (m === mood) {
+            btn.className = 'py-1 px-1.5 rounded-lg bg-emerald-500 text-white font-black text-center truncate shadow-xs';
+          } else {
+            btn.className = 'py-1 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-center truncate';
+          }
+        }
       });
-      savePersistentState();
-      renderFavoritesList();
-      showToast('Look saved to your Favorites collection! ⭐', 'success');
+      renderFinancialPersona();
+      showToast(`Previewing ${mood.toUpperCase()} financial aura!`, 'info');
     }
 
-    function renderFavoritesList() {
-      const grid = document.getElementById('favoritesListGrid');
-      if (!grid) return;
-      const favs = state.avatarFavorites || [];
-      if (favs.length === 0) {
-        grid.innerHTML = '<span class="text-[10px] text-slate-400 italic">No saved favorites yet. Click "+ Add Current Look" above!</span>';
-        return;
-      }
-      grid.innerHTML = favs.map((fav, idx) => `
-        <button onclick="loadFavoriteLook(${idx})" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-800 shadow-2xs hover:scale-105 transition-transform shrink-0 flex items-center space-x-1.5">
-          <span class="text-sm">✨</span>
-          <span class="font-bold text-[10px]">${fav.name}</span>
-        </button>
-      `).join('');
+    function runAIPersonaStylist() {
+      showToast('✨ Gemini AI analyzing group expenses...', 'info');
+      
+      setTimeout(() => {
+        const conf = state.personaConfig;
+        
+        const personas = [
+          {
+            title: 'The Tokyo Gastronome',
+            subtitle: 'Spends 65% on Izakaya food & sake. Settles instantly with PayPal.',
+            quote: 'Zero debts across Tokyo. Perfect financial peace.',
+            vibe: 'foodie',
+            hair: 'beanie',
+            outfit: 'bomber',
+            acc: 'none',
+            expr: 'smile'
+          },
+          {
+            title: 'The High-Roller Creditor',
+            subtitle: 'Fronted the bullet train tickets. Waiting on group repayments.',
+            quote: 'All expenses balanced. Smooth like the Shinkansen.',
+            vibe: 'baller',
+            hair: 'executive',
+            outfit: 'suit',
+            acc: 'gold_aviators',
+            expr: 'cool'
+          },
+          {
+            title: 'Royal Heritage Explorer',
+            subtitle: 'Curator of group memories and cultural feasts.',
+            quote: 'Shared joy, zero debt awkwardness.',
+            vibe: 'traditional',
+            hair: 'turban',
+            outfit: 'kurta',
+            acc: 'gold_chain',
+            expr: 'smirk'
+          }
+        ];
+
+        const selected = personas[Math.floor(Math.random() * personas.length)];
+        conf.aiTitle = selected.title;
+        conf.aiSubtitle = selected.subtitle;
+        conf.aiQuote = selected.quote;
+        conf.vibe = selected.vibe;
+        conf.hairStyle = selected.hair;
+        conf.outfitStyle = selected.outfit;
+        conf.accessory = selected.acc;
+        conf.expression = selected.expr;
+
+        renderFinancialPersona();
+        triggerConfettiCannon();
+        showToast(`✨ Gemini styled you as "${selected.title}"!`, 'success');
+      }, 500);
     }
 
-    function loadFavoriteLook(idx) {
-      const fav = state.avatarFavorites?.[idx];
-      if (!fav) return;
-      state.avatarConfig = JSON.parse(JSON.stringify(fav.config));
-      build3DAvatarRig();
-      renderStudioPanel();
-      renderColorPaletteBar();
-      showToast(`Equipped ${fav.name}!`, 'success');
+    function randomizePersonaLook() {
+      const conf = state.personaConfig;
+      const rVibe = PERSONA_VIBES[Math.floor(Math.random() * PERSONA_VIBES.length)];
+      const rExpr = PERSONA_EXPRESSIONS[Math.floor(Math.random() * PERSONA_EXPRESSIONS.length)];
+      const rHair = PERSONA_HAIRSTYLES[Math.floor(Math.random() * PERSONA_HAIRSTYLES.length)];
+      const rOutfit = PERSONA_OUTFITS[Math.floor(Math.random() * PERSONA_OUTFITS.length)];
+      const rAcc = PERSONA_ACCESSORIES[Math.floor(Math.random() * PERSONA_ACCESSORIES.length)];
+      const rSkin = PERSONA_PALETTES.skins[Math.floor(Math.random() * PERSONA_PALETTES.skins.length)];
+      const rHairColor = PERSONA_PALETTES.hairs[Math.floor(Math.random() * PERSONA_PALETTES.hairs.length)];
+      const rOutfitColor = PERSONA_PALETTES.outfits[Math.floor(Math.random() * PERSONA_PALETTES.outfits.length)];
+
+      conf.vibe = rVibe.id;
+      conf.expression = rExpr.id;
+      conf.hairStyle = rHair.id;
+      conf.outfitStyle = rOutfit.id;
+      conf.accessory = rAcc.id;
+      conf.skinColor = rSkin.hex;
+      conf.hairColor = rHairColor.hex;
+      conf.outfitColor = rOutfitColor.hex;
+      conf.outfitSecColor = rOutfitColor.sec;
+
+      renderFinancialPersona();
+      triggerConfettiCannon();
+      showToast('🎲 Random persona look generated!', 'info');
     }
 
-    // --- Save Profile & Update SplitSmart ---
-    function saveAvatarProfile() {
+    function resetPersonaToDefault() {
+      state.personaConfig = {
+        vibe: 'minimalist',
+        expression: 'smile',
+        hairStyle: 'modern_fade',
+        hairColor: '#0f172a',
+        skinTone: 'warm',
+        skinColor: '#fcd34d',
+        outfitStyle: 'hoodie',
+        outfitColor: '#059669',
+        outfitSecColor: '#10b981',
+        accessory: 'none',
+        activeTab: 'vibe',
+        aiTitle: 'The Tokyo Gastronome',
+        aiSubtitle: 'Balances izakaya feasts with integer-precise PayPal settlements.',
+        aiQuote: 'Zero debts across Tokyo. Perfect financial peace.',
+        mood: 'settled',
+        overrideMood: null
+      };
+      renderFinancialPersona();
+      showToast('🔄 Reset persona to clean default', 'info');
+    }
+
+    function savePersonaProfile() {
       savePersistentState();
       triggerConfettiCannon();
-      
-      // Update Navbar & Story Bitmoji Icons
-      const navAvatar = document.getElementById('navBitmojiAvatarContainer');
-      if (navAvatar) {
-        navAvatar.innerHTML = `<span class="text-base">${state.avatarConfig.gender === 'female' ? '👩' : '👨'}</span>`;
-      }
-      renderSnapshotsTray();
-      showToast('✨ 3D Bitmoji customized and saved to your SplitSmart profile!', 'success');
+      renderFinancialPersona();
+      showToast('✨ SplitSmart persona saved to profile!', 'success');
       setTimeout(() => switchTab('dashboard'), 800);
+    }
+
+    function openPayPalWardrobeCheckout(itemId, itemName, priceCents) {
+      document.getElementById('checkoutOutfitName').innerText = itemName;
+      document.getElementById('checkoutOutfitPrice').innerText = `$${(priceCents / 100).toFixed(2)}`;
+      openModal('paypalCheckoutModal');
+      
+      renderPayPalButton('paypal-wardrobe-button-container', priceCents / 100, `SplitSmart Persona Unlock: ${itemName}`, (captureData) => {
+        closeModal('paypalCheckoutModal');
+        if (itemId === 'pp_crown') state.personaConfig.accessory = 'crown';
+        else if (itemId === 'pp_visor') state.personaConfig.accessory = 'cyber_visor';
+        else if (itemId === 'pp_kurta') {
+          state.personaConfig.outfitStyle = 'kurta';
+          state.personaConfig.outfitColor = '#d97706';
+        }
+        renderFinancialPersona();
+        triggerConfettiCannon();
+        showToast(`🎉 Unlocked ${itemName} with PayPal!`, 'success');
+      });
     }
 
     // ==================== STORIES / SNAPSHOTS ====================
@@ -4479,16 +3085,7 @@
       });
 
       if (tabId === 'avatar') {
-        setTimeout(() => {
-          if (!scene3D) {
-            init3DAvatarStudio();
-          } else {
-            resize3DAvatarCanvas();
-            build3DAvatarRig();
-            renderStudioPanel();
-            renderColorPaletteBar();
-          }
-        }, 50);
+        renderFinancialPersona();
       }
       if (tabId === 'agent') runSettleAgent();
       if (tabId === 'travel') renderTravelMode();
@@ -4579,7 +3176,7 @@
       showToast('Testing Gemini connection... Connected!', 'success');
     }
 
-    function openBitmojiStudioModal() {
+    function openPersonaStudioModal() {
       switchTab('avatar');
     }
 
@@ -4945,12 +3542,12 @@
       }
 
       // Check URL hash for direct tab navigation (e.g. #avatar)
-      if (window.location.hash === '#avatar' || window.location.hash === '#bitmoji') {
+      if (window.location.hash === '#avatar' || window.location.hash === '#persona') {
         switchTab('avatar');
       }
 
-      // Load and display complete, functional 3D character model by default when the application opens!
-      init3DAvatarStudio();
+      // Initialize SplitSmart Financial Persona
+      renderFinancialPersona();
     });
   </script>
 </body>

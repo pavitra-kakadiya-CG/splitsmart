@@ -1,7 +1,7 @@
 {
   "name": "splitsmart",
   "version": "1.0.0",
-  "description": "Agentic Social Finance, 3D Bitmojis & PayPal Settlements for the PayPal AI Hackathon",
+  "description": "Agentic Social Finance, Dynamic Financial Avatars & Autonomous PayPal Settlements for the PayPal AI Hackathon",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -15,7 +15,8 @@
     "gemini",
     "agentic-commerce",
     "expense-splitting",
-    "threejs",
+    "financial-persona",
+    "avatar-studio",
     "devpost",
     "hackathon"
   ],
