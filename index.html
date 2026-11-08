@@ -45,12 +45,27 @@
     .paypal-btn { background-color: #ffc439; color: #003087; transition: all 0.15s ease-in-out; }
     .paypal-btn:hover { background-color: #f6b728; transform: translateY(-1px); }
     .paypal-btn:active { transform: translateY(0); }
-    /* Mobile-first touch & drag optimizations */
-    #avatar3dCanvas, #canvas3dContainer {
-      touch-action: none;
-      -webkit-user-select: none;
-      user-select: none;
+    
+    /* Native select option & popup contrast fix for dark and light modes */
+    html.dark, .dark {
+      color-scheme: dark;
     }
+    html:not(.dark) {
+      color-scheme: light;
+    }
+    select {
+      color-scheme: light dark;
+    }
+    select option {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+    }
+    .dark select option,
+    html.dark select option {
+      background-color: #0f172a !important;
+      color: #f8fafc !important;
+    }
+
     .safe-bottom {
       padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
     }
@@ -76,9 +91,9 @@
           </div>
           <div class="flex items-center space-x-1 mt-0.5">
             <select id="groupSelect" onchange="changeGroup(this.value)" class="text-[11px] sm:text-xs font-bold bg-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer outline-none max-w-[105px] xs:max-w-[130px] sm:max-w-[190px] truncate">
-              <option value="g1">🇯🇵 Tokyo Trip 2026</option>
-              <option value="g2">🏠 Apartment Roommates</option>
-              <option value="g3">🍕 Friday Pizza Club</option>
+              <option value="g1" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇯🇵 Tokyo Trip 2026</option>
+              <option value="g2" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🏠 Apartment Roommates</option>
+              <option value="g3" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🍕 Friday Pizza Club</option>
             </select>
           </div>
         </div>
@@ -90,16 +105,16 @@
         <div class="hidden sm:flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-2 py-1 shadow-2xs shrink-0">
           <span id="currencyFlag" class="text-xs mr-1">🇺🇸</span>
           <select id="currencySelector" onchange="changeCurrency(this.value)" class="text-xs font-extrabold bg-transparent text-slate-700 dark:text-slate-200 outline-none cursor-pointer pr-0.5">
-            <option value="USD">USD ($)</option>
-            <option value="INR">INR (₹)</option>
-            <option value="EUR">EUR (€)</option>
-            <option value="GBP">GBP (£)</option>
-            <option value="JPY">JPY (¥)</option>
-            <option value="CAD">CAD (CA$)</option>
-            <option value="AUD">AUD (A$)</option>
-            <option value="SGD">SGD (S$)</option>
-            <option value="AED">AED (AED)</option>
-            <option value="CHF">CHF (CHF)</option>
+            <option value="USD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">USD ($)</option>
+            <option value="INR" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">INR (₹)</option>
+            <option value="EUR" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">EUR (€)</option>
+            <option value="GBP" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">GBP (£)</option>
+            <option value="JPY" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">JPY (¥)</option>
+            <option value="CAD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">CAD (CA$)</option>
+            <option value="AUD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">AUD (A$)</option>
+            <option value="SGD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">SGD (S$)</option>
+            <option value="AED" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">AED (AED)</option>
+            <option value="CHF" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">CHF (CHF)</option>
           </select>
         </div>
 
@@ -155,16 +170,16 @@
             <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
               <span class="font-bold text-slate-700 dark:text-slate-300 block mb-1">Currency</span>
               <select id="mobileCurrencySelector" onchange="changeCurrency(this.value)" class="w-full p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold border-none outline-none">
-                <option value="USD">🇺🇸 USD ($)</option>
-                <option value="INR">🇮🇳 INR (₹)</option>
-                <option value="EUR">🇪🇺 EUR (€)</option>
-                <option value="GBP">🇬🇧 GBP (£)</option>
-                <option value="JPY">🇯🇵 JPY (¥)</option>
-                <option value="CAD">🇨🇦 CAD (CA$)</option>
-                <option value="AUD">🇦🇺 AUD (A$)</option>
-                <option value="SGD">🇸🇬 SGD (S$)</option>
-                <option value="AED">🇦🇪 AED (AED)</option>
-                <option value="CHF">🇨🇭 CHF (CHF)</option>
+                <option value="USD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇺🇸 USD ($)</option>
+                <option value="INR" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇮🇳 INR (₹)</option>
+                <option value="EUR" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇪🇺 EUR (€)</option>
+                <option value="GBP" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇬🇧 GBP (£)</option>
+                <option value="JPY" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇯🇵 JPY (¥)</option>
+                <option value="CAD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇨🇦 CAD (CA$)</option>
+                <option value="AUD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇦🇺 AUD (A$)</option>
+                <option value="SGD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇸🇬 SGD (S$)</option>
+                <option value="AED" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇦🇪 AED (AED)</option>
+                <option value="CHF" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🇨🇭 CHF (CHF)</option>
               </select>
             </div>
             
@@ -912,11 +927,11 @@
         <div>
           <label class="text-xs font-bold block mb-1">Select Bot Persona Tone:</label>
           <select id="reminderToneSelect" onchange="generateAIReminderText()" class="w-full p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold border-none outline-none">
-            <option value="shakespearean">🎭 Shakespearean Bard ("Hark, noble companion...")</option>
-            <option value="sarcastic">😏 Sarcastic Roommate ("I love funding your lifestyle...")</option>
-            <option value="mobster">🕶️ Godfather Mafia Boss ("Be a shame if something happened...")</option>
-            <option value="pirate">🏴‍☠️ Pirate Captain ("Surrender yer doubloons...")</option>
-            <option value="gentle">🧘 Gentle Therapist ("Let us gently reconcile our energy...")</option>
+            <option value="shakespearean" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🎭 Shakespearean Bard ("Hark, noble companion...")</option>
+            <option value="sarcastic" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">😏 Sarcastic Roommate ("I love funding your lifestyle...")</option>
+            <option value="mobster" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🕶️ Godfather Mafia Boss ("Be a shame if something happened...")</option>
+            <option value="pirate" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🏴‍☠️ Pirate Captain ("Surrender yer doubloons...")</option>
+            <option value="gentle" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">🧘 Gentle Therapist ("Let us gently reconcile our energy...")</option>
           </select>
         </div>
 
@@ -3099,7 +3114,7 @@
       if (payerSel && group) {
         payerSel.innerHTML = group.members.map(mId => {
           const u = state.users.find(x => x.id === mId);
-          return `<option value="${u.id}">${u.name}</option>`;
+          return `<option value="${u.id}" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">${u.name}</option>`;
         }).join('');
       }
       renderSplitInputs();
@@ -3245,7 +3260,7 @@
       // Populate snapshot expense selector
       const snapExpSel = document.getElementById('snapshotAttachExpense');
       if (snapExpSel) {
-        snapExpSel.innerHTML = grpExpenses.map(e => `<option value="${e.id}">${e.description} (${formatMoney(e.amount)})</option>`).join('');
+        snapExpSel.innerHTML = grpExpenses.map(e => `<option value="${e.id}" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">${e.description} (${formatMoney(e.amount)})</option>`).join('');
       }
     }
 

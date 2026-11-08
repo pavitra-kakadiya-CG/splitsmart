@@ -168,12 +168,12 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
-    const currentState = loadState();
+    const currentState = await loadState();
     return res.status(200).json(currentState);
   }
 
   if (req.method === 'POST') {
-    const updated = saveState(req.body || {});
+    const updated = await saveState(req.body || {});
     return res.status(200).json({ success: true, state: updated });
   }
 

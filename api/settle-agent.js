@@ -17,10 +17,19 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { query = '', currentUserId = 'u1', groups = [], expenses = [], settlements = [] } = req.body || {};
+    let { query = '', currentUserId = 'u1', groups = [], expenses = [], settlements = [] } = req.body || {};
 
     if (!groups.length) {
-      return res.status(400).json({ error: 'No groups provided to analyze.' });
+      // Graceful fallback to default demo state if not provided in payload
+      groups = [
+        { id: 'g1', name: 'Tokyo Trip 2026', flag: '🇯🇵', members: ['u1', 'u2', 'u3', 'u4'], budget: 3000 },
+        { id: 'g2', name: 'Apartment Roommates', flag: '🏠', members: ['u1', 'u2', 'u3'], budget: 2000 },
+        { id: 'g3', name: 'Friday Pizza Club', flag: '🍕', members: ['u1', 'u2', 'u4'], budget: 500 }
+      ];
+      expenses = [
+        { id: 'e1', groupId: 'g1', payerId: 'u1', amount: 84.00, splits: [{ userId: 'u1', amount: 21 }, { userId: 'u2', amount: 21 }, { userId: 'u3', amount: 21 }, { userId: 'u4', amount: 21 }] },
+        { id: 'e2', groupId: 'g1', payerId: 'u2', amount: 48.00, splits: [{ userId: 'u1', amount: 12 }, { userId: 'u2', amount: 12 }, { userId: 'u3', amount: 12 }, { userId: 'u4', amount: 12 }] }
+      ];
     }
 
     // 1. Identify Target Group from User Query
