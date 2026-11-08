@@ -712,11 +712,11 @@
 
               <!-- Camera View Presets -->
               <div class="flex items-center space-x-1 bg-white/80 dark:bg-slate-800/80 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700 text-[10px] font-bold">
-                <button onclick="setCameraAngle('face')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700" title="Face Close-up">👁️ Face</button>
-                <button onclick="setCameraAngle('front')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-black text-amber-600" title="Full Front View">🧍 Front</button>
-                <button onclick="setCameraAngle('threeQuarter')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700" title="3/4 Fashion View">📐 3/4</button>
-                <button onclick="setCameraAngle('side')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700" title="Side Profile">👤 Side</button>
-                <button onclick="setCameraAngle('back')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700" title="Back View">🔙 Back</button>
+                <button onclick="setCameraAngle('face')" id="camBtn-face" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" title="Face Close-up">👁️ Face</button>
+                <button onclick="setCameraAngle('front')" id="camBtn-front" class="px-1.5 py-0.5 rounded-lg bg-amber-500 text-white font-black shadow-2xs" title="Full Front View">🧍 Front</button>
+                <button onclick="setCameraAngle('threeQuarter')" id="camBtn-threeQuarter" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" title="3/4 Fashion View">📐 3/4</button>
+                <button onclick="setCameraAngle('side')" id="camBtn-side" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" title="Side Profile">👤 Side</button>
+                <button onclick="setCameraAngle('back')" id="camBtn-back" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300" title="Back View">🔙 Back</button>
               </div>
 
               <!-- Zoom Controls -->
@@ -1338,19 +1338,20 @@
       // 3D Avatar Customization State (Snapchat Bitmoji 3D Engine)
       avatarConfig: {
         gender: 'female',
-        faceShape: 'oval',
+        faceShape: 'chiseled',
         skinTone: 'ivory',
         skinColor: 0xfcd0a1,
         eyeColor: 0x3b82f6,
-        eyebrowShape: 'arched',
-        noseShape: 'button',
+        eyebrowShape: 'sharp_arch',
+        noseShape: 'sculpted',
         lipShape: 'smile',
-        lipstick: 0xe11d48,
+        lipstick: 0xd88874,
         blush: true,
         blushColor: 0xf43f5e,
         freckles: false,
         beautyMark: false,
         expression: 'smile',
+        colorTarget: 'top',
         
         hairStyle: 'straight_long',
         hairColor: 0x3d2314,
@@ -2343,11 +2344,25 @@
     ];
 
     const FACE_SHAPES = [
-      { id: 'oval', name: 'Classic Oval', icon: '🥚' },
-      { id: 'round', name: 'Cute Round', icon: '🌕' },
-      { id: 'heart', name: 'Sweetheart', icon: '💖' },
-      { id: 'square', name: 'Defined Square', icon: '🔲' },
-      { id: 'chiseled', name: 'Chiseled Jaw', icon: '💎' }
+      { id: 'chiseled', name: 'Chiseled Jaw', desc: 'Sharp jaw angles & sculpted chin', icon: '💎' },
+      { id: 'oval', name: 'Classic Oval', desc: 'Balanced sleek aesthetic', icon: '🥚' },
+      { id: 'heart', name: 'Sweetheart', desc: 'High cheekbones & tapered chin', icon: '💖' },
+      { id: 'square', name: 'Defined Square', desc: 'Strong architectural jawline', icon: '🔲' },
+      { id: 'soft', name: 'Soft Contoured', desc: 'Smooth natural angles', icon: '✨' }
+    ];
+
+    const NOSE_SHAPES = [
+      { id: 'sculpted', name: 'Sculpted Bridge', desc: 'Straight bridge & refined tip', icon: '👃' },
+      { id: 'narrow', name: 'Sleek Narrow', desc: 'Slim refined aesthetic bridge', icon: '✨' },
+      { id: 'straight', name: 'Architectural Straight', desc: 'Clean straight profile', icon: '📐' },
+      { id: 'button', name: 'Delicate Petite', desc: 'Subtle slope with lifted tip', icon: '💎' }
+    ];
+
+    const EYEBROW_SHAPES = [
+      { id: 'sharp_arch', name: 'Sharp High Arch', desc: 'Defined clean arch', icon: '📐' },
+      { id: 'sleek_straight', name: 'Sleek Straight', desc: 'Modern minimalist taper', icon: '➖' },
+      { id: 'feathered', name: 'Soft Feathered', desc: 'Natural elegant contour', icon: '🪶' },
+      { id: 'bold', name: 'Bold Structured', desc: 'Strong statement brow', icon: '⚡' }
     ];
 
     const EYE_COLORS = [
@@ -2360,12 +2375,12 @@
     ];
 
     const LIP_COLORS = [
-      { id: 'natural', name: 'Natural', color: null, hex: 'transparent' },
-      { id: 'ruby', name: 'Ruby Glam', color: 0xe11d48, hex: '#e11d48' },
-      { id: 'rose', name: 'Soft Rose', color: 0xf43f5e, hex: '#f43f5e' },
-      { id: 'berry', name: 'Berry Magenta', color: 0xdb2777, hex: '#db2777' },
-      { id: 'caramel', name: 'Warm Caramel', color: 0xb45309, hex: '#b45309' },
-      { id: 'plum', name: 'Gothic Plum', color: 0x4a044e, hex: '#4a044e' }
+      { id: 'natural', name: 'Natural Nude', color: 0xd88874, hex: '#d88874' },
+      { id: 'soft_rose', name: 'Soft Rosewood', color: 0xd94b68, hex: '#d94b68' },
+      { id: 'ruby', name: 'Ruby Glam', color: 0xc01a38, hex: '#c01a38' },
+      { id: 'berry', name: 'Deep Berry', color: 0x9f1239, hex: '#9f1239' },
+      { id: 'caramel', name: 'Warm Terracotta', color: 0xa85526, hex: '#a85526' },
+      { id: 'plum', name: 'Satin Plum', color: 0x581c4a, hex: '#581c4a' }
     ];
 
     const HAIRSTYLES = [
@@ -2637,49 +2652,92 @@
       const isFemale = conf.gender === 'female';
 
       // 1. Materials
-      const skinMat = new THREE.MeshStandardMaterial({ color: conf.skinColor, roughness: 0.65, metalness: 0.05 });
-      const hairMat = new THREE.MeshStandardMaterial({ color: conf.hairColor, roughness: 0.65, metalness: 0.05 });
+      const skinMat = new THREE.MeshStandardMaterial({ color: conf.skinColor, roughness: 0.46, metalness: 0.04 });
+      const hairMat = new THREE.MeshStandardMaterial({ color: conf.hairColor, roughness: 0.55, metalness: 0.08 });
       const goldMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.85, roughness: 0.25 });
       const silverMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.2 });
 
-      // 2. Head & Face Shape
-      const headGeom = new THREE.SphereGeometry(0.38, 32, 32);
+      // 2. Sculpted Cranium & Face Structure
+      const headGeom = new THREE.SphereGeometry(0.31, 32, 28);
       const head = new THREE.Mesh(headGeom, skinMat);
       head.position.y = 1.48;
 
-      if (conf.faceShape === 'round') head.scale.set(1.06, 0.96, 1.02);
-      else if (conf.faceShape === 'oval') head.scale.set(0.96, 1.05, 0.98);
-      else if (conf.faceShape === 'heart') head.scale.set(1.03, 1.0, 0.94);
-      else if (conf.faceShape === 'square') head.scale.set(1.04, 0.96, 1.04);
-      else if (conf.faceShape === 'chiseled') head.scale.set(0.95, 1.04, 1.0);
+      if (conf.faceShape === 'chiseled') head.scale.set(0.90, 1.04, 0.96);
+      else if (conf.faceShape === 'oval') head.scale.set(0.93, 1.02, 0.95);
+      else if (conf.faceShape === 'heart') head.scale.set(0.97, 1.00, 0.92);
+      else if (conf.faceShape === 'square') head.scale.set(1.02, 0.98, 0.98);
+      else head.scale.set(0.96, 0.98, 0.96); // soft
       avatarGroup.add(head);
 
-      // Cute Chin
-      const chin = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), skinMat);
-      chin.position.set(0, 1.18, 0.28);
-      chin.scale.set(1, 0.8, 0.9);
+      // Sculpted Defined Cheekbones (sharp highlight planes)
+      const cheekL = new THREE.Mesh(new THREE.SphereGeometry(0.085, 16, 16), skinMat);
+      cheekL.position.set(-0.155, 1.42, 0.16);
+      cheekL.scale.set(1.0, 0.70, 0.85);
+      if (conf.faceShape === 'chiseled' || conf.faceShape === 'heart') {
+        cheekL.position.x = -0.168;
+        cheekL.scale.set(1.15, 0.75, 0.90);
+      }
+      avatarGroup.add(cheekL);
+
+      const cheekR = new THREE.Mesh(new THREE.SphereGeometry(0.085, 16, 16), skinMat);
+      cheekR.position.set(0.155, 1.42, 0.16);
+      cheekR.scale.set(1.0, 0.70, 0.85);
+      if (conf.faceShape === 'chiseled' || conf.faceShape === 'heart') {
+        cheekR.position.x = 0.168;
+        cheekR.scale.set(1.15, 0.75, 0.90);
+      }
+      avatarGroup.add(cheekR);
+
+      // Sculpted Tapered Jawline Contours & Chiseled Chin
+      const jawL = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.032, 0.24, 12), skinMat);
+      jawL.position.set(-0.14, 1.25, 0.12);
+      jawL.rotation.z = -0.42;
+      jawL.rotation.y = 0.22;
+      avatarGroup.add(jawL);
+
+      const jawR = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.032, 0.24, 12), skinMat);
+      jawR.position.set(0.14, 1.25, 0.12);
+      jawR.rotation.z = 0.42;
+      jawR.rotation.y = -0.22;
+      avatarGroup.add(jawR);
+
+      const chinGeom = new THREE.BoxGeometry(0.09, 0.075, 0.11);
+      const chin = new THREE.Mesh(chinGeom, skinMat);
+      chin.position.set(0, 1.15, 0.23);
+      if (conf.faceShape === 'chiseled') {
+        chin.scale.set(0.85, 1.15, 1.10);
+      } else if (conf.faceShape === 'square') {
+        chin.scale.set(1.35, 0.90, 1.00);
+      } else if (conf.faceShape === 'heart') {
+        chin.scale.set(0.70, 1.10, 0.90);
+        chin.position.y = 1.14;
+      } else if (conf.faceShape === 'oval') {
+        chin.scale.set(1.0, 1.0, 1.0);
+      } else { // soft
+        chin.scale.set(1.10, 0.85, 0.95);
+      }
       avatarGroup.add(chin);
 
-      // Cheeks Blush
+      // Subtle Cheeks Blush Glow
       if (conf.blush) {
-        const blushMat = new THREE.MeshBasicMaterial({ color: conf.blushColor || 0xf43f5e, transparent: true, opacity: 0.45 });
-        const blushL = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), blushMat);
-        blushL.position.set(-0.21, 1.39, 0.28);
-        blushL.scale.set(1, 0.6, 0.5);
+        const blushMat = new THREE.MeshBasicMaterial({ color: conf.blushColor || 0xf43f5e, transparent: true, opacity: 0.26 });
+        const blushL = new THREE.Mesh(new THREE.SphereGeometry(0.052, 16, 16), blushMat);
+        blushL.position.set(-0.165, 1.38, 0.21);
+        blushL.scale.set(1.2, 0.55, 0.50);
         avatarGroup.add(blushL);
 
-        const blushR = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), blushMat);
-        blushR.position.set(0.21, 1.39, 0.28);
-        blushR.scale.set(1, 0.6, 0.5);
+        const blushR = new THREE.Mesh(new THREE.SphereGeometry(0.052, 16, 16), blushMat);
+        blushR.position.set(0.165, 1.38, 0.21);
+        blushR.scale.set(1.2, 0.55, 0.50);
         avatarGroup.add(blushR);
       }
 
       // Freckles
       if (conf.freckles) {
-        const freckleMat = new THREE.MeshBasicMaterial({ color: 0x78350f });
-        [[-0.08, 1.42, 0.35], [-0.14, 1.40, 0.33], [-0.04, 1.45, 0.36],
-         [0.08, 1.42, 0.35], [0.14, 1.40, 0.33], [0.04, 1.45, 0.36]].forEach(pt => {
-          const dot = new THREE.Mesh(new THREE.SphereGeometry(0.008, 8, 8), freckleMat);
+        const freckleMat = new THREE.MeshBasicMaterial({ color: 0x6b3b19 });
+        [[-0.07, 1.41, 0.33], [-0.12, 1.39, 0.30], [-0.03, 1.43, 0.34],
+         [0.07, 1.41, 0.33], [0.12, 1.39, 0.30], [0.03, 1.43, 0.34]].forEach(pt => {
+          const dot = new THREE.Mesh(new THREE.SphereGeometry(0.007, 8, 8), freckleMat);
           dot.position.set(pt[0], pt[1], pt[2]);
           avatarGroup.add(dot);
         });
@@ -2687,119 +2745,180 @@
 
       // Beauty Mark
       if (conf.beautyMark) {
-        const bDot = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), new THREE.MeshBasicMaterial({ color: 0x111111 }));
-        bDot.position.set(0.13, 1.25, 0.36);
+        const bDot = new THREE.Mesh(new THREE.SphereGeometry(0.010, 8, 8), new THREE.MeshBasicMaterial({ color: 0x111111 }));
+        bDot.position.set(0.12, 1.25, 0.34);
         avatarGroup.add(bDot);
       }
 
-      // 3. Expressive Stylized Cartoon Eyes (with specular light reflection sparkle)
-      const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const pupilMat = new THREE.MeshBasicMaterial({ color: 0x050505 });
+      // 3. Sleek Almond Eyes (Sharp Eyeliner, Winged Lashes & Limbal Ring)
+      const scleraMat = new THREE.MeshStandardMaterial({ color: 0xfcfcfd, roughness: 0.2, metalness: 0.0 });
+      const linerMat = new THREE.MeshBasicMaterial({ color: 0x09090b });
+      const limbalMat = new THREE.MeshBasicMaterial({ color: 0x050508 });
+      const pupilMat = new THREE.MeshBasicMaterial({ color: 0x020202 });
       const glintMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const irisMat = new THREE.MeshStandardMaterial({ color: conf.eyeColor, roughness: 0.3 });
+      const irisMat = new THREE.MeshStandardMaterial({ color: conf.eyeColor, roughness: 0.28, metalness: 0.10 });
 
-      // Left Eye
+      function buildAlmondEye(isLeft) {
+        const eyeGroup = new THREE.Group();
+        eyeGroup.position.set(isLeft ? -0.125 : 0.125, 1.50, 0.30);
+
+        // Almond contoured sclera
+        const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.042, 24, 20), scleraMat);
+        sclera.scale.set(1.24, 0.74, 0.85);
+        sclera.rotation.z = isLeft ? 0.08 : -0.08;
+        eyeGroup.add(sclera);
+
+        // Iris Disc
+        const iris = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.006, 24), irisMat);
+        iris.rotation.x = Math.PI / 2;
+        iris.position.set(0, 0, 0.034);
+        eyeGroup.add(iris);
+
+        // Limbal Ring
+        const limbal = new THREE.Mesh(new THREE.TorusGeometry(0.0285, 0.0022, 8, 24), limbalMat);
+        limbal.position.set(0, 0, 0.035);
+        eyeGroup.add(limbal);
+
+        // Pupil
+        const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.014, 16, 16), pupilMat);
+        pupil.position.set(0, 0, 0.037);
+        eyeGroup.add(pupil);
+
+        // Single Sharp Catchlight Specular Sparkle
+        const glint = new THREE.Mesh(new THREE.SphereGeometry(0.006, 8, 8), glintMat);
+        glint.position.set(isLeft ? 0.009 : -0.009, 0.009, 0.043);
+        eyeGroup.add(glint);
+
+        // Winged Upper Eyeliner Arc
+        const eyeliner = new THREE.Mesh(new THREE.TorusGeometry(0.048, 0.0055, 8, 24, Math.PI * 0.76), linerMat);
+        eyeliner.rotation.z = isLeft ? 0.12 : -0.12;
+        eyeliner.position.set(0, 0.018, 0.033);
+        eyeGroup.add(eyeliner);
+
+        // Outer Wing Flick
+        const wing = new THREE.Mesh(new THREE.ConeGeometry(0.004, 0.018, 6), linerMat);
+        wing.position.set(isLeft ? -0.048 : 0.048, 0.026, 0.030);
+        wing.rotation.z = isLeft ? 0.95 : -0.95;
+        eyeGroup.add(wing);
+
+        // Subtle Upper Crease
+        const crease = new THREE.Mesh(new THREE.TorusGeometry(0.044, 0.0022, 6, 20, Math.PI * 0.60), linerMat);
+        crease.position.set(0, 0.034, 0.028);
+        crease.rotation.z = isLeft ? 0.10 : -0.10;
+        eyeGroup.add(crease);
+
+        return eyeGroup;
+      }
+
       if (conf.expression === 'wink') {
-        const winkArc = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.012, 8, 16, Math.PI), new THREE.MeshBasicMaterial({ color: 0x1e293b }));
-        winkArc.position.set(-0.13, 1.49, 0.34);
-        winkArc.rotation.z = Math.PI;
+        const winkArc = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.007, 8, 20, Math.PI * 0.9), linerMat);
+        winkArc.position.set(-0.125, 1.50, 0.32);
+        winkArc.rotation.z = Math.PI + 0.15;
         avatarGroup.add(winkArc);
         eyeMeshLeft = null;
       } else {
-        eyeMeshLeft = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), eyeWhiteMat);
-        eyeMeshLeft.position.set(-0.13, 1.50, 0.32);
-        
-        const irisL = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.044, 0.012, 16), irisMat);
-        irisL.rotation.x = Math.PI / 2;
-        irisL.position.set(0, 0, 0.06);
-        eyeMeshLeft.add(irisL);
-
-        const pupilL = new THREE.Mesh(new THREE.SphereGeometry(0.024, 16, 16), pupilMat);
-        pupilL.position.set(0, 0, 0.065);
-        eyeMeshLeft.add(pupilL);
-
-        const glintL = new THREE.Mesh(new THREE.SphereGeometry(0.013, 8, 8), glintMat);
-        glintL.position.set(0.016, 0.016, 0.072);
-        eyeMeshLeft.add(glintL);
-
-        const glintL2 = new THREE.Mesh(new THREE.SphereGeometry(0.007, 8, 8), glintMat);
-        glintL2.position.set(-0.014, -0.012, 0.072);
-        eyeMeshLeft.add(glintL2);
-
+        eyeMeshLeft = buildAlmondEye(true);
         avatarGroup.add(eyeMeshLeft);
       }
 
-      // Right Eye
-      eyeMeshRight = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), eyeWhiteMat);
-      eyeMeshRight.position.set(0.13, 1.50, 0.32);
-      
-      const irisR = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.044, 0.012, 16), irisMat);
-      irisR.rotation.x = Math.PI / 2;
-      irisR.position.set(0, 0, 0.06);
-      eyeMeshRight.add(irisR);
-
-      const pupilR = new THREE.Mesh(new THREE.SphereGeometry(0.024, 16, 16), pupilMat);
-      pupilR.position.set(0, 0, 0.065);
-      eyeMeshRight.add(pupilR);
-
-      const glintR = new THREE.Mesh(new THREE.SphereGeometry(0.013, 8, 8), glintMat);
-      glintR.position.set(0.016, 0.016, 0.072);
-      eyeMeshRight.add(glintR);
-
-      const glintR2 = new THREE.Mesh(new THREE.SphereGeometry(0.007, 8, 8), glintMat);
-      glintR2.position.set(-0.014, -0.012, 0.072);
-      eyeMeshRight.add(glintR2);
-
+      eyeMeshRight = buildAlmondEye(false);
       avatarGroup.add(eyeMeshRight);
 
-      // 4. Eyebrows
-      const browMat = new THREE.MeshStandardMaterial({ color: conf.hairColor, roughness: 0.8 });
-      const browGeom = new THREE.BoxGeometry(0.12, 0.022, 0.02);
-      const browL = new THREE.Mesh(browGeom, browMat);
-      const browR = new THREE.Mesh(browGeom, browMat);
-      
-      let browY = 1.60;
-      let browRotL = 0.08, browRotR = -0.08;
-      if (conf.expression === 'happy' || conf.expression === 'excited') {
-        browY = 1.63; browRotL = 0.20; browRotR = -0.20;
+      // 4. Sharp Arched Eyebrows
+      const browMat = new THREE.MeshStandardMaterial({ color: conf.hairColor, roughness: 0.72, metalness: 0.02 });
+      const browThick = conf.eyebrowShape === 'bold' ? 0.015 : 0.009;
+      const isArch = conf.eyebrowShape === 'sharp_arch';
+
+      const browHeadL = new THREE.Mesh(new THREE.CylinderGeometry(browThick, browThick * 1.1, 0.065, 8), browMat);
+      browHeadL.rotation.z = isArch ? 0.35 : 0.15;
+      browHeadL.position.set(-0.085, 1.595, 0.325);
+      avatarGroup.add(browHeadL);
+
+      const browTailL = new THREE.Mesh(new THREE.CylinderGeometry(browThick * 1.1, browThick * 0.35, 0.068, 8), browMat);
+      browTailL.rotation.z = isArch ? -0.55 : -0.25;
+      browTailL.position.set(-0.145, 1.605, 0.315);
+      if (isArch) browTailL.position.y += 0.008;
+      avatarGroup.add(browTailL);
+
+      const browHeadR = new THREE.Mesh(new THREE.CylinderGeometry(browThick, browThick * 1.1, 0.065, 8), browMat);
+      browHeadR.rotation.z = isArch ? -0.35 : -0.15;
+      browHeadR.position.set(0.085, 1.595, 0.325);
+      avatarGroup.add(browHeadR);
+
+      const browTailR = new THREE.Mesh(new THREE.CylinderGeometry(browThick * 1.1, browThick * 0.35, 0.068, 8), browMat);
+      browTailR.rotation.z = isArch ? 0.55 : 0.25;
+      browTailR.position.set(0.145, 1.605, 0.315);
+      if (isArch) browTailR.position.y += 0.008;
+      avatarGroup.add(browTailR);
+
+      if (conf.expression === 'excited' || conf.expression === 'happy') {
+        browHeadL.position.y += 0.02; browTailL.position.y += 0.02;
+        browHeadR.position.y += 0.02; browTailR.position.y += 0.02;
       } else if (conf.expression === 'cool') {
-        browRotL = -0.25; browRotR = 0.15;
+        browHeadL.position.y -= 0.015; browTailL.position.y -= 0.015;
+        browHeadR.position.y += 0.018; browTailR.position.y += 0.018;
       }
-      
-      browL.position.set(-0.13, browY, 0.34);
-      browL.rotation.z = browRotL;
-      avatarGroup.add(browL);
 
-      browR.position.set(0.13, browY, 0.34);
-      browR.rotation.z = browRotR;
-      avatarGroup.add(browR);
+      // 5. Sculpted Sharp Nose Profile (Bridge + Refined Tip + Nostril Wings)
+      const bridgeLen = 0.16;
+      const bridgeTopW = conf.noseShape === 'narrow' ? 0.012 : 0.016;
+      const bridgeBotW = conf.noseShape === 'narrow' ? 0.018 : 0.024;
+      const bridgeMesh = new THREE.Mesh(new THREE.CylinderGeometry(bridgeTopW, bridgeBotW, bridgeLen, 12), skinMat);
+      bridgeMesh.position.set(0, 1.45, 0.33);
+      bridgeMesh.rotation.x = -0.18;
+      avatarGroup.add(bridgeMesh);
 
-      // 5. 3D Nose
-      let noseMesh;
-      if (conf.noseShape === 'straight') {
-        noseMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.038, 0.10, 16), skinMat);
-      } else if (conf.noseShape === 'cute') {
-        noseMesh = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.08, 16), skinMat);
-        noseMesh.rotation.x = 0.2;
-      } else if (conf.noseShape === 'wide') {
-        noseMesh = new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 16), skinMat);
-        noseMesh.scale.x = 1.3;
-      } else {
-        noseMesh = new THREE.Mesh(new THREE.SphereGeometry(0.038, 16, 16), skinMat);
+      const tipRadius = conf.noseShape === 'narrow' ? 0.016 : (conf.noseShape === 'button' ? 0.022 : (conf.noseShape === 'straight' ? 0.019 : 0.020));
+      const tipMesh = new THREE.Mesh(new THREE.SphereGeometry(tipRadius, 16, 16), skinMat);
+      tipMesh.position.set(0, 1.37, 0.37);
+      if (conf.noseShape === 'button') tipMesh.position.y += 0.01;
+      avatarGroup.add(tipMesh);
+
+      const nostrilL = new THREE.Mesh(new THREE.SphereGeometry(tipRadius * 0.65, 12, 12), skinMat);
+      nostrilL.position.set(-0.024, 1.365, 0.35);
+      avatarGroup.add(nostrilL);
+
+      const nostrilR = new THREE.Mesh(new THREE.SphereGeometry(tipRadius * 0.65, 12, 12), skinMat);
+      nostrilR.position.set(0.024, 1.365, 0.35);
+      avatarGroup.add(nostrilR);
+
+      // 6. Sculpted Cupid's Bow Lips & Satin Gloss Finish
+      const lipColor = (conf.lipstick !== undefined && conf.lipstick !== null) ? conf.lipstick : (isFemale ? 0xd88874 : 0xcc7b65);
+      const lipMat = new THREE.MeshStandardMaterial({ color: lipColor, roughness: 0.32, metalness: 0.06 });
+
+      const lipLobeL = new THREE.Mesh(new THREE.SphereGeometry(0.026, 16, 12), lipMat);
+      lipLobeL.scale.set(1.2, 0.65, 0.85);
+      lipLobeL.position.set(-0.022, 1.282, 0.355);
+      avatarGroup.add(lipLobeL);
+
+      const lipLobeR = new THREE.Mesh(new THREE.SphereGeometry(0.026, 16, 12), lipMat);
+      lipLobeR.scale.set(1.2, 0.65, 0.85);
+      lipLobeR.position.set(0.022, 1.282, 0.355);
+      avatarGroup.add(lipLobeR);
+
+      const upperCenter = new THREE.Mesh(new THREE.SphereGeometry(0.020, 12, 12), lipMat);
+      upperCenter.scale.set(1.1, 0.55, 0.80);
+      upperCenter.position.set(0, 1.278, 0.357);
+      avatarGroup.add(upperCenter);
+
+      const lowerLip = new THREE.Mesh(new THREE.SphereGeometry(0.036, 16, 14), lipMat);
+      lowerLip.scale.set(1.5, 0.72, 0.88);
+      lowerLip.position.set(0, 1.256, 0.352);
+      avatarGroup.add(lowerLip);
+
+      const cornerL = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), lipMat);
+      cornerL.position.set(-0.052, 1.272, 0.344);
+      avatarGroup.add(cornerL);
+
+      const cornerR = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), lipMat);
+      cornerR.position.set(0.052, 1.272, 0.344);
+      avatarGroup.add(cornerR);
+
+      if (conf.expression === 'smile' || conf.expression === 'excited' || conf.expression === 'happy') {
+        cornerL.position.y += 0.012; cornerL.position.x -= 0.008;
+        cornerR.position.y += 0.012; cornerR.position.x += 0.008;
+        lowerLip.scale.x = 1.65;
       }
-      noseMesh.position.set(0, 1.40, 0.38);
-      avatarGroup.add(noseMesh);
-
-      // 6. 3D Lips & Makeup
-      const lipColor = conf.lipstick || (isFemale ? 0xe11d48 : 0xdd8877);
-      const lipMat = new THREE.MeshStandardMaterial({ color: lipColor, roughness: 0.35, metalness: 0.1 });
-      const lips = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.085, 0.024, 16), lipMat);
-      lips.rotation.x = Math.PI / 2;
-      lips.position.set(0, 1.28, 0.36);
-      if (conf.expression === 'smile' || conf.expression === 'happy' || conf.expression === 'excited') {
-        lips.scale.set(1.15, 1, 1.3);
-      }
-      avatarGroup.add(lips);
 
       // 7. Ears & Jewelry
       const earGeom = new THREE.SphereGeometry(0.08, 16, 16);
@@ -3451,7 +3570,7 @@
       avatarGroup.rotation.x = 0;
 
       if (angle === 'face') {
-        camera3D.position.set(0, 1.48, 1.4);
+        camera3D.position.set(0, 1.48, 1.35);
         camera3D.lookAt(0, 1.45, 0);
       } else if (angle === 'front') {
         camera3D.position.set(0, 0.72, 4.3);
@@ -3466,6 +3585,15 @@
         camera3D.position.set(0, 0.72, -4.3);
         camera3D.lookAt(0, 0.72, 0);
       }
+
+      ['face', 'front', 'threeQuarter', 'side', 'back'].forEach(a => {
+        const btn = document.getElementById(`camBtn-${a}`);
+        if (btn) {
+          btn.className = (a === angle)
+            ? 'px-1.5 py-0.5 rounded-lg bg-amber-500 text-white font-black shadow-2xs'
+            : 'px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-slate-600 dark:text-slate-300';
+        }
+      });
     }
 
     function zoomAvatar(direction) {
@@ -3527,14 +3655,30 @@
     // --- Studio Navigation & Panel Renderer ---
     function switchStudioCategory(cat) {
       state.avatarConfig.activeCategory = cat;
+      // Automatically frame camera to close-up for face/hair, and full-body for clothing
+      if (cat === 'face' || cat === 'hair') {
+        setCameraAngle('face');
+      } else {
+        setCameraAngle('front');
+      }
+
       ['face', 'hair', 'tops', 'bottoms', 'ethnic', 'shoes', 'accessories'].forEach(c => {
         const btn = document.getElementById(`scat-${c}`);
         if (btn) {
           btn.className = c === cat 
-            ? 'shrink-0 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-2xs whitespace-nowrap font-black'
+            ? 'shrink-0 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-2xs whitespace-nowrap font-black border border-amber-300 dark:border-amber-600'
             : 'shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap font-medium';
         }
       });
+
+      // Contextual default color target
+      if (cat === 'hair') state.avatarConfig.colorTarget = 'hair';
+      else if (cat === 'face') state.avatarConfig.colorTarget = 'lipstick';
+      else if (cat === 'bottoms') state.avatarConfig.colorTarget = 'bottom';
+      else if (cat === 'ethnic') state.avatarConfig.colorTarget = 'dress';
+      else if (cat === 'shoes') state.avatarConfig.colorTarget = 'shoes';
+      else state.avatarConfig.colorTarget = 'top';
+
       renderStudioPanel();
       renderColorPaletteBar();
     }
@@ -3561,27 +3705,61 @@
 
       if (cat === 'face') {
         container.innerHTML = `
-          <!-- Skin Tones -->
+          <!-- Sculpted Face Shapes & Jawlines -->
           <div class="space-y-1.5">
-            <span class="text-[10px] font-black uppercase text-slate-400">Skin Tone & Undertone:</span>
-            <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
-              ${SKIN_TONES.map(t => `
-                <button onclick="equipFaceOption('skinTone', '${t.id}', ${t.color})" class="p-1 rounded-2xl border-2 ${conf.skinColor === t.color ? 'border-amber-500 scale-105 shadow-md' : 'border-slate-200 dark:border-slate-700'} flex flex-col items-center transition-all">
-                  <div class="w-8 h-8 rounded-full shadow-inner" style="background-color: ${t.hex}"></div>
-                  <span class="text-[9px] font-bold mt-1 truncate max-w-[50px]">${t.name.split(' ')[0]}</span>
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase text-slate-400">Sculpted Face Shape & Jawline:</span>
+              <span class="text-[9px] font-bold text-amber-600">Defined 3D Contours</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              ${FACE_SHAPES.map(s => `
+                <button onclick="equipFaceOption('faceShape', '${s.id}')" class="p-2 rounded-xl border text-left transition-all ${conf.faceShape === s.id ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/50 shadow-xs' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-amber-300'}">
+                  <div class="flex items-center justify-between">
+                    <span class="text-base">${s.icon}</span>
+                    ${conf.faceShape === s.id ? '<span class="text-[8px] bg-amber-500 text-white font-black px-1.5 py-0.5 rounded-full">✓ Active</span>' : ''}
+                  </div>
+                  <span class="block text-xs font-black mt-1 text-slate-900 dark:text-white truncate">${s.name}</span>
+                  <span class="block text-[9px] text-slate-500 leading-tight">${s.desc}</span>
                 </button>
               `).join('')}
             </div>
           </div>
 
-          <!-- Face Shapes -->
+          <!-- Sculpted Nose Profile -->
           <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-[10px] font-black uppercase text-slate-400">Face Shape & Chin:</span>
-            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
-              ${FACE_SHAPES.map(s => `
-                <button onclick="equipFaceOption('faceShape', '${s.id}')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.faceShape === s.id ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30' : 'border-slate-200 dark:border-slate-700'} text-center font-bold text-xs">
-                  <span class="text-base">${s.icon}</span>
-                  <span class="block text-[10px] mt-0.5">${s.name}</span>
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase text-slate-400">Sculpted Nose Profile:</span>
+              <span class="text-[9px] font-bold text-amber-600">Bridge & Tip Definition</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              ${NOSE_SHAPES.map(n => `
+                <button onclick="equipFaceOption('noseShape', '${n.id}')" class="p-2 rounded-xl border text-left transition-all ${conf.noseShape === n.id ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/50 shadow-xs' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-amber-300'}">
+                  <div class="flex items-center justify-between">
+                    <span class="text-base">${n.icon}</span>
+                    ${conf.noseShape === n.id ? '<span class="text-[8px] bg-amber-500 text-white font-black px-1.5 py-0.5 rounded-full">✓</span>' : ''}
+                  </div>
+                  <span class="block text-xs font-black mt-1 text-slate-900 dark:text-white truncate">${n.name}</span>
+                  <span class="block text-[9px] text-slate-500 leading-tight">${n.desc}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Eyebrows & Arch -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase text-slate-400">Eyebrows & Arch:</span>
+              <span class="text-[9px] font-bold text-amber-600">Sharp Editorial Angles</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              ${EYEBROW_SHAPES.map(b => `
+                <button onclick="equipFaceOption('eyebrowShape', '${b.id}')" class="p-2 rounded-xl border text-left transition-all ${conf.eyebrowShape === b.id ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/50 shadow-xs' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-amber-300'}">
+                  <div class="flex items-center justify-between">
+                    <span class="text-base">${b.icon}</span>
+                    ${conf.eyebrowShape === b.id ? '<span class="text-[8px] bg-amber-500 text-white font-black px-1.5 py-0.5 rounded-full">✓</span>' : ''}
+                  </div>
+                  <span class="block text-xs font-black mt-1 text-slate-900 dark:text-white truncate">${b.name}</span>
+                  <span class="block text-[9px] text-slate-500 leading-tight">${b.desc}</span>
                 </button>
               `).join('')}
             </div>
@@ -3589,42 +3767,55 @@
 
           <!-- Eye Iris Colors -->
           <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-[10px] font-black uppercase text-slate-400">Eye Color (Cartoon Iris):</span>
+            <span class="text-[10px] font-black uppercase text-slate-400">Eye Iris Color:</span>
             <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
               ${EYE_COLORS.map(e => `
-                <button onclick="equipFaceOption('eyeColor', '${e.id}', ${e.color})" class="p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.eyeColor === e.color ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} flex items-center space-x-1.5">
-                  <div class="w-5 h-5 rounded-full border border-white" style="background-color: ${e.hex}"></div>
-                  <span class="text-[10px] font-bold truncate">${e.name.split(' ')[0]}</span>
+                <button onclick="equipFaceOption('eyeColor', '${e.id}', ${e.color})" class="p-1.5 rounded-xl border transition-all ${conf.eyeColor === e.color ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold'} flex items-center space-x-1.5">
+                  <div class="w-5 h-5 rounded-full border-2 border-white shadow-xs shrink-0" style="background-color: ${e.hex}"></div>
+                  <span class="text-[10px] truncate text-slate-900 dark:text-white">${e.name.split(' ')[0]}</span>
                 </button>
               `).join('')}
             </div>
           </div>
 
-          <!-- Lips & Lipstick -->
+          <!-- Sculpted Lips & Satin Gloss -->
           <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-[10px] font-black uppercase text-slate-400">Lip Color & Gloss:</span>
+            <span class="text-[10px] font-black uppercase text-slate-400">Sculpted Lips & Satin Gloss:</span>
             <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
               ${LIP_COLORS.map(l => `
-                <button onclick="equipFaceOption('lipstick', '${l.id}', ${l.color})" class="p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.lipstick === l.color ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} flex items-center space-x-1.5">
-                  <div class="w-5 h-5 rounded-full border border-white/50" style="background-color: ${l.hex === 'transparent' ? '#ffdfd0' : l.hex}"></div>
-                  <span class="text-[10px] font-bold truncate">${l.name}</span>
+                <button onclick="equipFaceOption('lipstick', '${l.id}', ${l.color})" class="p-1.5 rounded-xl border transition-all ${conf.lipstick === l.color ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold'} flex items-center space-x-1.5">
+                  <div class="w-5 h-5 rounded-full border-2 border-white/60 shadow-xs shrink-0" style="background-color: ${l.hex}"></div>
+                  <span class="text-[10px] truncate text-slate-900 dark:text-white">${l.name.split(' ')[0]}</span>
                 </button>
               `).join('')}
             </div>
           </div>
 
-          <!-- Facial Features & Details -->
+          <!-- Skin Tone & Undertone -->
           <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-            <span class="text-[10px] font-black uppercase text-slate-400">Facial Details:</span>
+            <span class="text-[10px] font-black uppercase text-slate-400">Skin Tone & Undertone:</span>
+            <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+              ${SKIN_TONES.map(t => `
+                <button onclick="equipFaceOption('skinTone', '${t.id}', ${t.color})" class="p-1.5 rounded-2xl border-2 ${conf.skinColor === t.color ? 'border-amber-500 scale-105 shadow-md bg-amber-50/50 dark:bg-amber-950/30 ring-2 ring-amber-400/40' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'} flex flex-col items-center transition-all">
+                  <div class="w-8 h-8 rounded-full shadow-inner border border-white/40" style="background-color: ${t.hex}"></div>
+                  <span class="text-[9px] font-bold mt-1 truncate max-w-[50px]">${t.name.split(' ')[0]}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Facial Accents & Glow -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase text-slate-400">Facial Accents & Glow:</span>
             <div class="grid grid-cols-3 gap-2">
-              <button onclick="toggleFaceDetail('blush')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.blush ? 'border-pink-500 bg-pink-50 dark:bg-pink-950/30' : 'border-slate-200 dark:border-slate-700'} text-center font-bold text-xs">
-                <span>🌸 Cheek Blush</span>
+              <button onclick="toggleFaceDetail('blush')" class="p-2 rounded-xl border ${conf.blush ? 'border-pink-500 bg-pink-50 dark:bg-pink-950/40 ring-1 ring-pink-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'} text-center font-bold text-xs transition-all">
+                <span>🌸 Cheek Glow ${conf.blush ? '✓' : ''}</span>
               </button>
-              <button onclick="toggleFaceDetail('freckles')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.freckles ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30' : 'border-slate-200 dark:border-slate-700'} text-center font-bold text-xs">
-                <span>✨ Freckles</span>
+              <button onclick="toggleFaceDetail('freckles')" class="p-2 rounded-xl border ${conf.freckles ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/40 ring-1 ring-amber-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'} text-center font-bold text-xs transition-all">
+                <span>✨ Freckles ${conf.freckles ? '✓' : ''}</span>
               </button>
-              <button onclick="toggleFaceDetail('beautyMark')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.beautyMark ? 'border-slate-900 dark:border-white bg-slate-200 dark:bg-slate-700' : 'border-slate-200 dark:border-slate-700'} text-center font-bold text-xs">
-                <span>💄 Beauty Mark</span>
+              <button onclick="toggleFaceDetail('beautyMark')" class="p-2 rounded-xl border ${conf.beautyMark ? 'border-slate-900 dark:border-white bg-slate-200 dark:bg-slate-700 ring-1 ring-slate-400' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'} text-center font-bold text-xs transition-all">
+                <span>💄 Beauty Mark ${conf.beautyMark ? '✓' : ''}</span>
               </button>
             </div>
           </div>
@@ -3650,12 +3841,15 @@
             <span class="text-[10px] font-black uppercase text-slate-400">Hair Styles (13 3D Cuts):</span>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
               ${filteredHair.map(h => `
-                <button onclick="equipHairstyle('${h.id}')" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border ${conf.hairStyle === h.id ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30 shadow-xs' : 'border-slate-200 dark:border-slate-700'} text-left space-y-1 hover:border-amber-300 transition-all">
+                <button onclick="equipHairstyle('${h.id}')" class="p-2.5 rounded-2xl border text-left space-y-1 hover:border-amber-300 transition-all ${conf.hairStyle === h.id ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 shadow-xs' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">
                   <div class="flex items-center justify-between">
                     <span class="text-base">${h.icon}</span>
                     <span class="text-[9px] uppercase font-bold text-amber-600">${h.length}</span>
                   </div>
-                  <span class="font-extrabold text-xs block truncate">${h.name}</span>
+                  <span class="font-extrabold text-xs block truncate text-slate-900 dark:text-white">${h.name}</span>
+                  <div class="pt-0.5 flex items-center justify-between text-[10px] font-bold text-amber-600">
+                    <span>${conf.hairStyle === h.id ? '✓ Equipped' : 'Equip'}</span>
+                  </div>
                 </button>
               `).join('')}
             </div>
@@ -3746,10 +3940,10 @@
             <div class="space-y-1.5">
               <span class="text-[10px] font-black uppercase text-slate-400">Eyewear:</span>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <button onclick="equipAccessory('glasses', 'none')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.glasses === 'none' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">None</button>
-                <button onclick="equipAccessory('glasses', 'sunglasses')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.glasses === 'sunglasses' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🕶️ Aviators</button>
-                <button onclick="equipAccessory('glasses', 'spectacles')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.glasses === 'spectacles' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">👓 Spectacles</button>
-                <button onclick="equipAccessory('glasses', 'cat_eye')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.glasses === 'cat_eye' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🐱 Cat-Eye</button>
+                <button onclick="equipAccessory('glasses', 'none')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.glasses === 'none' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">None</button>
+                <button onclick="equipAccessory('glasses', 'sunglasses')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.glasses === 'sunglasses' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🕶️ Aviators ${conf.glasses === 'sunglasses' ? '✓' : ''}</button>
+                <button onclick="equipAccessory('glasses', 'spectacles')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.glasses === 'spectacles' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">👓 Spectacles ${conf.glasses === 'spectacles' ? '✓' : ''}</button>
+                <button onclick="equipAccessory('glasses', 'cat_eye')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.glasses === 'cat_eye' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🐱 Cat-Eye ${conf.glasses === 'cat_eye' ? '✓' : ''}</button>
               </div>
             </div>
 
@@ -3757,10 +3951,10 @@
             <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
               <span class="text-[10px] font-black uppercase text-slate-400">Headwear & Caps:</span>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <button onclick="equipAccessory('headwear', 'none')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.headwear === 'none' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">None</button>
-                <button onclick="equipAccessory('headwear', 'snapback_cap')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.headwear === 'snapback_cap' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🧢 Snapback</button>
-                <button onclick="equipAccessory('headwear', 'bucket_hat')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.headwear === 'bucket_hat' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🪣 Bucket Hat</button>
-                <button onclick="equipAccessory('headwear', 'beanie')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.headwear === 'beanie' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🧶 Beanie</button>
+                <button onclick="equipAccessory('headwear', 'none')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.headwear === 'none' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">None</button>
+                <button onclick="equipAccessory('headwear', 'snapback_cap')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.headwear === 'snapback_cap' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🧢 Snapback ${conf.headwear === 'snapback_cap' ? '✓' : ''}</button>
+                <button onclick="equipAccessory('headwear', 'bucket_hat')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.headwear === 'bucket_hat' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🪣 Bucket Hat ${conf.headwear === 'bucket_hat' ? '✓' : ''}</button>
+                <button onclick="equipAccessory('headwear', 'beanie')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.headwear === 'beanie' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🧶 Beanie ${conf.headwear === 'beanie' ? '✓' : ''}</button>
               </div>
             </div>
 
@@ -3768,10 +3962,10 @@
             <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
               <span class="text-[10px] font-black uppercase text-slate-400">Jewelry:</span>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <button onclick="equipAccessory('earrings', conf.earrings === 'gold_hoops' ? 'none' : 'gold_hoops')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.earrings === 'gold_hoops' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">✨ Gold Hoops</button>
-                <button onclick="equipAccessory('earrings', conf.earrings === 'pearl_studs' ? 'none' : 'pearl_studs')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.earrings === 'pearl_studs' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🦪 Pearl Studs</button>
-                <button onclick="equipAccessory('necklace', conf.necklace === 'gold_chain' ? 'none' : 'gold_chain')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.necklace === 'gold_chain' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">⛓️ Gold Chain</button>
-                <button onclick="equipAccessory('necklace', conf.necklace === 'pearl_choker' ? 'none' : 'pearl_choker')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.necklace === 'pearl_choker' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">📿 Pearl Choker</button>
+                <button onclick="equipAccessory('earrings', conf.earrings === 'gold_hoops' ? 'none' : 'gold_hoops')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.earrings === 'gold_hoops' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">✨ Gold Hoops ${conf.earrings === 'gold_hoops' ? '✓' : ''}</button>
+                <button onclick="equipAccessory('earrings', conf.earrings === 'pearl_studs' ? 'none' : 'pearl_studs')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.earrings === 'pearl_studs' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">🦪 Pearl Studs ${conf.earrings === 'pearl_studs' ? '✓' : ''}</button>
+                <button onclick="equipAccessory('necklace', conf.necklace === 'gold_chain' ? 'none' : 'gold_chain')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.necklace === 'gold_chain' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">⛓️ Gold Chain ${conf.necklace === 'gold_chain' ? '✓' : ''}</button>
+                <button onclick="equipAccessory('necklace', conf.necklace === 'pearl_choker' ? 'none' : 'pearl_choker')" class="p-2 rounded-xl border font-bold text-xs transition-all ${conf.necklace === 'pearl_choker' ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">📿 Pearl Choker ${conf.necklace === 'pearl_choker' ? '✓' : ''}</button>
               </div>
             </div>
 
@@ -3779,8 +3973,8 @@
             <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
               <span class="text-[10px] font-black uppercase text-slate-400">Tech & Handbag:</span>
               <div class="grid grid-cols-2 gap-2">
-                <button onclick="equipAccessory('watch', conf.watch === 'smartwatch' ? 'none' : 'smartwatch')" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.watch === 'smartwatch' ? 'border-cyan-500 bg-cyan-50/40 dark:bg-cyan-950/20' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">⌚ Apple Smartwatch</button>
-                <button onclick="equipAccessory('bag', conf.bag === 'crossbody' ? 'none' : 'crossbody')" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.bag === 'crossbody' ? 'border-amber-500 bg-amber-50/40 dark:bg-amber-950/20' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">👜 Crossbody Handbag</button>
+                <button onclick="equipAccessory('watch', conf.watch === 'smartwatch' ? 'none' : 'smartwatch')" class="p-2.5 rounded-xl border font-bold text-xs transition-all ${conf.watch === 'smartwatch' ? 'border-cyan-500 bg-cyan-50/50 dark:bg-cyan-950/30 ring-2 ring-cyan-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">⌚ Apple Smartwatch ${conf.watch === 'smartwatch' ? '✓' : ''}</button>
+                <button onclick="equipAccessory('bag', conf.bag === 'crossbody' ? 'none' : 'crossbody')" class="p-2.5 rounded-xl border font-bold text-xs transition-all ${conf.bag === 'crossbody' ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30 ring-2 ring-amber-400/50 font-black' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}">👜 Crossbody Handbag ${conf.bag === 'crossbody' ? '✓' : ''}</button>
               </div>
             </div>
           </div>
@@ -3789,59 +3983,91 @@
     }
 
     // --- Color Customizer Palette Bar ---
+    function setColorTarget(target) {
+      state.avatarConfig.colorTarget = target;
+      renderColorPaletteBar();
+    }
+
     function renderColorPaletteBar() {
       const bar = document.getElementById('studioColorPaletteBar');
       if (!bar) return;
-      const cat = state.avatarConfig.activeCategory || 'tops';
-      const targetLabel = (cat === 'hair' ? 'Hair' : (cat === 'bottoms' ? 'Bottoms' : (cat === 'ethnic' ? 'Saree / Dress' : (cat === 'shoes' ? 'Shoes' : 'Top'))));
+      const curTarget = state.avatarConfig.colorTarget || 'top';
+      const targetLabels = {
+        hair: '💇 Hair',
+        lipstick: '💄 Lips',
+        top: '👕 Top',
+        bottom: '👖 Pants',
+        dress: '🥻 Saree / Dress',
+        shoes: '👟 Shoes'
+      };
 
       bar.innerHTML = `
-        <div class="flex items-center justify-between">
-          <span class="font-black text-slate-700 dark:text-slate-300">🎨 Instant Color Customizer: <span class="text-amber-600">${targetLabel}</span></span>
-          <span class="text-[10px] text-slate-400">12 Designer Tones</span>
+        <div class="flex items-center justify-between flex-wrap gap-1">
+          <div class="flex items-center space-x-1 overflow-x-auto scrollbar-none py-0.5 text-[10px]">
+            <span class="font-black text-slate-400 uppercase mr-1 shrink-0">🎨 Recolor:</span>
+            ${Object.keys(targetLabels).map(t => `
+              <button onclick="setColorTarget('${t}')" class="px-2 py-0.5 rounded-lg font-bold shrink-0 transition-all ${curTarget === t ? 'bg-amber-500 text-white shadow-2xs font-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">
+                ${targetLabels[t]}
+              </button>
+            `).join('')}
+          </div>
+          <span class="text-[10px] text-slate-400 hidden sm:inline">12 Designer Tones</span>
         </div>
         <div class="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-1">
           ${PALETTE_SWATCHES.map(s => `
-            <button onclick="applyStudioColor(${s.color})" class="w-6 h-6 rounded-full border-2 border-white/60 shadow-xs shrink-0 hover:scale-110 transition-transform" style="background-color: ${s.hex}" title="${s.name}"></button>
+            <button onclick="applyStudioColor(${s.color})" class="w-6 h-6 rounded-full border-2 border-white/70 shadow-xs shrink-0 hover:scale-115 transition-transform" style="background-color: ${s.hex}" title="${s.name}"></button>
           `).join('')}
         </div>
       `;
     }
 
     function applyStudioColor(color) {
-      const cat = state.avatarConfig.activeCategory || 'tops';
-      if (cat === 'hair') state.avatarConfig.hairColor = color;
-      else if (cat === 'bottoms') state.avatarConfig.pantsColor = color;
-      else if (cat === 'ethnic') state.avatarConfig.dressColor = color;
-      else if (cat === 'shoes') state.avatarConfig.shoesColor = color;
+      const target = state.avatarConfig.colorTarget || 'top';
+      if (target === 'hair') state.avatarConfig.hairColor = color;
+      else if (target === 'bottom') state.avatarConfig.pantsColor = color;
+      else if (target === 'dress') state.avatarConfig.dressColor = color;
+      else if (target === 'shoes') state.avatarConfig.shoesColor = color;
+      else if (target === 'lipstick') state.avatarConfig.lipstick = color;
       else state.avatarConfig.topColor = color;
-      build3DAvatarRig();
-    }
 
-    // --- Item Equippers ---
-    function equipFaceOption(prop, val, color) {
-      state.avatarConfig[prop] = val;
-      if (color !== undefined) state.avatarConfig[prop === 'skinTone' ? 'skinColor' : (prop === 'eyeColor' ? 'eyeColor' : 'lipstick')] = color;
       build3DAvatarRig();
       renderStudioPanel();
+      showToast('Updated color in real time!', 'info');
+    }
+
+    // --- Item Equippers with Instant Real-Time 3D Update ---
+    function equipFaceOption(prop, val, color) {
+      state.avatarConfig[prop] = val;
+      if (color !== undefined) {
+        if (prop === 'skinTone') state.avatarConfig.skinColor = color;
+        else if (prop === 'eyeColor') state.avatarConfig.eyeColor = color;
+        else if (prop === 'lipstick') state.avatarConfig.lipstick = color;
+      }
+      build3DAvatarRig();
+      renderStudioPanel();
+      showToast(`Updated ${prop}: ${val}`, 'info');
     }
 
     function toggleFaceDetail(detail) {
       state.avatarConfig[detail] = !state.avatarConfig[detail];
       build3DAvatarRig();
       renderStudioPanel();
+      showToast(`${detail} ${state.avatarConfig[detail] ? 'enabled' : 'disabled'}`, 'info');
     }
 
     function equipHairColor(color) {
       state.avatarConfig.hairColor = color;
       build3DAvatarRig();
       renderStudioPanel();
+      showToast('Updated hair color', 'info');
     }
 
     function equipHairstyle(styleId) {
       state.avatarConfig.hairStyle = styleId;
       build3DAvatarRig();
       renderStudioPanel();
+      const hObj = HAIRSTYLES.find(h => h.id === styleId);
+      showToast(`Equipped hairstyle: ${hObj ? hObj.name : styleId}`, 'info');
     }
 
     function equipTop(topId) {
@@ -3851,6 +4077,7 @@
       if (topObj && topObj.defaultColor) state.avatarConfig.topColor = topObj.defaultColor;
       build3DAvatarRig();
       renderStudioPanel();
+      showToast(`Equipped top: ${topObj ? topObj.name : topId}`, 'info');
     }
 
     function equipBottom(bottomId) {
@@ -3860,6 +4087,7 @@
       if (botObj && botObj.defaultColor) state.avatarConfig.pantsColor = botObj.defaultColor;
       build3DAvatarRig();
       renderStudioPanel();
+      showToast(`Equipped bottom: ${botObj ? botObj.name : bottomId}`, 'info');
     }
 
     function equipDressEthnic(dressId) {
@@ -3878,24 +4106,32 @@
       if (fObj && fObj.defaultColor) state.avatarConfig.shoesColor = fObj.defaultColor;
       build3DAvatarRig();
       renderStudioPanel();
+      showToast(`Equipped footwear: ${fObj ? fObj.name : shoeId}`, 'info');
     }
 
     function equipAccessory(type, val) {
       state.avatarConfig[type] = val;
       build3DAvatarRig();
       renderStudioPanel();
+      showToast(`Updated accessory: ${val}`, 'info');
     }
 
     // --- Surprise Me (Random Outfit Generator) ---
     function randomizeAvatarLook() {
       const conf = state.avatarConfig;
       conf.faceShape = FACE_SHAPES[Math.floor(Math.random() * FACE_SHAPES.length)].id;
+      conf.noseShape = NOSE_SHAPES[Math.floor(Math.random() * NOSE_SHAPES.length)].id;
+      conf.eyebrowShape = EYEBROW_SHAPES[Math.floor(Math.random() * EYEBROW_SHAPES.length)].id;
+
       const randomTone = SKIN_TONES[Math.floor(Math.random() * SKIN_TONES.length)];
       conf.skinTone = randomTone.id;
       conf.skinColor = randomTone.color;
 
       const randomEye = EYE_COLORS[Math.floor(Math.random() * EYE_COLORS.length)];
       conf.eyeColor = randomEye.color;
+
+      const randomLip = LIP_COLORS[Math.floor(Math.random() * LIP_COLORS.length)];
+      conf.lipstick = randomLip.color;
 
       conf.hairStyle = HAIRSTYLES[Math.floor(Math.random() * HAIRSTYLES.length)].id;
       conf.hairColor = HAIR_COLORS[Math.floor(Math.random() * HAIR_COLORS.length)].color;
@@ -3937,6 +4173,17 @@
 
     // --- Reset & Favorites ---
     function resetAvatarToDefault() {
+      state.avatarConfig.faceShape = 'chiseled';
+      state.avatarConfig.eyebrowShape = 'sharp_arch';
+      state.avatarConfig.noseShape = 'sculpted';
+      state.avatarConfig.skinTone = 'ivory';
+      state.avatarConfig.skinColor = 0xfcd0a1;
+      state.avatarConfig.eyeColor = 0x3b82f6;
+      state.avatarConfig.lipstick = 0xd88874;
+      state.avatarConfig.blush = true;
+      state.avatarConfig.freckles = false;
+      state.avatarConfig.beautyMark = false;
+
       state.avatarConfig.outfitCategory = 'separates';
       state.avatarConfig.topStyle = 'hoodie';
       state.avatarConfig.topColor = 0x10b981;
@@ -3954,6 +4201,8 @@
       state.avatarConfig.bag = 'none';
       state.avatarConfig.expression = 'smile';
       state.avatarConfig.pose = 'model';
+      state.avatarConfig.colorTarget = 'top';
+
       setCameraAngle('front');
       build3DAvatarRig();
       renderStudioPanel();
