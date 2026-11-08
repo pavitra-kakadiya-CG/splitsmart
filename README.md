@@ -71,10 +71,11 @@ All serverless endpoints run inside the `/api/` directory (compatible with **Ver
 
 | Endpoint | Method | Description |
 | :--- | :--- | :--- |
+| `/api/config` | `GET` | Securely provides public client configuration (PayPal Sandbox client ID, active AI engine status). |
 | `/api/create-order` | `POST` | Authenticates via PayPal OAuth2 and creates an Order v2 with exact owed amount. Keeps `PAYPAL_CLIENT_SECRET` safe on server. |
 | `/api/capture-order` | `POST` | Captures approved PayPal Sandbox order, records capture ID, payer info, and updates balance. |
 | `/api/payouts` | `POST` | Disburses peer-to-peer funds to individual sandbox emails via PayPal Payouts API. |
-| `/api/scan-receipt` | `POST` | Sends receipt image to Gemini 1.5 Flash Vision. Verifies that `itemsSum + tax + tip === total`. |
+| `/api/scan-receipt` | `POST` | Sends receipt image to Google Gemini Multimodal Vision. Verifies that `itemsSum + tax + tip === total`. |
 | `/api/settle-agent` | `POST` | Analyzes natural language trip queries, runs Min-Cash-Flow graph reduction, and formats PayPal payment requests. |
 | `/api/state` | `GET/POST` | Manages persistent ledger storage across sessions (groups, expenses, settlements). |
 
