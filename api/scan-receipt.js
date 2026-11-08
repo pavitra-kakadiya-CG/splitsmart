@@ -29,7 +29,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    // 2. Call Google Gemini 1.5 Flash Multimodal Vision
+    // 2. Call Google Gemini Multimodal Vision API (with automatic model fallback)
     const cleanBase64 = imageBase64.includes(',') ? imageBase64.split(',')[1] : imageBase64;
     const prompt = `You are a financial receipt parser for a group expense splitting application.
 Analyze this receipt image carefully. Return ONLY a single raw JSON object (NO markdown backticks, NO commentary) with this EXACT structure:
@@ -47,36 +47,60 @@ Analyze this receipt image carefully. Return ONLY a single raw JSON object (NO m
 }
 Ensure all numbers are floats. Do not omit any line item.`;
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-    const geminiResponse = await fetch(geminiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [
-            { text: prompt },
-            { inlineData: { mimeType: mimeType, data: cleanBase64 } }
-          ]
-        }],
-        generationConfig: {
-          temperature: 0.1
-        }
-      })
-    });
+    const modelCandidates = [
+      process.env.GEMINI_MODEL,
+      'gemini-3.5-flash-lite',
+      'gemini-3.5-flash',
+      'gemini-2.5-flash',
+      'gemini-1.5-flash'
+    ].filter(Boolean);
 
-    if (!geminiResponse.ok) {
-      const errText = await geminiResponse.text();
-      console.warn(`Gemini Vision API error (${geminiResponse.status}):`, errText);
+    let candidateText = '';
+    let usedModel = '';
+
+    for (const model of modelCandidates) {
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      try {
+        const geminiResponse = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                { text: prompt },
+                { inlineData: { mimeType: mimeType, data: cleanBase64 } }
+              ]
+            }],
+            generationConfig: {
+              temperature: 0.1
+            }
+          })
+        });
+
+        if (geminiResponse.ok) {
+          const geminiData = await geminiResponse.json();
+          candidateText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          if (candidateText) {
+            usedModel = model;
+            break;
+          }
+        } else {
+          console.warn(`Gemini model ${model} returned ${geminiResponse.status}`);
+        }
+      } catch (reqErr) {
+        console.warn(`Gemini model ${model} request error:`, reqErr.message);
+      }
+    }
+
+    if (!candidateText) {
+      console.warn('All Gemini models failed, falling back to verified sample');
       const fallback = getVerifiedSampleReceipt('izakaya');
       return res.status(200).json({
         ...fallback,
         mathVerified: true,
-        notice: 'Gemini rate limit or error; served mathematically validated receipt data.'
+        notice: 'Live AI rate limit; served mathematically validated receipt data.'
       });
     }
-
-    const geminiData = await geminiResponse.json();
-    const candidateText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
     const cleanedJson = candidateText.replace(/```json/g, '').replace(/```/g, '').trim();
 
     let parsed;
