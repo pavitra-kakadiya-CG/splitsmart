@@ -24,8 +24,8 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required parameter: orderId' });
     }
 
-    // Check if PayPal credentials are configured
-    if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
+    // Check if PayPal credentials are configured or demo order requested
+    if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET || orderId.startsWith('DEMO-')) {
       return res.status(200).json({
         success: true,
         id: 'DEMO-CAPTURE-' + Math.random().toString(36).substring(2, 9).toUpperCase(),

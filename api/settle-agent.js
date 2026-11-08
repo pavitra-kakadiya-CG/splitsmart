@@ -66,17 +66,20 @@ module.exports = async function handler(req, res) {
 
     groupExpenses.forEach(exp => {
       const payerId = exp.payerId;
-      const amtCents = Math.round(parseFloat(exp.amount) * 100);
-      netMap[payerId] = (netMap[payerId] || 0) + amtCents;
+      let expAmt = parseFloat(exp.amount || 0);
+      let expCents = expAmt > 500 ? Math.round(expAmt) : Math.round(expAmt * 100);
+      netMap[payerId] = (netMap[payerId] || 0) + expCents;
 
       (exp.splits || []).forEach(sp => {
-        const splitAmt = Math.round(parseFloat(sp.amount) * 100);
-        netMap[sp.userId] = (netMap[sp.userId] || 0) - splitAmt;
+        let spAmt = parseFloat(sp.amount || 0);
+        let spCents = spAmt > 500 ? Math.round(spAmt) : Math.round(spAmt * 100);
+        netMap[sp.userId] = (netMap[sp.userId] || 0) - spCents;
       });
     });
 
     groupSettlements.forEach(st => {
-      const amtCents = Math.round(parseFloat(st.amount) * 100);
+      let stAmt = parseFloat(st.amount || 0);
+      let amtCents = stAmt > 500 ? Math.round(stAmt) : Math.round(stAmt * 100);
       if (st.payerId) netMap[st.payerId] = (netMap[st.payerId] || 0) + amtCents;
       if (st.payeeId) netMap[st.payeeId] = (netMap[st.payeeId] || 0) - amtCents;
     });

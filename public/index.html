@@ -1776,7 +1776,14 @@
             query: query,
             currentUserId: state.user.id,
             groups: state.groups,
-            expenses: state.expenses.map(e => ({ ...e, amount: e.amount / 100 })),
+            expenses: state.expenses.map(e => ({
+              ...e,
+              amount: e.amount > 500 ? e.amount / 100 : e.amount,
+              splits: (e.splits || []).map(s => ({
+                ...s,
+                amount: s.amount > 500 ? s.amount / 100 : s.amount
+              }))
+            })),
             settlements: state.settlements
           })
         });
