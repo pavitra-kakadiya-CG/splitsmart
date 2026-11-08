@@ -80,10 +80,10 @@
 
       <!-- Header Controls: Currency, PayPal Balance, AI Status, 3D Bitmoji, Settings -->
       <div class="flex items-center space-x-1 sm:space-x-2 shrink-0">
-        <!-- GLOBAL CURRENCY SELECTOR -->
-        <div class="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-1.5 sm:px-2 py-1 shadow-2xs shrink-0">
-          <span id="currencyFlag" class="text-xs mr-0.5 sm:mr-1">🇺🇸</span>
-          <select id="currencySelector" onchange="changeCurrency(this.value)" class="text-xs font-extrabold bg-transparent text-slate-700 dark:text-slate-200 outline-none cursor-pointer pr-0.5 max-w-[55px] sm:max-w-none">
+        <!-- GLOBAL CURRENCY SELECTOR (Desktop/Tablet) -->
+        <div class="hidden sm:flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-2 py-1 shadow-2xs shrink-0">
+          <span id="currencyFlag" class="text-xs mr-1">🇺🇸</span>
+          <select id="currencySelector" onchange="changeCurrency(this.value)" class="text-xs font-extrabold bg-transparent text-slate-700 dark:text-slate-200 outline-none cursor-pointer pr-0.5">
             <option value="USD">USD ($)</option>
             <option value="INR">INR (₹)</option>
             <option value="EUR">EUR (€)</option>
@@ -144,9 +144,27 @@
           </button>
           
           <!-- Sleek Floating Dropdown Menu -->
-          <div id="mobileSettingsDropdown" class="hidden absolute right-0 mt-2 w-60 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl shadow-slate-950/20 py-2 z-50 text-xs">
-            <div class="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800">
-              <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Dev & AI Settings</span>
+          <div id="mobileSettingsDropdown" class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl shadow-slate-950/20 py-2 z-50 text-xs">
+            <div class="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Preferences & Tools</span>
+              <span class="text-[9px] text-emerald-600 font-bold">SplitSmart</span>
+            </div>
+
+            <!-- Currency Selector for Mobile -->
+            <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+              <span class="font-bold text-slate-700 dark:text-slate-300 block mb-1">Currency</span>
+              <select id="mobileCurrencySelector" onchange="changeCurrency(this.value)" class="w-full p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold border-none outline-none">
+                <option value="USD">🇺🇸 USD ($)</option>
+                <option value="INR">🇮🇳 INR (₹)</option>
+                <option value="EUR">🇪🇺 EUR (€)</option>
+                <option value="GBP">🇬🇧 GBP (£)</option>
+                <option value="JPY">🇯🇵 JPY (¥)</option>
+                <option value="CAD">🇨🇦 CAD (CA$)</option>
+                <option value="AUD">🇦🇺 AUD (A$)</option>
+                <option value="SGD">🇸🇬 SGD (S$)</option>
+                <option value="AED">🇦🇪 AED (AED)</option>
+                <option value="CHF">🇨🇭 CHF (CHF)</option>
+              </select>
             </div>
             
             <button onclick="closeMobileSettingsDropdown(); openPayPalDevSettingsModal();" class="w-full px-3 py-2 text-left hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center space-x-2.5 transition-colors">
@@ -626,75 +644,159 @@
 
   </main>
 
-  <!-- ==================== 1. 3D BITMOJI STUDIO MODAL (THREE.JS WEBGL) ==================== -->
-  <div id="bitmojiStudioModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-2.5 md:p-5">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-4xl w-full max-h-[94vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800">
+  <!-- ==================== 1. 3D BITMOJI STUDIO MODAL (SNAPCHAT-INSPIRED 3D ENGINE) ==================== -->
+  <div id="bitmojiStudioModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-5xl w-full max-h-[96vh] overflow-hidden flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800">
       
       <!-- Studio Header -->
-      <div class="p-3.5 px-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <div class="flex items-center space-x-2.5">
-          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#fffc00] to-amber-500 text-slate-900 flex items-center justify-center font-black text-base shadow-2xs">
+      <div class="p-3 sm:px-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+        <div class="flex items-center space-x-2.5 min-w-0">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#fffc00] via-amber-400 to-orange-500 text-slate-950 flex items-center justify-center font-black text-lg shadow-sm shrink-0">
             👻
           </div>
-          <div>
+          <div class="min-w-0">
             <div class="flex items-center space-x-2">
-              <h3 class="text-sm font-black tracking-tight">Snapchat 3D Bitmoji Studio</h3>
-              <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">3D WebGL Rig</span>
+              <h3 class="text-sm sm:text-base font-black tracking-tight truncate">Snapchat 3D Bitmoji Studio</h3>
+              <span class="hidden sm:inline-flex text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 shrink-0">Snap 3D Engine</span>
             </div>
-            <p class="text-[10px] text-slate-500">Alive Expression • Blinking Eyes • 360° Spin • Makeup & PayPal Drip</p>
+            <p class="text-[10px] text-slate-500 truncate hidden sm:block">Full 3D Cartoon Avatar • Hairstyles • Tops, Bottoms, Sarees & Ethnic Fashion</p>
           </div>
         </div>
-        <button onclick="closeModal('bitmojiStudioModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+
+        <div class="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
+          <!-- Surprise Me / Randomizer -->
+          <button onclick="randomizeAvatarLook()" class="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-xs font-black shadow-xs flex items-center space-x-1 transition-all" title="Generate Random Matching Outfit">
+            <span>🎲</span>
+            <span class="hidden sm:inline">Surprise Me</span>
+          </button>
+
+          <!-- Reset -->
+          <button onclick="resetAvatarToDefault()" class="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-all" title="Reset to Clean Default">
+            <span>🔄</span>
+            <span class="hidden md:inline ml-1">Reset</span>
+          </button>
+
+          <!-- Favorites Toggle -->
+          <button onclick="toggleFavoritesDrawer()" id="favDrawerBtn" class="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-300 text-xs font-bold transition-all" title="Saved Looks">
+            <span>⭐</span>
+            <span class="hidden md:inline ml-1">Favorites</span>
+          </button>
+
+          <!-- Save Button -->
+          <button onclick="saveAvatarProfile()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md flex items-center space-x-1 transition-all">
+            <span>💾</span>
+            <span>Save</span>
+          </button>
+
+          <!-- Close -->
+          <button onclick="closeModal('bitmojiStudioModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-black text-lg p-1 ml-0.5">✕</button>
+        </div>
       </div>
 
-      <!-- Studio Body (2 Columns) -->
-      <div class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-12 gap-3 p-4">
-        <!-- Left: Interactive 3D Canvas Rig -->
-        <div class="md:col-span-5 flex flex-col items-center justify-between p-3.5 bg-gradient-to-b from-slate-100 via-amber-50/20 to-slate-200/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 text-center relative overflow-hidden">
+      <!-- Studio Body: 2 Columns (3D Viewport on Left, Category Wardrobe on Right) -->
+      <div class="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-12 gap-3 p-3 sm:p-4">
+        
+        <!-- Left: Interactive 3D Canvas Rig & Poses -->
+        <div class="lg:col-span-5 flex flex-col justify-between p-3 bg-gradient-to-b from-slate-100 via-amber-50/20 to-slate-200/50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 text-center relative overflow-hidden space-y-2">
           
-          <div class="w-full flex items-center justify-between z-10 px-1">
+          <!-- Viewport Top Overlay: Gender & Camera Presets -->
+          <div class="w-full flex items-center justify-between z-10 gap-1 flex-wrap">
             <!-- Gender Selector -->
             <div class="flex items-center bg-white/90 dark:bg-slate-800/90 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700 shadow-2xs">
-              <button onclick="setAvatarGender('female')" id="genderBtn-female" class="px-2.5 py-1 rounded-lg text-xs font-black bg-rose-500 text-white shadow-2xs">👩 Female</button>
-              <button onclick="setAvatarGender('male')" id="genderBtn-male" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white">👨 Male</button>
+              <button onclick="setAvatarGender('female')" id="genderBtn-female" class="px-2 py-1 rounded-lg text-xs font-black bg-rose-500 text-white shadow-2xs">👩 Female</button>
+              <button onclick="setAvatarGender('male')" id="genderBtn-male" class="px-2 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white">👨 Male</button>
             </div>
-            <span class="text-[10px] text-slate-400 bg-white/70 dark:bg-slate-800/70 px-2 py-0.5 rounded-full">👆 Drag 360°</span>
+
+            <!-- Camera View Presets -->
+            <div class="flex items-center space-x-1 bg-white/80 dark:bg-slate-800/80 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700 text-[10px] font-bold">
+              <button onclick="setCameraAngle('face')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700" title="Face Close-up">👁️ Face</button>
+              <button onclick="setCameraAngle('front')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-black text-amber-600" title="Full Front View">🧍 Front</button>
+              <button onclick="setCameraAngle('threeQuarter')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700" title="3/4 Fashion View">📐 3/4</button>
+              <button onclick="setCameraAngle('side')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700" title="Side Profile">👤 Side</button>
+              <button onclick="setCameraAngle('back')" class="px-1.5 py-0.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700" title="Back View">🔙 Back</button>
+            </div>
+
+            <!-- Zoom Controls -->
+            <div class="flex items-center space-x-0.5 bg-white/80 dark:bg-slate-800/80 rounded-xl p-0.5 border border-slate-200 dark:border-slate-700 text-xs">
+              <button onclick="zoomAvatar(1)" class="w-6 h-6 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" title="Zoom In">+</button>
+              <button onclick="zoomAvatar(-1)" class="w-6 h-6 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" title="Zoom Out">-</button>
+            </div>
           </div>
 
-          <!-- 3D Canvas -->
-          <div class="w-full h-64 md:h-72 flex items-center justify-center relative cursor-grab active:cursor-grabbing my-1" id="canvas3dContainer">
+          <!-- 3D Canvas Viewport -->
+          <div class="w-full h-64 sm:h-72 md:h-80 flex items-center justify-center relative cursor-grab active:cursor-grabbing rounded-2xl bg-radial from-slate-100/50 to-transparent dark:from-slate-900/40" id="canvas3dContainer">
             <canvas id="avatar3dCanvas" class="w-full h-full rounded-2xl"></canvas>
+            <span class="absolute bottom-2 right-2 text-[9px] font-bold text-slate-400 bg-white/70 dark:bg-slate-900/70 px-2 py-0.5 rounded-full pointer-events-none">👆 Drag to spin 360°</span>
           </div>
 
-          <!-- Quick Action Buttons -->
-          <div class="w-full flex items-center space-x-2 z-10">
-            <button onclick="triggerAvatarPose('wave')" class="flex-1 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-xs font-bold border border-slate-250 dark:border-slate-700 hover:border-amber-400">👋 Wave</button>
-            <button onclick="triggerAvatarPose('dance')" class="flex-1 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-xs font-bold border border-slate-250 dark:border-slate-700 hover:border-amber-400">💃 Dance</button>
-            <button onclick="saveAvatarProfile()" class="flex-1 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold shadow-sm">Save</button>
+          <!-- Viewport Bottom: Facial Expressions & Poses -->
+          <div class="space-y-1.5 z-10 text-xs text-left">
+            <!-- Expressions Row -->
+            <div class="flex items-center space-x-1 overflow-x-auto scrollbar-none py-0.5">
+              <span class="text-[10px] font-black uppercase text-slate-400 shrink-0">Face:</span>
+              <button onclick="setAvatarExpression('smile')" id="exprBtn-smile" class="shrink-0 px-2 py-1 rounded-xl bg-white dark:bg-slate-800 border border-amber-300 text-amber-700 dark:text-amber-400 font-black shadow-2xs">😊 Smile</button>
+              <button onclick="setAvatarExpression('wink')" id="exprBtn-wink" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">😉 Wink</button>
+              <button onclick="setAvatarExpression('cool')" id="exprBtn-cool" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">😎 Cool</button>
+              <button onclick="setAvatarExpression('excited')" id="exprBtn-excited" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">🤩 Happy</button>
+              <button onclick="setAvatarExpression('neutral')" id="exprBtn-neutral" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">😐 Neutral</button>
+            </div>
+
+            <!-- Poses Row -->
+            <div class="flex items-center space-x-1 overflow-x-auto scrollbar-none py-0.5">
+              <span class="text-[10px] font-black uppercase text-slate-400 shrink-0">Pose:</span>
+              <button onclick="triggerAvatarPose('model')" id="poseBtn-model" class="shrink-0 px-2 py-1 rounded-xl bg-white dark:bg-slate-800 border border-emerald-300 text-emerald-700 dark:text-emerald-400 font-black shadow-2xs">🧍 Model</button>
+              <button onclick="triggerAvatarPose('wave')" id="poseBtn-wave" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">👋 Wave</button>
+              <button onclick="triggerAvatarPose('dance')" id="poseBtn-dance" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">💃 Dance</button>
+              <button onclick="triggerAvatarPose('hand_on_hip')" id="poseBtn-hand_on_hip" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">💅 Hip</button>
+              <button onclick="triggerAvatarPose('celebrate')" id="poseBtn-celebrate" class="shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold">🙌 Woohoo</button>
+            </div>
           </div>
         </div>
 
-        <!-- Right: Wardrobe, Makeup & PayPal Store Catalog -->
-        <div class="md:col-span-7 flex flex-col space-y-3">
-          <!-- Catalog Category Tabs -->
-          <div class="flex items-center space-x-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold overflow-x-auto">
-            <button onclick="switchWardrobeCategory('outfits')" id="wcat-outfits" class="flex-1 py-1.5 px-2.5 rounded-xl bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-2xs whitespace-nowrap">👗 Outfits</button>
-            <button onclick="switchWardrobeCategory('hair')" id="wcat-hair" class="flex-1 py-1.5 px-2.5 rounded-xl text-slate-500 whitespace-nowrap">💇 Hair & Eyes</button>
-            <button onclick="switchWardrobeCategory('makeup')" id="wcat-makeup" class="flex-1 py-1.5 px-2.5 rounded-xl text-slate-500 whitespace-nowrap">💄 Glam & Shades</button>
-            <button onclick="switchWardrobeCategory('shoes')" id="wcat-shoes" class="flex-1 py-1.5 px-2.5 rounded-xl text-slate-500 whitespace-nowrap">👠 Shoes</button>
-            <button onclick="switchWardrobeCategory('paypal')" id="wcat-paypal" class="flex-1 py-1.5 px-2.5 rounded-xl text-sky-600 dark:text-sky-400 font-extrabold whitespace-nowrap">⚡ PayPal Drip</button>
+        <!-- Right: Wardrobe, Ethnic Outfits, Hairstyles & Face Studio -->
+        <div class="lg:col-span-7 flex flex-col space-y-2.5">
+          
+          <!-- Category Primary Tabs (7 Categories) -->
+          <div class="flex items-center space-x-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs font-bold overflow-x-auto scrollbar-none touch-scroll">
+            <button onclick="switchStudioCategory('face')" id="scat-face" class="shrink-0 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-2xs whitespace-nowrap font-black">👤 Face & Skin</button>
+            <button onclick="switchStudioCategory('hair')" id="scat-hair" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">💇 Hairstyles</button>
+            <button onclick="switchStudioCategory('tops')" id="scat-tops" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👕 Tops</button>
+            <button onclick="switchStudioCategory('bottoms')" id="scat-bottoms" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👖 Bottoms</button>
+            <button onclick="switchStudioCategory('ethnic')" id="scat-ethnic" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">🥻 Sarees & Ethnic</button>
+            <button onclick="switchStudioCategory('shoes')" id="scat-shoes" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👟 Footwear</button>
+            <button onclick="switchStudioCategory('accessories')" id="scat-accessories" class="shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap">👓 Accessories</button>
           </div>
 
-          <!-- Catalog Items Grid -->
-          <div id="wardrobeItemsGrid" class="flex-1 overflow-y-auto max-h-64 md:max-h-72 grid grid-cols-2 sm:grid-cols-3 gap-2.5 pr-1"></div>
+          <!-- Fashion Style Filter Pills -->
+          <div class="flex items-center space-x-1.5 overflow-x-auto scrollbar-none touch-scroll py-0.5 text-[11px] font-bold">
+            <span class="text-slate-400 uppercase text-[9px] font-black tracking-wider shrink-0">Style:</span>
+            <button onclick="setStudioFashionFilter('all')" id="ffilter-all" class="shrink-0 px-2 py-0.5 rounded-lg bg-amber-500 text-white font-extrabold shadow-2xs">All</button>
+            <button onclick="setStudioFashionFilter('casual')" id="ffilter-casual" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Casual</button>
+            <button onclick="setStudioFashionFilter('streetwear')" id="ffilter-streetwear" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Streetwear</button>
+            <button onclick="setStudioFashionFilter('luxury')" id="ffilter-luxury" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Luxury</button>
+            <button onclick="setStudioFashionFilter('traditional')" id="ffilter-traditional" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Traditional 🇮🇳</button>
+            <button onclick="setStudioFashionFilter('partywear')" id="ffilter-partywear" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Partywear</button>
+            <button onclick="setStudioFashionFilter('sporty')" id="ffilter-sporty" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Sporty</button>
+            <button onclick="setStudioFashionFilter('minimalist')" id="ffilter-minimalist" class="shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Minimalist</button>
+          </div>
 
-          <!-- Wardrobe Footer Note -->
-          <div class="p-2.5 rounded-2xl bg-sky-50 dark:bg-slate-800/80 border border-sky-200 dark:border-sky-900/60 flex items-center space-x-2.5 text-xs">
-            <span class="text-base text-[#0070ba]">🛡️</span>
-            <div>
-              <span class="font-black text-[#003087] dark:text-sky-300 block text-[11px] leading-tight">PayPal Sandbox Wardrobe Store</span>
-              <p class="text-[10px] text-slate-600 dark:text-slate-400">Unlock outfits instantly using your test PayPal sandbox balance.</p>
+          <!-- Dynamic Options Panel Container -->
+          <div id="studioOptionsContainer" class="flex-1 overflow-y-auto max-h-64 sm:max-h-72 md:max-h-80 pr-1 space-y-3">
+            <!-- Rendered dynamically by renderStudioPanel() -->
+          </div>
+
+          <!-- Color Customizer Palette Bar (Always at bottom of right panel) -->
+          <div id="studioColorPaletteBar" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 space-y-1.5 text-xs">
+            <!-- Rendered by renderColorPaletteBar() -->
+          </div>
+
+          <!-- Favorites Drawer (Collapsible) -->
+          <div id="studioFavoritesDrawer" class="hidden p-3 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 space-y-2 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-black text-amber-900 dark:text-amber-200">⭐ Your Favorite Looks</span>
+              <button onclick="saveCurrentLookToFavorites()" class="text-[10px] font-bold bg-amber-200 dark:bg-amber-900 text-amber-950 dark:text-amber-100 px-2 py-0.5 rounded-full hover:bg-amber-300">+ Add Current Look</button>
             </div>
+            <div id="favoritesListGrid" class="flex items-center space-x-2 overflow-x-auto scrollbar-none py-1"></div>
           </div>
         </div>
       </div>
@@ -1224,22 +1326,52 @@
         }
       ],
 
-      // 3D Avatar Customization State
+      // 3D Avatar Customization State (Snapchat Bitmoji 3D Engine)
       avatarConfig: {
         gender: 'female',
-        skinColor: 0xffdfd0,
-        hairColor: 0x3d2314,
+        faceShape: 'oval',
+        skinTone: 'ivory',
+        skinColor: 0xfcd0a1,
         eyeColor: 0x3b82f6,
-        topColor: 0x10b981,
-        pantsColor: 0x1e293b,
-        shoesColor: 0xffffff,
-        shoesStyle: 'sneakers',
-        glasses: false,
-        makeup: true,
+        eyebrowShape: 'arched',
+        noseShape: 'button',
+        lipShape: 'smile',
         lipstick: 0xe11d48,
-        eyeshadow: 0x8b5cf6,
-        blush: 0xfb7185
+        blush: true,
+        blushColor: 0xf43f5e,
+        freckles: false,
+        beautyMark: false,
+        expression: 'smile',
+        
+        hairStyle: 'straight_long',
+        hairColor: 0x3d2314,
+        hairHighlight: null,
+        
+        outfitCategory: 'separates',
+        topStyle: 'hoodie',
+        topColor: 0x10b981,
+        pantsStyle: 'jeans',
+        pantsColor: 0x1e3a8a,
+        dressStyle: 'saree',
+        dressColor: 0xbe123c,
+        shoesStyle: 'sneakers',
+        shoesColor: 0xffffff,
+        
+        glasses: 'none',
+        glassesColor: 0x111111,
+        headwear: 'none',
+        headwearColor: 0x0070ba,
+        earrings: 'gold_hoops',
+        necklace: 'gold_chain',
+        watch: 'smartwatch',
+        bag: 'crossbody',
+        
+        pose: 'model',
+        activeCategory: 'face',
+        fashionFilter: 'all',
+        cameraView: 'front'
       },
+      avatarFavorites: [],
 
       wardrobeCatalog: {
         outfits: [
@@ -1365,8 +1497,14 @@
     function changeCurrency(curr) {
       state.selectedCurrency = curr;
       const fx = FX_RATES[curr] || FX_RATES.USD;
-      document.getElementById('currencyFlag').innerText = fx.flag;
-      document.getElementById('currentCurrencyTag').innerText = `${curr} (${fx.symbol})`;
+      const flagEl = document.getElementById('currencyFlag');
+      if (flagEl) flagEl.innerText = fx.flag;
+      const tagEl = document.getElementById('currentCurrencyTag');
+      if (tagEl) tagEl.innerText = `${curr} (${fx.symbol})`;
+      const deskSel = document.getElementById('currencySelector');
+      if (deskSel) deskSel.value = curr;
+      const mobSel = document.getElementById('mobileCurrencySelector');
+      if (mobSel) mobSel.value = curr;
       updatePayPalUI();
       renderApp();
       reloadPayPalSDK();
@@ -2177,12 +2315,164 @@
       showToast(`Added ${currentScannedData.merchant} to group expenses!`, 'success');
     }
 
-    // ==================== 3D BITMOJI STUDIO ENGINE (THREE.JS WEBGL) ====================
+    // ==================== 3D BITMOJI STUDIO ENGINE (SNAPCHAT 3D CARTOON AVATAR) ====================
     let scene3D, camera3D, renderer3D, avatarGroup;
-    let isDragging = false, prevMouseX = 0;
+    let isDragging = false, prevMouseX = 0, prevMouseY = 0;
     let blinkTimer = 0, isBlinking = false;
-    let eyeMeshLeft, eyeMeshRight;
+    let eyeMeshLeft = null, eyeMeshRight = null;
+    let armMeshLeft = null, armMeshRight = null;
 
+    // --- Catalogs & Presets ---
+    const SKIN_TONES = [
+      { id: 'porcelain', name: 'Porcelain Fair', color: 0xffe0bd, hex: '#ffe0bd' },
+      { id: 'ivory', name: 'Warm Ivory', color: 0xfcd0a1, hex: '#fcd0a1' },
+      { id: 'golden', name: 'Golden Honey', color: 0xf1c27d, hex: '#f1c27d' },
+      { id: 'honey', name: 'Honey Bronze', color: 0xe0ac69, hex: '#e0ac69' },
+      { id: 'caramel', name: 'Almond Caramel', color: 0xc68642, hex: '#c68642' },
+      { id: 'espresso', name: 'Deep Espresso', color: 0x8d5524, hex: '#8d5524' },
+      { id: 'mocha', name: 'Rich Mocha', color: 0x51341c, hex: '#51341c' }
+    ];
+
+    const FACE_SHAPES = [
+      { id: 'oval', name: 'Classic Oval', icon: '🥚' },
+      { id: 'round', name: 'Cute Round', icon: '🌕' },
+      { id: 'heart', name: 'Sweetheart', icon: '💖' },
+      { id: 'square', name: 'Defined Square', icon: '🔲' },
+      { id: 'chiseled', name: 'Chiseled Jaw', icon: '💎' }
+    ];
+
+    const EYE_COLORS = [
+      { id: 'blue', name: 'Sapphire Blue', color: 0x3b82f6, hex: '#3b82f6' },
+      { id: 'green', name: 'Emerald Green', color: 0x10b981, hex: '#10b981' },
+      { id: 'brown', name: 'Amber Brown', color: 0x78350f, hex: '#78350f' },
+      { id: 'black', name: 'Obsidian Black', color: 0x1f2937, hex: '#1f2937' },
+      { id: 'violet', name: 'Amethyst Violet', color: 0x8b5cf6, hex: '#8b5cf6' },
+      { id: 'hazel', name: 'Honey Hazel', color: 0xd97706, hex: '#d97706' }
+    ];
+
+    const LIP_COLORS = [
+      { id: 'natural', name: 'Natural', color: null, hex: 'transparent' },
+      { id: 'ruby', name: 'Ruby Glam', color: 0xe11d48, hex: '#e11d48' },
+      { id: 'rose', name: 'Soft Rose', color: 0xf43f5e, hex: '#f43f5e' },
+      { id: 'berry', name: 'Berry Magenta', color: 0xdb2777, hex: '#db2777' },
+      { id: 'caramel', name: 'Warm Caramel', color: 0xb45309, hex: '#b45309' },
+      { id: 'plum', name: 'Gothic Plum', color: 0x4a044e, hex: '#4a044e' }
+    ];
+
+    const HAIRSTYLES = [
+      { id: 'pixie', name: 'Chic Pixie Cut', length: 'short', style: 'casual', icon: '💇' },
+      { id: 'buzz', name: 'Modern Fade Buzz', length: 'short', style: 'streetwear', icon: '✂️' },
+      { id: 'crop', name: 'Messy Textured Crop', length: 'short', style: 'aesthetic', icon: '⚡' },
+      { id: 'bob', name: 'Sleek Parisian Bob', length: 'medium', style: 'luxury', icon: '💁' },
+      { id: 'wavy_bob', name: 'Tousled Wavy Bob', length: 'medium', style: 'casual', icon: '🌊' },
+      { id: 'straight_long', name: 'Flowing Silk Straight', length: 'long', style: 'luxury', icon: '✨' },
+      { id: 'curtain_bangs', name: 'Retro Curtain Bangs', length: 'long', style: 'aesthetic', icon: '🌸' },
+      { id: 'beach_waves', name: 'Golden Beach Waves', length: 'long', style: 'casual', icon: '🏖️' },
+      { id: 'ponytail', name: 'High Runway Ponytail', length: 'updo', style: 'sporty', icon: '🐎' },
+      { id: 'top_bun', name: 'Messy Top Bun', length: 'updo', style: 'casual', icon: '🍡' },
+      { id: 'twin_braids', name: 'Boho Twin Braids', length: 'updo', style: 'aesthetic', icon: '🎀' },
+      { id: 'afro', name: 'Voluminous Fluffy Afro', length: 'textured', style: 'streetwear', icon: '👑' },
+      { id: 'curly_coils', name: 'Defined Spiral Curls', length: 'textured', style: 'partywear', icon: '🌀' }
+    ];
+
+    const HAIR_COLORS = [
+      { id: 'black', name: 'Jet Obsidian', color: 0x111111, hex: '#111111' },
+      { id: 'espresso', name: 'Dark Espresso', color: 0x3d2314, hex: '#3d2314' },
+      { id: 'blonde', name: 'Honey Blonde', color: 0xd97706, hex: '#d97706' },
+      { id: 'platinum', name: 'Platinum Ice', color: 0xfef08a, hex: '#fef08a' },
+      { id: 'auburn', name: 'Auburn Ginger', color: 0x991b1b, hex: '#991b1b' },
+      { id: 'pink', name: 'Pastel Bubblegum', color: 0xf472b6, hex: '#f472b6' },
+      { id: 'cyan', name: 'Cyberpunk Cyan', color: 0x06b6d4, hex: '#06b6d4' },
+      { id: 'lavender', name: 'Lavender Mist', color: 0xc084fc, hex: '#c084fc' }
+    ];
+
+    const TOPS = [
+      { id: 'tshirt', name: 'Classic Crewneck Tee', style: 'casual', desc: 'Everyday comfort cotton tee', defaultColor: 0x10b981 },
+      { id: 'crop_top', name: 'Streetwear Crop Top', style: 'streetwear', desc: 'Fitted cropped silhouette with bare midriff', defaultColor: 0xf43f5e },
+      { id: 'hoodie', name: 'Oversized Kangaroo Hoodie', style: 'streetwear', desc: 'Heavyweight fleece with 3D front pouch & hood', defaultColor: 0x3b82f6 },
+      { id: 'blouse', name: 'Silk Evening Blouse', style: 'luxury', desc: 'Draped V-neck satin with cuffed sleeves', defaultColor: 0xfbbf24 },
+      { id: 'sweater', name: 'Cozy Cable Knit Sweater', style: 'minimalist', desc: 'Thick ribbed collar and cuffs', defaultColor: 0xec4899 },
+      { id: 'jacket', name: 'Vintage Denim Street Jacket', style: 'casual', desc: 'Classic indigo wash with metal buttons', defaultColor: 0x0284c7 },
+      { id: 'blazer', name: 'Executive Luxury Blazer', style: 'formal', desc: 'Structured shoulder silhouette and tailored lapels', defaultColor: 0x0f172a },
+      { id: 'biker_leather', name: 'Rebel Biker Leather Jacket', style: 'streetwear', desc: 'Asymmetrical zip with silver hardware', defaultColor: 0x18181b }
+    ];
+
+    const BOTTOMS = [
+      { id: 'jeans', name: 'Classic Indigo Denim Jeans', style: 'casual', desc: 'Five-pocket straight leg fit', defaultColor: 0x1e3a8a },
+      { id: 'cargo', name: 'Tactical Utility Cargo Pants', style: 'streetwear', desc: 'Side flap box pockets with relaxed drape', defaultColor: 0x3f6212 },
+      { id: 'wide_leg', name: 'High-Rise Wide-Leg Trousers', style: 'luxury', desc: 'Tailored drape flowing down to shoes', defaultColor: 0x475569 },
+      { id: 'tennis_skirt', name: 'Pleated Tennis Skirt', style: 'sporty', desc: 'Flared athletic skirt with bare legs', defaultColor: 0xffffff },
+      { id: 'shorts', name: 'Biker / Denim Cutoff Shorts', style: 'casual', desc: 'High-waisted summer shorts', defaultColor: 0x0284c7 },
+      { id: 'leggings', name: 'Sleek Matte Leather Leggings', style: 'partywear', desc: 'Skin-tight sculpting silhouette', defaultColor: 0x09090b }
+    ];
+
+    const DRESSES_AND_ETHNIC = [
+      { 
+        id: 'saree', 
+        name: 'Royal Banarasi Silk Saree 🥻', 
+        style: 'traditional', 
+        desc: 'Grand Indian saree with gold zari border and draped 3D pallu across shoulder', 
+        defaultColor: 0xbe123c, 
+        isEthnic: true 
+      },
+      { 
+        id: 'lehenga', 
+        name: 'Festive Designer Lehenga Choli 💃', 
+        style: 'traditional', 
+        desc: 'Embroidered cropped choli top + wide flared circular skirt with gold borders', 
+        defaultColor: 0x7c3aed, 
+        isEthnic: true 
+      },
+      { 
+        id: 'kurti', 
+        name: 'Embroidered Silk Kurti & Palazzos 👘', 
+        style: 'traditional', 
+        desc: 'Long straight side-slit tunic with palazzo pants and soft dupatta drape', 
+        defaultColor: 0x059669, 
+        isEthnic: true 
+      },
+      { 
+        id: 'party_dress', 
+        name: 'Satin Cocktail Party Dress 🍸', 
+        style: 'partywear', 
+        desc: 'Sweetheart neckline bodice with flared satin evening silhouette', 
+        defaultColor: 0x0f172a, 
+        isEthnic: false 
+      },
+      { 
+        id: 'sundress', 
+        name: 'Floral A-Line Summer Sundress 🌸', 
+        style: 'casual', 
+        desc: 'Breezy spaghetti strap dress ending above knees', 
+        defaultColor: 0xf59e0b, 
+        isEthnic: false 
+      }
+    ];
+
+    const FOOTWEAR = [
+      { id: 'sneakers', name: 'Chunky Platform Street Kicks 👟', style: 'streetwear', desc: 'Thick white platform sole with color panels', defaultColor: 0xffffff },
+      { id: 'boots', name: 'Chelsea Leather Ankle Boots 👢', style: 'casual', desc: 'Sleek high-ankle shaft with sturdy heel', defaultColor: 0x3d2314 },
+      { id: 'heels', name: 'Strappy High-Fashion Stilettos 👠', style: 'partywear', desc: 'Elevated slender heel with delicate ankle strap', defaultColor: 0xe11d48 },
+      { id: 'sandals', name: 'Summer Slides & Strap Sandals 🩴', style: 'casual', desc: 'Open-toe resort slides', defaultColor: 0xd97706 },
+      { id: 'formal', name: 'Italian Oxford Loafers 👞', style: 'formal', desc: 'Burnished leather with gold bit accent', defaultColor: 0x1c1917 }
+    ];
+
+    const PALETTE_SWATCHES = [
+      { name: 'Emerald', hex: '#10b981', color: 0x10b981 },
+      { name: 'Sapphire', hex: '#3b82f6', color: 0x3b82f6 },
+      { name: 'Rose', hex: '#f43f5e', color: 0xf43f5e },
+      { name: 'Amber', hex: '#f59e0b', color: 0xf59e0b },
+      { name: 'Purple', hex: '#8b5cf6', color: 0x8b5cf6 },
+      { name: 'Crimson', hex: '#be123c', color: 0xbe123c },
+      { name: 'Royal Gold', hex: '#ffd700', color: 0xffd700 },
+      { name: 'Obsidian', hex: '#0f172a', color: 0x0f172a },
+      { name: 'Pure White', hex: '#ffffff', color: 0xffffff },
+      { name: 'Teal', hex: '#14b8a6', color: 0x14b8a6 },
+      { name: 'Coral', hex: '#fb923c', color: 0xfb923c },
+      { name: 'Indigo', hex: '#4f46e5', color: 0x4f46e5 }
+    ];
+
+    // --- 3D WebGL Studio Initialization ---
     function init3DAvatarStudio() {
       const canvas = document.getElementById('avatar3dCanvas');
       const container = document.getElementById('canvas3dContainer');
@@ -2190,19 +2480,19 @@
 
       scene3D = new THREE.Scene();
       camera3D = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
-      camera3D.position.set(0, 0.95, 3.4);
+      camera3D.position.set(0, 0.85, 3.2);
 
-      renderer3D = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer3D = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
       renderer3D.setSize(container.clientWidth, container.clientHeight);
       renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
       // 4-Point Cinematic Lighting
-      scene3D.add(new THREE.AmbientLight(0xffffff, 0.85));
-      const keyLight = new THREE.DirectionalLight(0xffedd5, 1.3);
+      scene3D.add(new THREE.AmbientLight(0xffffff, 0.90));
+      const keyLight = new THREE.DirectionalLight(0xffedd5, 1.35);
       keyLight.position.set(2.5, 4, 3.5);
       scene3D.add(keyLight);
 
-      const fillLight = new THREE.DirectionalLight(0xe0f2fe, 0.65);
+      const fillLight = new THREE.DirectionalLight(0xe0f2fe, 0.70);
       fillLight.position.set(-2.5, 2, 2.5);
       scene3D.add(fillLight);
 
@@ -2210,141 +2500,763 @@
       rimLight.position.set(-2.2, 3, -2.5);
       scene3D.add(rimLight);
 
+      // Floor Shadow Disc
+      const shadowMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.15 });
+      const shadowDisc = new THREE.Mesh(new THREE.CircleGeometry(0.55, 32), shadowMat);
+      shadowDisc.rotation.x = -Math.PI / 2;
+      shadowDisc.position.y = -0.52;
+      scene3D.add(shadowDisc);
+
       build3DAvatarRig();
       setupAvatarInteraction(container);
       animate3DAvatar();
+      renderStudioPanel();
+      renderColorPaletteBar();
     }
 
+    // --- Procedural 3D Cartoon Avatar Rig Builder ---
     function build3DAvatarRig() {
       if (avatarGroup) scene3D.remove(avatarGroup);
       avatarGroup = new THREE.Group();
       const conf = state.avatarConfig;
       const isFemale = conf.gender === 'female';
 
-      // 1. Head
-      const skinMat = new THREE.MeshStandardMaterial({ color: conf.skinColor, roughness: 0.65 });
+      // 1. Materials
+      const skinMat = new THREE.MeshStandardMaterial({ color: conf.skinColor, roughness: 0.65, metalness: 0.05 });
+      const hairMat = new THREE.MeshStandardMaterial({ color: conf.hairColor, roughness: 0.65, metalness: 0.05 });
+      const goldMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.85, roughness: 0.25 });
+      const silverMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.2 });
+
+      // 2. Head & Face Shape
       const headGeom = new THREE.SphereGeometry(0.38, 32, 32);
       const head = new THREE.Mesh(headGeom, skinMat);
       head.position.y = 1.48;
+
+      if (conf.faceShape === 'round') head.scale.set(1.06, 0.96, 1.02);
+      else if (conf.faceShape === 'oval') head.scale.set(0.96, 1.05, 0.98);
+      else if (conf.faceShape === 'heart') head.scale.set(1.03, 1.0, 0.94);
+      else if (conf.faceShape === 'square') head.scale.set(1.04, 0.96, 1.04);
+      else if (conf.faceShape === 'chiseled') head.scale.set(0.95, 1.04, 1.0);
       avatarGroup.add(head);
 
-      // 2. Eyes
-      const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const pupilMat = new THREE.MeshBasicMaterial({ color: conf.eyeColor });
+      // Cute Chin
+      const chin = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), skinMat);
+      chin.position.set(0, 1.18, 0.28);
+      chin.scale.set(1, 0.8, 0.9);
+      avatarGroup.add(chin);
 
-      const eyeGeom = new THREE.SphereGeometry(0.065, 16, 16);
-      const pupilGeom = new THREE.SphereGeometry(0.035, 16, 16);
+      // Cheeks Blush
+      if (conf.blush) {
+        const blushMat = new THREE.MeshBasicMaterial({ color: conf.blushColor || 0xf43f5e, transparent: true, opacity: 0.45 });
+        const blushL = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), blushMat);
+        blushL.position.set(-0.21, 1.39, 0.28);
+        blushL.scale.set(1, 0.6, 0.5);
+        avatarGroup.add(blushL);
 
-      eyeMeshLeft = new THREE.Mesh(eyeGeom, eyeWhiteMat);
-      eyeMeshLeft.position.set(-0.13, 1.5, 0.32);
-      const pupilLeft = new THREE.Mesh(pupilGeom, pupilMat);
-      pupilLeft.position.set(0, 0, 0.05);
-      eyeMeshLeft.add(pupilLeft);
-      avatarGroup.add(eyeMeshLeft);
-
-      eyeMeshRight = new THREE.Mesh(eyeGeom, eyeWhiteMat);
-      eyeMeshRight.position.set(0.13, 1.5, 0.32);
-      const pupilRight = new THREE.Mesh(pupilGeom, pupilMat);
-      pupilRight.position.set(0, 0, 0.05);
-      eyeMeshRight.add(pupilRight);
-      avatarGroup.add(eyeMeshRight);
-
-      // 3. Lips & Makeup
-      const lipMat = new THREE.MeshStandardMaterial({ color: conf.lipstick || 0xe11d48, roughness: 0.5 });
-      const lips = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.025, 16), lipMat);
-      lips.rotation.x = Math.PI / 2;
-      lips.position.set(0, 1.28, 0.36);
-      avatarGroup.add(lips);
-
-      // 4. Hair
-      const hairMat = new THREE.MeshStandardMaterial({ color: conf.hairColor, roughness: 0.7 });
-      const hair = new THREE.Mesh(new THREE.SphereGeometry(isFemale ? 0.42 : 0.44, 24, 24), hairMat);
-      hair.position.set(0, 1.62, -0.05);
-      avatarGroup.add(hair);
-
-      if (isFemale) {
-        const lockGeom = new THREE.CylinderGeometry(0.08, 0.05, 0.65, 16);
-        const lockL = new THREE.Mesh(lockGeom, hairMat);
-        lockL.position.set(-0.35, 1.25, 0.05);
-        lockL.rotation.z = -0.15;
-        avatarGroup.add(lockL);
-
-        const lockR = new THREE.Mesh(lockGeom, hairMat);
-        lockR.position.set(0.35, 1.25, 0.05);
-        lockR.rotation.z = 0.15;
-        avatarGroup.add(lockR);
+        const blushR = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), blushMat);
+        blushR.position.set(0.21, 1.39, 0.28);
+        blushR.scale.set(1, 0.6, 0.5);
+        avatarGroup.add(blushR);
       }
 
-      // 5. Sunglasses
-      if (conf.glasses) {
-        const frameMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.8, roughness: 0.2 });
-        const lensMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.9, roughness: 0.1 });
+      // Freckles
+      if (conf.freckles) {
+        const freckleMat = new THREE.MeshBasicMaterial({ color: 0x78350f });
+        [[-0.08, 1.42, 0.35], [-0.14, 1.40, 0.33], [-0.04, 1.45, 0.36],
+         [0.08, 1.42, 0.35], [0.14, 1.40, 0.33], [0.04, 1.45, 0.36]].forEach(pt => {
+          const dot = new THREE.Mesh(new THREE.SphereGeometry(0.008, 8, 8), freckleMat);
+          dot.position.set(pt[0], pt[1], pt[2]);
+          avatarGroup.add(dot);
+        });
+      }
+
+      // Beauty Mark
+      if (conf.beautyMark) {
+        const bDot = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), new THREE.MeshBasicMaterial({ color: 0x111111 }));
+        bDot.position.set(0.13, 1.25, 0.36);
+        avatarGroup.add(bDot);
+      }
+
+      // 3. Expressive Stylized Cartoon Eyes (with specular light reflection sparkle)
+      const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const pupilMat = new THREE.MeshBasicMaterial({ color: 0x050505 });
+      const glintMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const irisMat = new THREE.MeshStandardMaterial({ color: conf.eyeColor, roughness: 0.3 });
+
+      // Left Eye
+      if (conf.expression === 'wink') {
+        const winkArc = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.012, 8, 16, Math.PI), new THREE.MeshBasicMaterial({ color: 0x1e293b }));
+        winkArc.position.set(-0.13, 1.49, 0.34);
+        winkArc.rotation.z = Math.PI;
+        avatarGroup.add(winkArc);
+        eyeMeshLeft = null;
+      } else {
+        eyeMeshLeft = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), eyeWhiteMat);
+        eyeMeshLeft.position.set(-0.13, 1.50, 0.32);
+        
+        const irisL = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.044, 0.012, 16), irisMat);
+        irisL.rotation.x = Math.PI / 2;
+        irisL.position.set(0, 0, 0.06);
+        eyeMeshLeft.add(irisL);
+
+        const pupilL = new THREE.Mesh(new THREE.SphereGeometry(0.024, 16, 16), pupilMat);
+        pupilL.position.set(0, 0, 0.065);
+        eyeMeshLeft.add(pupilL);
+
+        const glintL = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), glintMat);
+        glintL.position.set(0.014, 0.014, 0.072);
+        eyeMeshLeft.add(glintL);
+
+        avatarGroup.add(eyeMeshLeft);
+      }
+
+      // Right Eye
+      eyeMeshRight = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 16), eyeWhiteMat);
+      eyeMeshRight.position.set(0.13, 1.50, 0.32);
+      
+      const irisR = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.044, 0.012, 16), irisMat);
+      irisR.rotation.x = Math.PI / 2;
+      irisR.position.set(0, 0, 0.06);
+      eyeMeshRight.add(irisR);
+
+      const pupilR = new THREE.Mesh(new THREE.SphereGeometry(0.024, 16, 16), pupilMat);
+      pupilR.position.set(0, 0, 0.065);
+      eyeMeshRight.add(pupilR);
+
+      const glintR = new THREE.Mesh(new THREE.SphereGeometry(0.012, 8, 8), glintMat);
+      glintR.position.set(0.014, 0.014, 0.072);
+      eyeMeshRight.add(glintR);
+
+      avatarGroup.add(eyeMeshRight);
+
+      // 4. Eyebrows
+      const browMat = new THREE.MeshStandardMaterial({ color: conf.hairColor, roughness: 0.8 });
+      const browGeom = new THREE.BoxGeometry(0.12, 0.022, 0.02);
+      const browL = new THREE.Mesh(browGeom, browMat);
+      const browR = new THREE.Mesh(browGeom, browMat);
+      
+      let browY = 1.60;
+      let browRotL = 0.08, browRotR = -0.08;
+      if (conf.expression === 'happy' || conf.expression === 'excited') {
+        browY = 1.63; browRotL = 0.20; browRotR = -0.20;
+      } else if (conf.expression === 'cool') {
+        browRotL = -0.25; browRotR = 0.15;
+      }
+      
+      browL.position.set(-0.13, browY, 0.34);
+      browL.rotation.z = browRotL;
+      avatarGroup.add(browL);
+
+      browR.position.set(0.13, browY, 0.34);
+      browR.rotation.z = browRotR;
+      avatarGroup.add(browR);
+
+      // 5. 3D Nose
+      let noseMesh;
+      if (conf.noseShape === 'straight') {
+        noseMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.038, 0.10, 16), skinMat);
+      } else if (conf.noseShape === 'cute') {
+        noseMesh = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.08, 16), skinMat);
+        noseMesh.rotation.x = 0.2;
+      } else if (conf.noseShape === 'wide') {
+        noseMesh = new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 16), skinMat);
+        noseMesh.scale.x = 1.3;
+      } else {
+        noseMesh = new THREE.Mesh(new THREE.SphereGeometry(0.038, 16, 16), skinMat);
+      }
+      noseMesh.position.set(0, 1.40, 0.38);
+      avatarGroup.add(noseMesh);
+
+      // 6. 3D Lips & Makeup
+      const lipColor = conf.lipstick || (isFemale ? 0xe11d48 : 0xdd8877);
+      const lipMat = new THREE.MeshStandardMaterial({ color: lipColor, roughness: 0.35, metalness: 0.1 });
+      const lips = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.085, 0.024, 16), lipMat);
+      lips.rotation.x = Math.PI / 2;
+      lips.position.set(0, 1.28, 0.36);
+      if (conf.expression === 'smile' || conf.expression === 'happy' || conf.expression === 'excited') {
+        lips.scale.set(1.15, 1, 1.3);
+      }
+      avatarGroup.add(lips);
+
+      // 7. Ears & Jewelry
+      const earGeom = new THREE.SphereGeometry(0.08, 16, 16);
+      const earL = new THREE.Mesh(earGeom, skinMat);
+      earL.position.set(-0.36, 1.48, 0);
+      earL.scale.set(0.3, 1, 0.6);
+      avatarGroup.add(earL);
+
+      const earR = new THREE.Mesh(earGeom, skinMat);
+      earR.position.set(0.36, 1.48, 0);
+      earR.scale.set(0.3, 1, 0.6);
+      avatarGroup.add(earR);
+
+      if (conf.earrings === 'gold_hoops') {
+        const hoopGeom = new THREE.TorusGeometry(0.045, 0.012, 8, 20);
+        const hoopL = new THREE.Mesh(hoopGeom, goldMat);
+        hoopL.position.set(-0.38, 1.42, 0);
+        avatarGroup.add(hoopL);
+
+        const hoopR = new THREE.Mesh(hoopGeom, goldMat);
+        hoopR.position.set(0.38, 1.42, 0);
+        avatarGroup.add(hoopR);
+      } else if (conf.earrings === 'pearl_studs') {
+        const pearlMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.3 });
+        const pearlL = new THREE.Mesh(new THREE.SphereGeometry(0.024, 12, 12), pearlMat);
+        pearlL.position.set(-0.38, 1.46, 0.02);
+        avatarGroup.add(pearlL);
+
+        const pearlR = new THREE.Mesh(new THREE.SphereGeometry(0.024, 12, 12), pearlMat);
+        pearlR.position.set(0.38, 1.46, 0.02);
+        avatarGroup.add(pearlR);
+      }
+
+      // 8. Neck & Necklaces
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 0.25, 20), skinMat);
+      neck.position.set(0, 1.15, 0);
+      avatarGroup.add(neck);
+
+      if (conf.necklace === 'gold_chain') {
+        const chain = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.015, 8, 24), goldMat);
+        chain.rotation.x = Math.PI / 2 + 0.2;
+        chain.position.set(0, 1.05, 0.03);
+        avatarGroup.add(chain);
+      } else if (conf.necklace === 'pearl_choker') {
+        const pChokerMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.2 });
+        const pChoker = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.018, 8, 24), pChokerMat);
+        pChoker.rotation.x = Math.PI / 2;
+        pChoker.position.set(0, 1.12, 0);
+        avatarGroup.add(pChoker);
+      }
+
+      // 9. Procedural 3D Hairstyles
+      const hairBase = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 24), hairMat);
+      hairBase.position.set(0, 1.58, -0.04);
+      avatarGroup.add(hairBase);
+
+      const hStyle = conf.hairStyle || 'straight_long';
+      if (hStyle === 'straight_long' || hStyle === 'curtain_bangs' || hStyle === 'beach_waves') {
+        // Long flowing locks down back
+        const longBack = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.85, 20), hairMat);
+        longBack.position.set(0, 1.18, -0.20);
+        avatarGroup.add(longBack);
+
+        // Front locks framing shoulders
+        const lockL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.05, 0.70, 16), hairMat);
+        lockL.position.set(-0.32, 1.18, 0.12);
+        lockL.rotation.z = -0.12;
+        avatarGroup.add(lockL);
+
+        const lockR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.05, 0.70, 16), hairMat);
+        lockR.position.set(0.32, 1.18, 0.12);
+        lockR.rotation.z = 0.12;
+        avatarGroup.add(lockR);
+
+        if (hStyle === 'curtain_bangs') {
+          const bangL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 0.28, 12), hairMat);
+          bangL.position.set(-0.16, 1.62, 0.32);
+          bangL.rotation.z = -0.4;
+          avatarGroup.add(bangL);
+
+          const bangR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 0.28, 12), hairMat);
+          bangR.position.set(0.16, 1.62, 0.32);
+          bangR.rotation.z = 0.4;
+          avatarGroup.add(bangR);
+        }
+      } else if (hStyle === 'bob' || hStyle === 'wavy_bob') {
+        const bobL = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.10, 0.42, 16), hairMat);
+        bobL.position.set(-0.35, 1.35, 0.04);
+        avatarGroup.add(bobL);
+
+        const bobR = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.10, 0.42, 16), hairMat);
+        bobR.position.set(0.35, 1.35, 0.04);
+        avatarGroup.add(bobR);
+      } else if (hStyle === 'ponytail') {
+        const tie = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.015, 8, 16), goldMat);
+        tie.position.set(0, 1.72, -0.38);
+        avatarGroup.add(tie);
+
+        const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.04, 0.65, 16), hairMat);
+        tail.position.set(0, 1.42, -0.46);
+        tail.rotation.x = -0.35;
+        avatarGroup.add(tail);
+      } else if (hStyle === 'top_bun') {
+        const bun = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), hairMat);
+        bun.position.set(0, 1.95, -0.05);
+        avatarGroup.add(bun);
+
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.02, 8, 20), goldMat);
+        ring.rotation.x = Math.PI / 2;
+        ring.position.set(0, 1.86, -0.05);
+        avatarGroup.add(ring);
+      } else if (hStyle === 'twin_braids') {
+        const bL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 0.70, 12), hairMat);
+        bL.position.set(-0.28, 1.15, 0.18);
+        avatarGroup.add(bL);
+
+        const bR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 0.70, 12), hairMat);
+        bR.position.set(0.28, 1.15, 0.18);
+        avatarGroup.add(bR);
+      } else if (hStyle === 'afro') {
+        const afro = new THREE.Mesh(new THREE.SphereGeometry(0.50, 24, 24), hairMat);
+        afro.position.set(0, 1.62, -0.04);
+        avatarGroup.add(afro);
+      } else if (hStyle === 'pixie' || hStyle === 'crop') {
+        const cropTufts = new THREE.Mesh(new THREE.SphereGeometry(0.44, 16, 16), hairMat);
+        cropTufts.position.set(0, 1.68, 0.02);
+        cropTufts.scale.set(0.9, 0.6, 1.0);
+        avatarGroup.add(cropTufts);
+      }
+
+      // 10. Accessories: Eyewear & Headwear
+      if (conf.glasses === 'sunglasses') {
+        const frameMat = goldMat;
+        const lensMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.95, roughness: 0.1 });
 
         const lensL = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 24), lensMat);
         lensL.rotation.x = Math.PI / 2;
-        lensL.position.set(-0.14, 1.5, 0.42);
+        lensL.position.set(-0.14, 1.50, 0.42);
         avatarGroup.add(lensL);
 
         const lensR = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.02, 24), lensMat);
         lensR.rotation.x = Math.PI / 2;
-        lensR.position.set(0.14, 1.5, 0.42);
+        lensR.position.set(0.14, 1.50, 0.42);
         avatarGroup.add(lensR);
 
-        const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.015, 0.02), frameMat);
+        const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.015, 0.02), frameMat);
         bridge.position.set(0, 1.52, 0.42);
         avatarGroup.add(bridge);
+      } else if (conf.glasses === 'spectacles') {
+        const wireMat = silverMat;
+        const lensMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, roughness: 0.1 });
+
+        const sLensL = new THREE.Mesh(new THREE.TorusGeometry(0.10, 0.012, 8, 24), wireMat);
+        sLensL.position.set(-0.14, 1.50, 0.42);
+        avatarGroup.add(sLensL);
+
+        const sLensR = new THREE.Mesh(new THREE.TorusGeometry(0.10, 0.012, 8, 24), wireMat);
+        sLensR.position.set(0.14, 1.50, 0.42);
+        avatarGroup.add(sLensR);
+
+        const sBridge = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.012, 0.015), wireMat);
+        sBridge.position.set(0, 1.52, 0.42);
+        avatarGroup.add(sBridge);
       }
 
-      // 6. Torso & Arms
-      const topMat = new THREE.MeshStandardMaterial({ color: conf.topColor, roughness: 0.4, metalness: 0.1 });
-      const torso = new THREE.Mesh(
-        isFemale ? new THREE.CylinderGeometry(0.26, 0.31, 0.72, 24) : new THREE.CylinderGeometry(0.36, 0.28, 0.75, 24),
-        topMat
-      );
-      torso.position.y = 0.65;
-      avatarGroup.add(torso);
+      if (conf.headwear === 'snapback_cap') {
+        const capMat = new THREE.MeshStandardMaterial({ color: conf.headwearColor || 0x0070ba, roughness: 0.6 });
+        const capDome = new THREE.Mesh(new THREE.SphereGeometry(0.44, 20, 20), capMat);
+        capDome.position.set(0, 1.68, -0.05);
+        avatarGroup.add(capDome);
 
+        const visor = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.03, 0.28), capMat);
+        visor.position.set(0, 1.58, 0.44);
+        visor.rotation.x = 0.12;
+        avatarGroup.add(visor);
+      } else if (conf.headwear === 'bucket_hat') {
+        const bHatMat = new THREE.MeshStandardMaterial({ color: conf.headwearColor || 0x1e293b, roughness: 0.6 });
+        const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.42, 0.28, 24), bHatMat);
+        crown.position.set(0, 1.82, -0.02);
+        avatarGroup.add(crown);
+
+        const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.58, 0.04, 24), bHatMat);
+        brim.position.set(0, 1.66, -0.02);
+        brim.rotation.x = 0.05;
+        avatarGroup.add(brim);
+      } else if (conf.headwear === 'beanie') {
+        const beanieMat = new THREE.MeshStandardMaterial({ color: conf.headwearColor || 0xec4899, roughness: 0.7 });
+        const bDome = new THREE.Mesh(new THREE.SphereGeometry(0.45, 20, 20), beanieMat);
+        bDome.position.set(0, 1.70, -0.10);
+        avatarGroup.add(bDome);
+      }
+
+      // 11. Complete Wardrobe: Articulated Torso, Dresses, Sarees & Bottoms
+      if (conf.outfitCategory === 'dress_ethnic') {
+        const dressMat = new THREE.MeshStandardMaterial({ color: conf.dressColor, roughness: 0.45, metalness: 0.15 });
+        const goldZariMat = goldMat;
+        const dStyle = conf.dressStyle || 'saree';
+
+        if (dStyle === 'saree') {
+          // Indian Royal Silk Saree:
+          // Fitted cropped choli blouse
+          const choli = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.25, 0.38, 24), dressMat);
+          choli.position.y = 0.82;
+          avatarGroup.add(choli);
+
+          // Bare Midriff
+          const midriff = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.24, 0.18, 20), skinMat);
+          midriff.position.y = 0.55;
+          avatarGroup.add(midriff);
+
+          // Pleated long saree skirt
+          const sareeSkirt = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.34, 0.85, 24), dressMat);
+          sareeSkirt.position.y = 0.12;
+          avatarGroup.add(sareeSkirt);
+
+          // Shimmering Gold Zari Hem Border
+          const goldHem = new THREE.Mesh(new THREE.TorusGeometry(0.33, 0.025, 8, 32), goldZariMat);
+          goldHem.rotation.x = Math.PI / 2;
+          goldHem.position.y = -0.28;
+          avatarGroup.add(goldHem);
+
+          // 3D Diagonal Pallu Drape across torso & flowing over left shoulder down the back!
+          const palluFront = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.65, 0.05), dressMat);
+          palluFront.position.set(-0.06, 0.76, 0.22);
+          palluFront.rotation.z = -0.48;
+          palluFront.rotation.y = 0.15;
+          avatarGroup.add(palluFront);
+
+          const palluBack = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.82, 0.04), dressMat);
+          palluBack.position.set(-0.24, 0.62, -0.16);
+          avatarGroup.add(palluBack);
+
+          const palluGoldBorder = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.82, 0.05), goldZariMat);
+          palluGoldBorder.position.set(-0.34, 0.62, -0.16);
+          avatarGroup.add(palluGoldBorder);
+
+        } else if (dStyle === 'lehenga') {
+          // Festive Designer Lehenga Choli:
+          const choli = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.25, 0.38, 24), dressMat);
+          choli.position.y = 0.82;
+          avatarGroup.add(choli);
+
+          const choliGold = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.02, 8, 24), goldZariMat);
+          choliGold.rotation.x = Math.PI / 2;
+          choliGold.position.y = 0.64;
+          avatarGroup.add(choliGold);
+
+          const midriff = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.24, 0.18, 20), skinMat);
+          midriff.position.y = 0.54;
+          avatarGroup.add(midriff);
+
+          // Grand wide flared lehenga skirt
+          const lehengaSkirt = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.48, 0.82, 32), dressMat);
+          lehengaSkirt.position.y = 0.14;
+          avatarGroup.add(lehengaSkirt);
+
+          const lehengaZari1 = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.025, 8, 32), goldZariMat);
+          lehengaZari1.rotation.x = Math.PI / 2;
+          lehengaZari1.position.y = -0.24;
+          avatarGroup.add(lehengaZari1);
+
+          // Draped dupatta
+          const dupatta = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.80, 0.03), dressMat);
+          dupatta.position.set(0.25, 0.65, 0.14);
+          dupatta.rotation.z = 0.25;
+          avatarGroup.add(dupatta);
+
+        } else if (dStyle === 'kurti') {
+          // Traditional Indian Kurti Tunic with side slits
+          const kurti = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.95, 24), dressMat);
+          kurti.position.y = 0.48;
+          avatarGroup.add(kurti);
+
+          // Churidar pants visible below
+          const churiL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.55, 16), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 }));
+          churiL.position.set(-0.12, -0.15, 0);
+          avatarGroup.add(churiL);
+
+          const churiR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.55, 16), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6 }));
+          churiR.position.set(0.12, -0.15, 0);
+          avatarGroup.add(churiR);
+
+          // Dupatta around neck
+          const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.04, 8, 24), dressMat);
+          scarf.rotation.x = Math.PI / 2;
+          scarf.position.set(0, 0.95, 0.05);
+          avatarGroup.add(scarf);
+
+        } else {
+          // Party Dress & Sundress
+          const dressTop = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.25, 0.45, 24), dressMat);
+          dressTop.position.y = 0.78;
+          avatarGroup.add(dressTop);
+
+          const dressSkirt = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.44, 0.65, 24), dressMat);
+          dressSkirt.position.y = 0.24;
+          avatarGroup.add(dressSkirt);
+
+          // Bare skin legs below dress
+          const bLegL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.065, 0.45, 16), skinMat);
+          bLegL.position.set(-0.12, -0.20, 0);
+          avatarGroup.add(bLegL);
+
+          const bLegR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.065, 0.45, 16), skinMat);
+          bLegR.position.set(0.12, -0.20, 0);
+          avatarGroup.add(bLegR);
+        }
+
+      } else {
+        // Separates: Tops & Bottoms
+        const topMat = new THREE.MeshStandardMaterial({ color: conf.topColor, roughness: 0.45, metalness: 0.08 });
+        const pantsMat = new THREE.MeshStandardMaterial({ color: conf.pantsColor, roughness: 0.65, metalness: 0.05 });
+        const tStyle = conf.topStyle || 'hoodie';
+
+        if (tStyle === 'crop_top') {
+          const cTop = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.25, 0.42, 24), topMat);
+          cTop.position.y = 0.82;
+          avatarGroup.add(cTop);
+
+          const bareBelly = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.24, 0.20, 20), skinMat);
+          bareBelly.position.y = 0.52;
+          avatarGroup.add(bareBelly);
+        } else if (tStyle === 'hoodie') {
+          // Oversized Hoodie with Kangaroo pocket & hood
+          const hTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.29, 0.72, 24), topMat);
+          hTorso.position.y = 0.65;
+          avatarGroup.add(hTorso);
+
+          const pocket = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.18, 0.08), topMat);
+          pocket.position.set(0, 0.52, 0.28);
+          avatarGroup.add(pocket);
+
+          const hood = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.08, 8, 20), topMat);
+          hood.rotation.x = Math.PI / 2;
+          hood.position.set(0, 0.98, -0.15);
+          avatarGroup.add(hood);
+        } else if (tStyle === 'blazer') {
+          const bTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.30, 0.28, 0.74, 24), topMat);
+          bTorso.position.y = 0.65;
+          avatarGroup.add(bTorso);
+
+          const lapelL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 0.04), new THREE.MeshStandardMaterial({ color: 0x050505 }));
+          lapelL.position.set(-0.10, 0.80, 0.27);
+          avatarGroup.add(lapelL);
+
+          const lapelR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 0.04), new THREE.MeshStandardMaterial({ color: 0x050505 }));
+          lapelR.position.set(0.10, 0.80, 0.27);
+          avatarGroup.add(lapelR);
+        } else {
+          // T-Shirt / Blouse / Sweater / Jacket
+          const tTorso = new THREE.Mesh(
+            isFemale ? new THREE.CylinderGeometry(0.26, 0.28, 0.70, 24) : new THREE.CylinderGeometry(0.33, 0.28, 0.72, 24),
+            topMat
+          );
+          tTorso.position.y = 0.65;
+          avatarGroup.add(tTorso);
+        }
+
+        // Bottoms
+        const bStyle = conf.pantsStyle || 'jeans';
+        if (bStyle === 'tennis_skirt') {
+          const skirt = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.44, 0.34, 24), pantsMat);
+          skirt.position.y = 0.22;
+          avatarGroup.add(skirt);
+
+          const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.065, 0.50, 16), skinMat);
+          legL.position.set(-0.14, -0.15, 0);
+          avatarGroup.add(legL);
+
+          const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.065, 0.50, 16), skinMat);
+          legR.position.set(0.14, -0.15, 0);
+          avatarGroup.add(legR);
+        } else if (bStyle === 'shorts') {
+          const sLegL = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.10, 0.22, 16), pantsMat);
+          sLegL.position.set(-0.14, 0.22, 0);
+          avatarGroup.add(sLegL);
+
+          const sLegR = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.10, 0.22, 16), pantsMat);
+          sLegR.position.set(0.14, 0.22, 0);
+          avatarGroup.add(sLegR);
+
+          const bareL = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.065, 0.52, 16), skinMat);
+          bareL.position.set(-0.14, -0.15, 0);
+          avatarGroup.add(bareL);
+
+          const bareR = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.065, 0.52, 16), skinMat);
+          bareR.position.set(0.14, -0.15, 0);
+          avatarGroup.add(bareR);
+        } else {
+          // Jeans, Cargos, Wide-Leg, Leggings
+          const legRadius = bStyle === 'wide_leg' ? 0.15 : (bStyle === 'leggings' ? 0.085 : 0.11);
+          const pLegL = new THREE.Mesh(new THREE.CylinderGeometry(legRadius, legRadius * 0.95, 0.68, 16), pantsMat);
+          pLegL.position.set(-0.15, -0.05, 0);
+          avatarGroup.add(pLegL);
+
+          const pLegR = new THREE.Mesh(new THREE.CylinderGeometry(legRadius, legRadius * 0.95, 0.68, 16), pantsMat);
+          pLegR.position.set(0.15, -0.05, 0);
+          avatarGroup.add(pLegR);
+
+          // 3D Cargo Pockets
+          if (bStyle === 'cargo') {
+            const pocketL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.14, 0.10), pantsMat);
+            pocketL.position.set(-0.25, 0.02, 0);
+            avatarGroup.add(pocketL);
+
+            const pocketR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.14, 0.10), pantsMat);
+            pocketR.position.set(0.25, 0.02, 0);
+            avatarGroup.add(pocketR);
+          }
+        }
+      }
+
+      // 12. Articulated Arms & Poses
+      const topMatArm = new THREE.MeshStandardMaterial({
+        color: conf.outfitCategory === 'dress_ethnic' ? conf.dressColor : conf.topColor,
+        roughness: 0.5
+      });
+      const armMat = (conf.topStyle === 'crop_top' || conf.dressStyle === 'sundress') ? skinMat : topMatArm;
       const armRadius = isFemale ? 0.075 : 0.095;
-      const armGeom = new THREE.CylinderGeometry(armRadius, armRadius * 0.9, 0.6, 16);
-      const armL = new THREE.Mesh(armGeom, topMat);
-      armL.position.set(isFemale ? -0.36 : -0.44, 0.65, 0);
-      armL.rotation.z = 0.18;
-      avatarGroup.add(armL);
+      const armGeom = new THREE.CylinderGeometry(armRadius, armRadius * 0.85, 0.62, 16);
 
-      const armR = new THREE.Mesh(armGeom, topMat);
-      armR.position.set(isFemale ? 0.36 : 0.44, 0.65, 0);
-      armR.rotation.z = -0.18;
-      avatarGroup.add(armR);
+      armMeshLeft = new THREE.Mesh(armGeom, armMat);
+      armMeshRight = new THREE.Mesh(armGeom, armMat);
 
-      // 7. Legs & Shoes
-      const pantsMat = new THREE.MeshStandardMaterial({ color: conf.pantsColor, roughness: 0.6 });
-      const legRadius = isFemale ? 0.105 : 0.125;
-      const legGeom = new THREE.CylinderGeometry(legRadius, legRadius * 0.9, 0.7, 16);
+      // Default Model Pose
+      armMeshLeft.position.set(isFemale ? -0.36 : -0.44, 0.65, 0);
+      armMeshLeft.rotation.z = 0.18;
 
-      const legL = new THREE.Mesh(legGeom, pantsMat);
-      legL.position.set(-0.15, -0.05, 0);
-      avatarGroup.add(legL);
+      armMeshRight.position.set(isFemale ? 0.36 : 0.44, 0.65, 0);
+      armMeshRight.rotation.z = -0.18;
 
-      const legR = new THREE.Mesh(legGeom, pantsMat);
-      legR.position.set(0.15, -0.05, 0);
-      avatarGroup.add(legR);
+      // Custom Pose Articulation
+      if (conf.pose === 'wave') {
+        armMeshRight.position.set(0.42, 0.95, 0.15);
+        armMeshRight.rotation.z = -2.2;
+        armMeshRight.rotation.x = 0.35;
+      } else if (conf.pose === 'hand_on_hip') {
+        armMeshLeft.position.set(-0.34, 0.62, 0.05);
+        armMeshLeft.rotation.z = -0.75;
+        armMeshLeft.rotation.y = 0.45;
+      } else if (conf.pose === 'dance') {
+        armMeshRight.position.set(0.38, 0.85, 0.15);
+        armMeshRight.rotation.z = -1.6;
+        armMeshLeft.position.set(-0.35, 0.50, 0.20);
+        armMeshLeft.rotation.z = 0.65;
+      } else if (conf.pose === 'celebrate') {
+        armMeshRight.position.set(0.42, 0.95, 0.10);
+        armMeshRight.rotation.z = -2.3;
+        armMeshLeft.position.set(-0.42, 0.95, 0.10);
+        armMeshLeft.rotation.z = 2.3;
+      }
 
+      avatarGroup.add(armMeshLeft);
+      avatarGroup.add(armMeshRight);
+
+      // Hands
+      const handGeom = new THREE.SphereGeometry(0.065, 12, 12);
+      const handL = new THREE.Mesh(handGeom, skinMat);
+      handL.position.set(0, -0.32, 0);
+      armMeshLeft.add(handL);
+
+      const handR = new THREE.Mesh(handGeom, skinMat);
+      handR.position.set(0, -0.32, 0);
+      armMeshRight.add(handR);
+
+      // Smartwatch on left wrist
+      if (conf.watch === 'smartwatch') {
+        const watchBand = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.015, 8, 16), new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3 }));
+        watchBand.position.set(0, -0.22, 0);
+        watchBand.rotation.x = Math.PI / 2;
+        armMeshLeft.add(watchBand);
+
+        const screen = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.06, 0.02), new THREE.MeshStandardMaterial({ color: 0x06b6d4, metalness: 0.8 }));
+        screen.position.set(0, -0.22, 0.08);
+        armMeshLeft.add(screen);
+      }
+
+      // Crossbody Handbag
+      if (conf.bag === 'crossbody') {
+        const bagMat = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.4 });
+        const purse = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.10), bagMat);
+        purse.position.set(0.32, 0.40, 0.12);
+        avatarGroup.add(purse);
+
+        const strap = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.85, 0.01), bagMat);
+        strap.position.set(0.05, 0.72, 0.16);
+        strap.rotation.z = -0.58;
+        avatarGroup.add(strap);
+      }
+
+      // 13. Footwear
       const shoeMat = new THREE.MeshStandardMaterial({ color: conf.shoesColor, roughness: 0.35 });
-      const shoeGeom = new THREE.BoxGeometry(0.15, 0.09, 0.32);
-      const shoeL = new THREE.Mesh(shoeGeom, shoeMat);
-      shoeL.position.set(-0.15, -0.42, 0.08);
-      avatarGroup.add(shoeL);
+      const fStyle = conf.shoesStyle || 'sneakers';
 
-      const shoeR = new THREE.Mesh(shoeGeom, shoeMat);
-      shoeR.position.set(0.15, -0.42, 0.08);
-      avatarGroup.add(shoeR);
+      if (fStyle === 'sneakers') {
+        // Chunky Platform Sneakers
+        const soleMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+        const soleL = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.06, 0.34), soleMat);
+        soleL.position.set(-0.15, -0.45, 0.08);
+        avatarGroup.add(soleL);
+
+        const soleR = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.06, 0.34), soleMat);
+        soleR.position.set(0.15, -0.45, 0.08);
+        avatarGroup.add(soleR);
+
+        const upperL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.28), shoeMat);
+        upperL.position.set(-0.15, -0.39, 0.08);
+        avatarGroup.add(upperL);
+
+        const upperR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.28), shoeMat);
+        upperR.position.set(0.15, -0.39, 0.08);
+        avatarGroup.add(upperR);
+
+      } else if (fStyle === 'heels') {
+        // High-Fashion Strappy Stilettos
+        const soleL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.03, 0.28), shoeMat);
+        soleL.position.set(-0.15, -0.42, 0.06);
+        avatarGroup.add(soleL);
+
+        const soleR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.03, 0.28), shoeMat);
+        soleR.position.set(0.15, -0.42, 0.06);
+        avatarGroup.add(soleR);
+
+        // Elevated Stiletto Heels
+        const stilettoGeom = new THREE.CylinderGeometry(0.015, 0.01, 0.12, 8);
+        const heelL = new THREE.Mesh(stilettoGeom, shoeMat);
+        heelL.position.set(-0.15, -0.46, -0.04);
+        avatarGroup.add(heelL);
+
+        const heelR = new THREE.Mesh(stilettoGeom, shoeMat);
+        heelR.position.set(0.15, -0.46, -0.04);
+        avatarGroup.add(heelR);
+
+        // Ankle Straps
+        const strapL = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.012, 8, 16), shoeMat);
+        strapL.rotation.x = Math.PI / 2;
+        strapL.position.set(-0.15, -0.36, 0);
+        avatarGroup.add(strapL);
+
+        const strapR = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.012, 8, 16), shoeMat);
+        strapR.rotation.x = Math.PI / 2;
+        strapR.position.set(0.15, -0.36, 0);
+        avatarGroup.add(strapR);
+
+      } else if (fStyle === 'boots') {
+        // Chelsea Leather Ankle Boots
+        const bootGeom = new THREE.CylinderGeometry(0.11, 0.10, 0.25, 16);
+        const bootL = new THREE.Mesh(bootGeom, shoeMat);
+        bootL.position.set(-0.15, -0.35, 0.04);
+        avatarGroup.add(bootL);
+
+        const bootR = new THREE.Mesh(bootGeom, shoeMat);
+        bootR.position.set(0.15, -0.35, 0.04);
+        avatarGroup.add(bootR);
+
+      } else {
+        // Slides & Oxford Loafers
+        const shoeGeom = new THREE.BoxGeometry(0.15, 0.08, 0.30);
+        const sL = new THREE.Mesh(shoeGeom, shoeMat);
+        sL.position.set(-0.15, -0.42, 0.08);
+        avatarGroup.add(sL);
+
+        const sR = new THREE.Mesh(shoeGeom, shoeMat);
+        sR.position.set(0.15, -0.42, 0.08);
+        avatarGroup.add(sR);
+      }
 
       scene3D.add(avatarGroup);
     }
 
+    // --- Interactive Orbit & Animation Loop ---
     function setupAvatarInteraction(container) {
-      container.addEventListener('mousedown', (e) => { isDragging = true; prevMouseX = e.clientX; });
+      container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      });
+
       window.addEventListener('mouseup', () => { isDragging = false; });
+
       container.addEventListener('mousemove', (e) => {
         if (!isDragging || !avatarGroup) return;
         const deltaX = e.clientX - prevMouseX;
@@ -2352,30 +3264,45 @@
         prevMouseX = e.clientX;
       });
 
-      container.addEventListener('touchstart', (e) => { isDragging = true; prevMouseX = e.touches[0].clientX; });
+      container.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        prevMouseX = e.touches[0].clientX;
+      });
+
       window.addEventListener('touchend', () => { isDragging = false; });
+
       container.addEventListener('touchmove', (e) => {
         if (!isDragging || !avatarGroup) return;
         const deltaX = e.touches[0].clientX - prevMouseX;
         avatarGroup.rotation.y += deltaX * 0.015;
         prevMouseX = e.touches[0].clientX;
       });
+
+      // Mouse wheel zoom
+      container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        zoomAvatar(e.deltaY > 0 ? -1 : 1);
+      }, { passive: false });
     }
 
     function animate3DAvatar() {
       requestAnimationFrame(animate3DAvatar);
       if (!scene3D || !camera3D || !renderer3D) return;
 
+      currentAnimFrame++;
       const time = Date.now() * 0.002;
+
+      // Subtle breathing motion
       if (avatarGroup && !isDragging) {
-        avatarGroup.position.y = Math.sin(time) * 0.025;
+        avatarGroup.position.y = Math.sin(time) * 0.02;
       }
 
+      // Natural eye blinking
       blinkTimer++;
       if (blinkTimer > 180) {
         isBlinking = true;
-        if (eyeMeshLeft) eyeMeshLeft.scale.y = 0.1;
-        if (eyeMeshRight) eyeMeshRight.scale.y = 0.1;
+        if (eyeMeshLeft) eyeMeshLeft.scale.y = 0.08;
+        if (eyeMeshRight) eyeMeshRight.scale.y = 0.08;
         if (blinkTimer > 192) {
           if (eyeMeshLeft) eyeMeshLeft.scale.y = 1;
           if (eyeMeshRight) eyeMeshRight.scale.y = 1;
@@ -2384,107 +3311,587 @@
         }
       }
 
+      // Wave arm animation
+      if (state.avatarConfig.pose === 'wave' && armMeshRight) {
+        armMeshRight.rotation.z = -2.2 + Math.sin(time * 6) * 0.25;
+      }
+
       renderer3D.render(scene3D, camera3D);
     }
 
+    // --- Camera View Presets & Zoom ---
+    function setCameraAngle(angle) {
+      if (!camera3D || !avatarGroup) return;
+      state.avatarConfig.cameraView = angle;
+
+      if (angle === 'face') {
+        camera3D.position.set(0, 1.48, 1.6);
+        avatarGroup.rotation.y = 0;
+      } else if (angle === 'front') {
+        camera3D.position.set(0, 0.85, 3.2);
+        avatarGroup.rotation.y = 0;
+      } else if (angle === 'threeQuarter') {
+        camera3D.position.set(0, 0.85, 3.2);
+        avatarGroup.rotation.y = -0.55;
+      } else if (angle === 'side') {
+        camera3D.position.set(0, 0.85, 3.2);
+        avatarGroup.rotation.y = Math.PI / 2;
+      } else if (angle === 'back') {
+        camera3D.position.set(0, 0.85, 3.2);
+        avatarGroup.rotation.y = Math.PI;
+      }
+    }
+
+    function zoomAvatar(direction) {
+      if (!camera3D) return;
+      const step = 0.25;
+      camera3D.position.z = Math.max(1.3, Math.min(4.8, camera3D.position.z - direction * step));
+    }
+
+    // --- Avatar Controls & Real-Time Actions ---
     function setAvatarGender(gender) {
       state.avatarConfig.gender = gender;
-      document.getElementById('genderBtn-female').className = gender === 'female' ? 'px-2.5 py-1 rounded-lg text-xs font-black bg-rose-500 text-white shadow-2xs' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-500';
-      document.getElementById('genderBtn-male').className = gender === 'male' ? 'px-2.5 py-1 rounded-lg text-xs font-black bg-blue-500 text-white shadow-2xs' : 'px-2.5 py-1 rounded-lg text-xs font-bold text-slate-500';
+      document.getElementById('genderBtn-female').className = gender === 'female' ? 'px-2 py-1 rounded-lg text-xs font-black bg-rose-500 text-white shadow-2xs' : 'px-2 py-1 rounded-lg text-xs font-bold text-slate-500';
+      document.getElementById('genderBtn-male').className = gender === 'male' ? 'px-2 py-1 rounded-lg text-xs font-black bg-blue-500 text-white shadow-2xs' : 'px-2 py-1 rounded-lg text-xs font-bold text-slate-500';
+      build3DAvatarRig();
+    }
+
+    function setAvatarExpression(expr) {
+      state.avatarConfig.expression = expr;
+      ['smile', 'wink', 'cool', 'excited', 'neutral'].forEach(e => {
+        const btn = document.getElementById(`exprBtn-${e}`);
+        if (btn) {
+          btn.className = e === expr 
+            ? 'shrink-0 px-2 py-1 rounded-xl bg-white dark:bg-slate-800 border border-amber-300 text-amber-700 dark:text-amber-400 font-black shadow-2xs'
+            : 'shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold';
+        }
+      });
       build3DAvatarRig();
     }
 
     function triggerAvatarPose(pose) {
-      if (!avatarGroup) return;
-      if (pose === 'wave') {
+      state.avatarConfig.pose = pose;
+      ['model', 'wave', 'dance', 'hand_on_hip', 'celebrate'].forEach(p => {
+        const btn = document.getElementById(`poseBtn-${p}`);
+        if (btn) {
+          btn.className = p === pose 
+            ? 'shrink-0 px-2 py-1 rounded-xl bg-white dark:bg-slate-800 border border-emerald-300 text-emerald-700 dark:text-emerald-400 font-black shadow-2xs'
+            : 'shrink-0 px-2 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold';
+        }
+      });
+      build3DAvatarRig();
+
+      if (pose === 'dance') {
         let step = 0;
         const interval = setInterval(() => {
           step++;
-          avatarGroup.rotation.z = Math.sin(step * 0.4) * 0.12;
-          if (step > 15) { clearInterval(interval); avatarGroup.rotation.z = 0; }
-        }, 30);
-      } else if (pose === 'dance') {
-        let step = 0;
-        const interval = setInterval(() => {
-          step++;
-          avatarGroup.position.y = Math.abs(Math.sin(step * 0.5)) * 0.1;
-          avatarGroup.rotation.y += 0.2;
-          if (step > 25) { clearInterval(interval); avatarGroup.position.y = 0; }
+          if (avatarGroup) {
+            avatarGroup.position.y = Math.abs(Math.sin(step * 0.5)) * 0.08;
+            avatarGroup.rotation.y += 0.15;
+          }
+          if (step > 25) { clearInterval(interval); if (avatarGroup) avatarGroup.position.y = 0; }
         }, 30);
       }
     }
 
+    // --- Studio Navigation & Panel Renderer ---
+    function switchStudioCategory(cat) {
+      state.avatarConfig.activeCategory = cat;
+      ['face', 'hair', 'tops', 'bottoms', 'ethnic', 'shoes', 'accessories'].forEach(c => {
+        const btn = document.getElementById(`scat-${c}`);
+        if (btn) {
+          btn.className = c === cat 
+            ? 'shrink-0 py-1.5 px-3 rounded-xl bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-2xs whitespace-nowrap font-black'
+            : 'shrink-0 py-1.5 px-3 rounded-xl text-slate-500 whitespace-nowrap font-medium';
+        }
+      });
+      renderStudioPanel();
+      renderColorPaletteBar();
+    }
+
+    function setStudioFashionFilter(filter) {
+      state.avatarConfig.fashionFilter = filter;
+      ['all', 'casual', 'streetwear', 'luxury', 'traditional', 'partywear', 'sporty', 'minimalist'].forEach(f => {
+        const btn = document.getElementById(`ffilter-${f}`);
+        if (btn) {
+          btn.className = f === filter
+            ? 'shrink-0 px-2 py-0.5 rounded-lg bg-amber-500 text-white font-extrabold shadow-2xs'
+            : 'shrink-0 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium';
+        }
+      });
+      renderStudioPanel();
+    }
+
+    function renderStudioPanel() {
+      const container = document.getElementById('studioOptionsContainer');
+      if (!container) return;
+      const cat = state.avatarConfig.activeCategory || 'face';
+      const filter = state.avatarConfig.fashionFilter || 'all';
+      const conf = state.avatarConfig;
+
+      if (cat === 'face') {
+        container.innerHTML = `
+          <!-- Skin Tones -->
+          <div class="space-y-1.5">
+            <span class="text-[10px] font-black uppercase text-slate-400">Skin Tone & Undertone:</span>
+            <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+              ${SKIN_TONES.map(t => `
+                <button onclick="equipFaceOption('skinTone', '${t.id}', ${t.color})" class="p-1 rounded-2xl border-2 ${conf.skinColor === t.color ? 'border-amber-500 scale-105 shadow-md' : 'border-slate-200 dark:border-slate-700'} flex flex-col items-center transition-all">
+                  <div class="w-8 h-8 rounded-full shadow-inner" style="background-color: ${t.hex}"></div>
+                  <span class="text-[9px] font-bold mt-1 truncate max-w-[50px]">${t.name.split(' ')[0]}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Face Shapes -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase text-slate-400">Face Shape & Chin:</span>
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+              ${FACE_SHAPES.map(s => `
+                <button onclick="equipFaceOption('faceShape', '${s.id}')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.faceShape === s.id ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30' : 'border-slate-200 dark:border-slate-700'} text-center font-bold text-xs">
+                  <span class="text-base">${s.icon}</span>
+                  <span class="block text-[10px] mt-0.5">${s.name}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Eye Iris Colors -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase text-slate-400">Eye Color (Cartoon Iris):</span>
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              ${EYE_COLORS.map(e => `
+                <button onclick="equipFaceOption('eyeColor', '${e.id}', ${e.color})" class="p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.eyeColor === e.color ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} flex items-center space-x-1.5">
+                  <div class="w-5 h-5 rounded-full border border-white" style="background-color: ${e.hex}"></div>
+                  <span class="text-[10px] font-bold truncate">${e.name.split(' ')[0]}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Lips & Lipstick -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase text-slate-400">Lip Color & Gloss:</span>
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              ${LIP_COLORS.map(l => `
+                <button onclick="equipFaceOption('lipstick', '${l.id}', ${l.color})" class="p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.lipstick === l.color ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} flex items-center space-x-1.5">
+                  <div class="w-5 h-5 rounded-full border border-white/50" style="background-color: ${l.hex === 'transparent' ? '#ffdfd0' : l.hex}"></div>
+                  <span class="text-[10px] font-bold truncate">${l.name}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Facial Features & Details -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase text-slate-400">Facial Details:</span>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="toggleFaceDetail('blush')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.blush ? 'border-pink-500 bg-pink-50 dark:bg-pink-950/30' : 'border-slate-200 dark:border-slate-700'} text-center font-bold text-xs">
+                <span>🌸 Cheek Blush</span>
+              </button>
+              <button onclick="toggleFaceDetail('freckles')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.freckles ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/30' : 'border-slate-200 dark:border-slate-700'} text-center font-bold text-xs">
+                <span>✨ Freckles</span>
+              </button>
+              <button onclick="toggleFaceDetail('beautyMark')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.beautyMark ? 'border-slate-900 dark:border-white bg-slate-200 dark:bg-slate-700' : 'border-slate-200 dark:border-slate-700'} text-center font-bold text-xs">
+                <span>💄 Beauty Mark</span>
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (cat === 'hair') {
+        const filteredHair = filter === 'all' ? HAIRSTYLES : HAIRSTYLES.filter(h => h.style === filter || h.length === filter);
+        container.innerHTML = `
+          <!-- Hair Colors Palette -->
+          <div class="space-y-1.5">
+            <span class="text-[10px] font-black uppercase text-slate-400">Hair Color & Dye:</span>
+            <div class="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+              ${HAIR_COLORS.map(c => `
+                <button onclick="equipHairColor(${c.color})" class="p-1 rounded-xl border-2 ${conf.hairColor === c.color ? 'border-amber-500 scale-105' : 'border-slate-200 dark:border-slate-700'} flex flex-col items-center">
+                  <div class="w-6 h-6 rounded-full border border-white/40 shadow-xs" style="background-color: ${c.hex}"></div>
+                  <span class="text-[8px] font-bold mt-0.5 truncate">${c.name.split(' ')[0]}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Hairstyles Grid -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <span class="text-[10px] font-black uppercase text-slate-400">Hair Styles (13 3D Cuts):</span>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              ${filteredHair.map(h => `
+                <button onclick="equipHairstyle('${h.id}')" class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border ${conf.hairStyle === h.id ? 'border-amber-500 bg-amber-50/50 dark:bg-amber-950/30 shadow-xs' : 'border-slate-200 dark:border-slate-700'} text-left space-y-1 hover:border-amber-300 transition-all">
+                  <div class="flex items-center justify-between">
+                    <span class="text-base">${h.icon}</span>
+                    <span class="text-[9px] uppercase font-bold text-amber-600">${h.length}</span>
+                  </div>
+                  <span class="font-extrabold text-xs block truncate">${h.name}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (cat === 'tops') {
+        const filteredTops = filter === 'all' ? TOPS : TOPS.filter(t => t.style === filter);
+        container.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${filteredTops.map(t => `
+              <div onclick="equipTop('${t.id}')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border cursor-pointer ${conf.outfitCategory === 'separates' && conf.topStyle === t.id ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-xs' : 'border-slate-200 dark:border-slate-700'} hover:border-emerald-400 transition-all space-y-1 text-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-black text-slate-900 dark:text-white">${t.name}</span>
+                  <span class="text-[9px] uppercase font-bold bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300">${t.style}</span>
+                </div>
+                <p class="text-[10px] text-slate-500">${t.desc}</p>
+                <div class="pt-1 flex items-center justify-between text-[11px] font-black text-emerald-600">
+                  <span>${conf.outfitCategory === 'separates' && conf.topStyle === t.id ? '✓ Equipped' : 'Equip'}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (cat === 'bottoms') {
+        const filteredBottoms = filter === 'all' ? BOTTOMS : BOTTOMS.filter(b => b.style === filter);
+        container.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${filteredBottoms.map(b => `
+              <div onclick="equipBottom('${b.id}')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border cursor-pointer ${conf.outfitCategory === 'separates' && conf.pantsStyle === b.id ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-xs' : 'border-slate-200 dark:border-slate-700'} hover:border-emerald-400 transition-all space-y-1 text-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-black text-slate-900 dark:text-white">${b.name}</span>
+                  <span class="text-[9px] uppercase font-bold bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-700 dark:text-slate-300">${b.style}</span>
+                </div>
+                <p class="text-[10px] text-slate-500">${b.desc}</p>
+                <div class="pt-1 flex items-center justify-between text-[11px] font-black text-emerald-600">
+                  <span>${conf.outfitCategory === 'separates' && conf.pantsStyle === b.id ? '✓ Equipped' : 'Equip'}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (cat === 'ethnic') {
+        container.innerHTML = `
+          <div class="space-y-2">
+            <div class="p-2.5 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-xs">
+              <span class="font-black text-rose-800 dark:text-rose-300 block">🇮🇳 Traditional Indian & Designer Dresses</span>
+              <p class="text-[10px] text-rose-700 dark:text-rose-400">Complete one-piece outfits with gold embroidery, flared lehengas, and silk sarees.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              ${DRESSES_AND_ETHNIC.map(d => `
+                <div onclick="equipDressEthnic('${d.id}')" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border cursor-pointer ${conf.outfitCategory === 'dress_ethnic' && conf.dressStyle === d.id ? 'border-rose-500 bg-rose-50/40 dark:bg-rose-950/20 shadow-xs' : 'border-slate-200 dark:border-slate-700'} hover:border-rose-400 transition-all space-y-1.5 text-xs">
+                  <div class="flex items-center justify-between">
+                    <span class="font-black text-slate-900 dark:text-white">${d.name}</span>
+                    ${d.isEthnic ? '<span class="text-[8px] bg-rose-100 text-rose-900 dark:bg-rose-900 dark:text-rose-100 px-1.5 py-0.2 rounded font-black">Ethnic</span>' : ''}
+                  </div>
+                  <p class="text-[10px] text-slate-500 leading-relaxed">${d.desc}</p>
+                  <div class="pt-1 flex items-center justify-between text-[11px] font-black text-rose-600">
+                    <span>${conf.outfitCategory === 'dress_ethnic' && conf.dressStyle === d.id ? '✓ Wearing' : 'Wear Outfit'}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (cat === 'shoes') {
+        const filteredFootwear = filter === 'all' ? FOOTWEAR : FOOTWEAR.filter(f => f.style === filter);
+        container.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${filteredFootwear.map(f => `
+              <div onclick="equipFootwear('${f.id}')" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border cursor-pointer ${conf.shoesStyle === f.id ? 'border-amber-500 bg-amber-50/30 dark:bg-amber-950/20 shadow-xs' : 'border-slate-200 dark:border-slate-700'} hover:border-amber-400 transition-all space-y-1 text-xs">
+                <div class="flex items-center justify-between">
+                  <span class="font-black text-slate-900 dark:text-white">${f.name}</span>
+                  <span class="text-[9px] uppercase font-bold text-slate-400">${f.style}</span>
+                </div>
+                <p class="text-[10px] text-slate-500">${f.desc}</p>
+                <div class="pt-1 flex items-center justify-between text-[11px] font-black text-amber-600">
+                  <span>${conf.shoesStyle === f.id ? '✓ Equipped' : 'Equip'}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (cat === 'accessories') {
+        container.innerHTML = `
+          <div class="space-y-3">
+            <!-- Eyewear -->
+            <div class="space-y-1.5">
+              <span class="text-[10px] font-black uppercase text-slate-400">Eyewear:</span>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button onclick="equipAccessory('glasses', 'none')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.glasses === 'none' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">None</button>
+                <button onclick="equipAccessory('glasses', 'sunglasses')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.glasses === 'sunglasses' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🕶️ Aviators</button>
+                <button onclick="equipAccessory('glasses', 'spectacles')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.glasses === 'spectacles' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">👓 Spectacles</button>
+                <button onclick="equipAccessory('glasses', 'cat_eye')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.glasses === 'cat_eye' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🐱 Cat-Eye</button>
+              </div>
+            </div>
+
+            <!-- Headwear -->
+            <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <span class="text-[10px] font-black uppercase text-slate-400">Headwear & Caps:</span>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button onclick="equipAccessory('headwear', 'none')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.headwear === 'none' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">None</button>
+                <button onclick="equipAccessory('headwear', 'snapback_cap')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.headwear === 'snapback_cap' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🧢 Snapback</button>
+                <button onclick="equipAccessory('headwear', 'bucket_hat')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.headwear === 'bucket_hat' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🪣 Bucket Hat</button>
+                <button onclick="equipAccessory('headwear', 'beanie')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.headwear === 'beanie' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🧶 Beanie</button>
+              </div>
+            </div>
+
+            <!-- Jewelry -->
+            <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <span class="text-[10px] font-black uppercase text-slate-400">Jewelry:</span>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button onclick="equipAccessory('earrings', conf.earrings === 'gold_hoops' ? 'none' : 'gold_hoops')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.earrings === 'gold_hoops' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">✨ Gold Hoops</button>
+                <button onclick="equipAccessory('earrings', conf.earrings === 'pearl_studs' ? 'none' : 'pearl_studs')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.earrings === 'pearl_studs' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">🦪 Pearl Studs</button>
+                <button onclick="equipAccessory('necklace', conf.necklace === 'gold_chain' ? 'none' : 'gold_chain')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.necklace === 'gold_chain' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">⛓️ Gold Chain</button>
+                <button onclick="equipAccessory('necklace', conf.necklace === 'pearl_choker' ? 'none' : 'pearl_choker')" class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.necklace === 'pearl_choker' ? 'border-amber-500' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">📿 Pearl Choker</button>
+              </div>
+            </div>
+
+            <!-- Bags & Smartwatch -->
+            <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <span class="text-[10px] font-black uppercase text-slate-400">Tech & Handbag:</span>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="equipAccessory('watch', conf.watch === 'smartwatch' ? 'none' : 'smartwatch')" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.watch === 'smartwatch' ? 'border-cyan-500 bg-cyan-50/40 dark:bg-cyan-950/20' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">⌚ Apple Smartwatch</button>
+                <button onclick="equipAccessory('bag', conf.bag === 'crossbody' ? 'none' : 'crossbody')" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border ${conf.bag === 'crossbody' ? 'border-amber-500 bg-amber-50/40 dark:bg-amber-950/20' : 'border-slate-200 dark:border-slate-700'} font-bold text-xs">👜 Crossbody Handbag</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // --- Color Customizer Palette Bar ---
+    function renderColorPaletteBar() {
+      const bar = document.getElementById('studioColorPaletteBar');
+      if (!bar) return;
+      const cat = state.avatarConfig.activeCategory || 'tops';
+      const targetLabel = (cat === 'hair' ? 'Hair' : (cat === 'bottoms' ? 'Bottoms' : (cat === 'ethnic' ? 'Saree / Dress' : (cat === 'shoes' ? 'Shoes' : 'Top'))));
+
+      bar.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="font-black text-slate-700 dark:text-slate-300">🎨 Instant Color Customizer: <span class="text-amber-600">${targetLabel}</span></span>
+          <span class="text-[10px] text-slate-400">12 Designer Tones</span>
+        </div>
+        <div class="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-1">
+          ${PALETTE_SWATCHES.map(s => `
+            <button onclick="applyStudioColor(${s.color})" class="w-6 h-6 rounded-full border-2 border-white/60 shadow-xs shrink-0 hover:scale-110 transition-transform" style="background-color: ${s.hex}" title="${s.name}"></button>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    function applyStudioColor(color) {
+      const cat = state.avatarConfig.activeCategory || 'tops';
+      if (cat === 'hair') state.avatarConfig.hairColor = color;
+      else if (cat === 'bottoms') state.avatarConfig.pantsColor = color;
+      else if (cat === 'ethnic') state.avatarConfig.dressColor = color;
+      else if (cat === 'shoes') state.avatarConfig.shoesColor = color;
+      else state.avatarConfig.topColor = color;
+      build3DAvatarRig();
+    }
+
+    // --- Item Equippers ---
+    function equipFaceOption(prop, val, color) {
+      state.avatarConfig[prop] = val;
+      if (color !== undefined) state.avatarConfig[prop === 'skinTone' ? 'skinColor' : (prop === 'eyeColor' ? 'eyeColor' : 'lipstick')] = color;
+      build3DAvatarRig();
+      renderStudioPanel();
+    }
+
+    function toggleFaceDetail(detail) {
+      state.avatarConfig[detail] = !state.avatarConfig[detail];
+      build3DAvatarRig();
+      renderStudioPanel();
+    }
+
+    function equipHairColor(color) {
+      state.avatarConfig.hairColor = color;
+      build3DAvatarRig();
+      renderStudioPanel();
+    }
+
+    function equipHairstyle(styleId) {
+      state.avatarConfig.hairStyle = styleId;
+      build3DAvatarRig();
+      renderStudioPanel();
+    }
+
+    function equipTop(topId) {
+      state.avatarConfig.outfitCategory = 'separates';
+      state.avatarConfig.topStyle = topId;
+      const topObj = TOPS.find(t => t.id === topId);
+      if (topObj && topObj.defaultColor) state.avatarConfig.topColor = topObj.defaultColor;
+      build3DAvatarRig();
+      renderStudioPanel();
+    }
+
+    function equipBottom(bottomId) {
+      state.avatarConfig.outfitCategory = 'separates';
+      state.avatarConfig.pantsStyle = bottomId;
+      const botObj = BOTTOMS.find(b => b.id === bottomId);
+      if (botObj && botObj.defaultColor) state.avatarConfig.pantsColor = botObj.defaultColor;
+      build3DAvatarRig();
+      renderStudioPanel();
+    }
+
+    function equipDressEthnic(dressId) {
+      state.avatarConfig.outfitCategory = 'dress_ethnic';
+      state.avatarConfig.dressStyle = dressId;
+      const dObj = DRESSES_AND_ETHNIC.find(d => d.id === dressId);
+      if (dObj && dObj.defaultColor) state.avatarConfig.dressColor = dObj.defaultColor;
+      build3DAvatarRig();
+      renderStudioPanel();
+      showToast(`Equipped ${dObj?.name || 'outfit'}!`, 'success');
+    }
+
+    function equipFootwear(shoeId) {
+      state.avatarConfig.shoesStyle = shoeId;
+      const fObj = FOOTWEAR.find(f => f.id === shoeId);
+      if (fObj && fObj.defaultColor) state.avatarConfig.shoesColor = fObj.defaultColor;
+      build3DAvatarRig();
+      renderStudioPanel();
+    }
+
+    function equipAccessory(type, val) {
+      state.avatarConfig[type] = val;
+      build3DAvatarRig();
+      renderStudioPanel();
+    }
+
+    // --- Surprise Me (Random Outfit Generator) ---
+    function randomizeAvatarLook() {
+      const conf = state.avatarConfig;
+      conf.faceShape = FACE_SHAPES[Math.floor(Math.random() * FACE_SHAPES.length)].id;
+      const randomTone = SKIN_TONES[Math.floor(Math.random() * SKIN_TONES.length)];
+      conf.skinTone = randomTone.id;
+      conf.skinColor = randomTone.color;
+
+      const randomEye = EYE_COLORS[Math.floor(Math.random() * EYE_COLORS.length)];
+      conf.eyeColor = randomEye.color;
+
+      conf.hairStyle = HAIRSTYLES[Math.floor(Math.random() * HAIRSTYLES.length)].id;
+      conf.hairColor = HAIR_COLORS[Math.floor(Math.random() * HAIR_COLORS.length)].color;
+
+      const isEthnic = Math.random() > 0.45;
+      if (isEthnic) {
+        conf.outfitCategory = 'dress_ethnic';
+        const dObj = DRESSES_AND_ETHNIC[Math.floor(Math.random() * DRESSES_AND_ETHNIC.length)];
+        conf.dressStyle = dObj.id;
+        conf.dressColor = dObj.defaultColor;
+      } else {
+        conf.outfitCategory = 'separates';
+        conf.topStyle = TOPS[Math.floor(Math.random() * TOPS.length)].id;
+        conf.topColor = PALETTE_SWATCHES[Math.floor(Math.random() * PALETTE_SWATCHES.length)].color;
+        conf.pantsStyle = BOTTOMS[Math.floor(Math.random() * BOTTOMS.length)].id;
+        conf.pantsColor = PALETTE_SWATCHES[Math.floor(Math.random() * PALETTE_SWATCHES.length)].color;
+      }
+
+      conf.shoesStyle = FOOTWEAR[Math.floor(Math.random() * FOOTWEAR.length)].id;
+      conf.shoesColor = PALETTE_SWATCHES[Math.floor(Math.random() * PALETTE_SWATCHES.length)].color;
+
+      // Random accessories
+      conf.glasses = Math.random() > 0.5 ? (Math.random() > 0.5 ? 'sunglasses' : 'spectacles') : 'none';
+      conf.headwear = Math.random() > 0.6 ? (Math.random() > 0.5 ? 'snapback_cap' : 'bucket_hat') : 'none';
+      conf.earrings = Math.random() > 0.4 ? 'gold_hoops' : 'none';
+      conf.necklace = Math.random() > 0.5 ? 'gold_chain' : 'none';
+      conf.watch = Math.random() > 0.4 ? 'smartwatch' : 'none';
+      conf.bag = Math.random() > 0.6 ? 'crossbody' : 'none';
+
+      conf.expression = ['smile', 'wink', 'cool', 'excited'][Math.floor(Math.random() * 4)];
+      conf.pose = ['model', 'wave', 'dance', 'hand_on_hip', 'celebrate'][Math.floor(Math.random() * 5)];
+
+      build3DAvatarRig();
+      renderStudioPanel();
+      renderColorPaletteBar();
+      triggerConfettiCannon();
+      showToast('🎲 Generated a fresh randomized 3D look!', 'success');
+    }
+
+    // --- Reset & Favorites ---
+    function resetAvatarToDefault() {
+      state.avatarConfig.outfitCategory = 'separates';
+      state.avatarConfig.topStyle = 'hoodie';
+      state.avatarConfig.topColor = 0x10b981;
+      state.avatarConfig.pantsStyle = 'jeans';
+      state.avatarConfig.pantsColor = 0x1e3a8a;
+      state.avatarConfig.shoesStyle = 'sneakers';
+      state.avatarConfig.shoesColor = 0xffffff;
+      state.avatarConfig.hairStyle = 'straight_long';
+      state.avatarConfig.hairColor = 0x3d2314;
+      state.avatarConfig.glasses = 'none';
+      state.avatarConfig.headwear = 'none';
+      state.avatarConfig.earrings = 'gold_hoops';
+      state.avatarConfig.necklace = 'none';
+      state.avatarConfig.watch = 'none';
+      state.avatarConfig.bag = 'none';
+      state.avatarConfig.expression = 'smile';
+      state.avatarConfig.pose = 'model';
+      setCameraAngle('front');
+      build3DAvatarRig();
+      renderStudioPanel();
+      renderColorPaletteBar();
+      showToast('Reset avatar to default clean look', 'info');
+    }
+
+    function toggleFavoritesDrawer() {
+      const drawer = document.getElementById('studioFavoritesDrawer');
+      if (!drawer) return;
+      drawer.classList.toggle('hidden');
+      renderFavoritesList();
+    }
+
+    function saveCurrentLookToFavorites() {
+      if (!state.avatarFavorites) state.avatarFavorites = [];
+      const outfitName = state.avatarConfig.outfitCategory === 'dress_ethnic' 
+        ? state.avatarConfig.dressStyle.toUpperCase() 
+        : `${state.avatarConfig.topStyle} + ${state.avatarConfig.pantsStyle}`;
+      state.avatarFavorites.push({
+        id: 'fav-' + Date.now(),
+        name: `Look #${state.avatarFavorites.length + 1} (${outfitName})`,
+        config: JSON.parse(JSON.stringify(state.avatarConfig))
+      });
+      savePersistentState();
+      renderFavoritesList();
+      showToast('Look saved to your Favorites collection! ⭐', 'success');
+    }
+
+    function renderFavoritesList() {
+      const grid = document.getElementById('favoritesListGrid');
+      if (!grid) return;
+      const favs = state.avatarFavorites || [];
+      if (favs.length === 0) {
+        grid.innerHTML = '<span class="text-[10px] text-slate-400 italic">No saved favorites yet. Click "+ Add Current Look" above!</span>';
+        return;
+      }
+      grid.innerHTML = favs.map((fav, idx) => `
+        <button onclick="loadFavoriteLook(${idx})" class="p-2 rounded-xl bg-white dark:bg-slate-800 border border-amber-300 dark:border-amber-800 shadow-2xs hover:scale-105 transition-transform shrink-0 flex items-center space-x-1.5">
+          <span class="text-sm">✨</span>
+          <span class="font-bold text-[10px]">${fav.name}</span>
+        </button>
+      `).join('');
+    }
+
+    function loadFavoriteLook(idx) {
+      const fav = state.avatarFavorites?.[idx];
+      if (!fav) return;
+      state.avatarConfig = JSON.parse(JSON.stringify(fav.config));
+      build3DAvatarRig();
+      renderStudioPanel();
+      renderColorPaletteBar();
+      showToast(`Equipped ${fav.name}!`, 'success');
+    }
+
+    // --- Save Profile & Update SplitSmart ---
     function saveAvatarProfile() {
       closeModal('bitmojiStudioModal');
       savePersistentState();
       triggerConfettiCannon();
-      showToast('3D Bitmoji look saved to your SplitSmart profile!', 'success');
-    }
-
-    // Wardrobe Store & Catalog
-    function switchWardrobeCategory(cat) {
-      ['outfits', 'hair', 'makeup', 'shoes', 'paypal'].forEach(c => {
-        const btn = document.getElementById(`wcat-${c}`);
-        if (btn) btn.className = c === cat ? 'flex-1 py-1.5 px-2.5 rounded-xl bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-2xs whitespace-nowrap' : 'flex-1 py-1.5 px-2.5 rounded-xl text-slate-500 whitespace-nowrap';
-      });
-      renderWardrobeItems(cat);
-    }
-
-    function renderWardrobeItems(cat) {
-      const container = document.getElementById('wardrobeItemsGrid');
-      if (!container) return;
-      const items = state.wardrobeCatalog[cat] || [];
-
-      container.innerHTML = items.map(item => `
-        <div class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-2 text-xs">
-          <div class="flex items-center justify-between">
-            <span class="font-extrabold truncate">${item.name}</span>
-            ${item.priceCents > 0 && !item.owned ? `<span class="text-[10px] font-black text-[#0070ba]">${formatMoney(item.priceCents)}</span>` : '<span class="text-[9px] text-emerald-600 font-bold">Owned</span>'}
-          </div>
-          <button onclick="handleWardrobeAction('${cat}', '${item.id}')" class="w-full py-1.5 rounded-xl ${item.priceCents > 0 && !item.owned ? 'paypal-btn font-black' : 'bg-emerald-600 text-white font-bold'} text-[11px]">
-            ${item.priceCents > 0 && !item.owned ? '⚡ Buy with PayPal' : 'Equip'}
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function handleWardrobeAction(cat, itemId) {
-      const item = state.wardrobeCatalog[cat]?.find(i => i.id === itemId);
-      if (!item) return;
-
-      if (item.priceCents > 0 && !item.owned) {
-        state.pendingWardrobePurchase = { category: cat, item };
-        document.getElementById('checkoutOutfitName').innerText = item.name;
-        document.getElementById('checkoutOutfitPrice').innerText = formatMoney(item.priceCents);
-        
-        renderPayPalButtons('paypal-wardrobe-button-container', item.priceCents / 100, `SplitSmart Outfit: ${item.name}`, (details) => {
-          item.owned = true;
-          state.paypalBalance -= item.priceCents;
-          applyWardrobeItem(cat, item);
-          savePersistentState();
-          closeModal('paypalCheckoutModal');
-          updatePayPalUI();
-          triggerConfettiCannon();
-          showToast(`Unlocked and equipped ${item.name} via PayPal!`, 'success');
-        });
-        openModal('paypalCheckoutModal');
-      } else {
-        applyWardrobeItem(cat, item);
-        showToast(`Equipped ${item.name}!`, 'success');
+      
+      // Update Navbar & Story Bitmoji Icons
+      const navAvatar = document.getElementById('navBitmojiAvatarContainer');
+      if (navAvatar) {
+        navAvatar.innerHTML = `<span class="text-base">${state.avatarConfig.gender === 'female' ? '👩' : '👨'}</span>`;
       }
-    }
-
-    function applyWardrobeItem(cat, item) {
-      if (item.color) {
-        if (cat === 'outfits' || cat === 'paypal') state.avatarConfig.topColor = item.color;
-        if (cat === 'hair') state.avatarConfig.hairColor = item.color;
-        if (cat === 'shoes') state.avatarConfig.shoesColor = item.color;
-      }
-      if (item.lipstick) state.avatarConfig.lipstick = item.lipstick;
-      if (item.blush) state.avatarConfig.blush = item.blush;
-      if (item.glasses !== undefined) state.avatarConfig.glasses = item.glasses;
-      if (item.style) state.avatarConfig.shoesStyle = item.style;
-      build3DAvatarRig();
+      renderSnapshotsTray();
+      showToast('✨ 3D Bitmoji customized and saved to your SplitSmart profile!', 'success');
     }
 
     // ==================== STORIES / SNAPSHOTS ====================
@@ -2728,9 +4135,19 @@
     function openBitmojiStudioModal() {
       openModal('bitmojiStudioModal');
       setTimeout(() => {
-        if (!scene3D) init3DAvatarStudio();
-        else build3DAvatarRig();
-        renderWardrobeItems('outfits');
+        if (!scene3D) {
+          init3DAvatarStudio();
+        } else {
+          const container = document.getElementById('canvas3dContainer');
+          if (container && renderer3D && camera3D) {
+            camera3D.aspect = container.clientWidth / container.clientHeight;
+            camera3D.updateProjectionMatrix();
+            renderer3D.setSize(container.clientWidth, container.clientHeight);
+          }
+          build3DAvatarRig();
+          renderStudioPanel();
+          renderColorPaletteBar();
+        }
       }, 100);
     }
 
