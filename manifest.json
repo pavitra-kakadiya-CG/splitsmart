@@ -1,0 +1,17 @@
+{
+  "name": "SplitSmart - Autonomous Agentic Social Finance",
+  "short_name": "SplitSmart",
+  "description": "Agentic Social Finance, Dynamic Financial Avatars & Autonomous PayPal Settlements",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#0070ba",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%230070ba'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='white'>⚡</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

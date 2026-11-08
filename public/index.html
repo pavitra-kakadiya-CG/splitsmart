@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SplitSmart - Autonomous Agentic Social Finance & PayPal Settlements</title>
   
+  <!-- PWA & Mobile Meta Tags -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0070ba">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SplitSmart">
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -1390,22 +1397,44 @@
       document.head.appendChild(script);
     }
 
+    function animateCounter(elOrId, targetCents, duration = 350) {
+      const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+      if (!el) return;
+      const numStr = el.innerText.replace(/[^0-9.-]/g, '');
+      const startCents = Math.round((parseFloat(numStr) || 0) * 100);
+      if (isNaN(startCents) || startCents === targetCents) {
+        el.innerText = formatMoney(targetCents);
+        return;
+      }
+      const startTime = performance.now();
+      function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(startCents + (targetCents - startCents) * easeOut);
+        el.innerText = formatMoney(current);
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          el.innerText = formatMoney(targetCents);
+        }
+      }
+      requestAnimationFrame(update);
+    }
+
     function updatePayPalUI() {
       const balanceStr = formatMoney(state.paypalBalance);
       const curr = state.selectedCurrency;
 
-      const navLabel = document.getElementById('navPayPalBalanceLabel');
+      animateCounter('navPayPalBalanceLabel', state.paypalBalance);
+      animateCounter('modalPayPalBalance', state.paypalBalance);
       const navShort = document.getElementById('navPayPalBalanceShort');
-      const widgetBal = document.getElementById('widgetPayPalBalance');
-      const widgetCurr = document.getElementById('widgetPayPalCurrency');
-      const modalBal = document.getElementById('modalPayPalBalance');
-      const modalCurr = document.getElementById('modalPayPalCurrency');
-
-      if (navLabel) navLabel.innerText = balanceStr;
       if (navShort) navShort.innerText = balanceStr;
-      if (widgetBal) widgetBal.innerText = balanceStr;
+      const widgetBal = document.getElementById('widgetPayPalBalance');
+      if (widgetBal) animateCounter('widgetPayPalBalance', state.paypalBalance);
+      const widgetCurr = document.getElementById('widgetPayPalCurrency');
       if (widgetCurr) widgetCurr.innerText = curr;
-      if (modalBal) modalBal.innerText = balanceStr;
+      const modalCurr = document.getElementById('modalPayPalCurrency');
       if (modalCurr) modalCurr.innerText = curr;
 
       renderPayPalTransactionHistory();
@@ -1826,22 +1855,70 @@
 
       if (!data.optimalTransactions || data.optimalTransactions.length === 0) {
         container.innerHTML = `
-          <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900 text-center space-y-1">
-            <span class="text-2xl">🎉</span>
-            <h4 class="text-xs font-black text-emerald-800 dark:text-emerald-300">All Settled Up!</h4>
-            <p class="text-[11px] text-emerald-600 dark:text-emerald-400">Zero pending debts exist in this group.</p>
+          <div class="p-6 rounded-3xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-cyan-500/10 border border-emerald-500/30 text-center space-y-3">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 mx-auto flex items-center justify-center text-3xl shadow-lg shadow-emerald-500/20">
+              👑
+            </div>
+            <div>
+              <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-black uppercase tracking-wider mb-1">
+                <span>✨</span><span>Zero-Debt Legend</span><span>✨</span>
+              </div>
+              <h3 class="text-base font-black text-slate-900 dark:text-white">All Members 100% Squared Away!</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1">
+                The Min-Cash-Flow optimizer confirmed 0 outstanding debts in this group. Everyone is in complete financial harmony.
+              </p>
+            </div>
+            <div class="pt-1 flex justify-center space-x-2">
+              <button onclick="switchTab('avatar')" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-black text-xs shadow-md hover:bg-emerald-500 transition-all">
+                View Settled Avatar ✨
+              </button>
+              <button onclick="openAddExpenseModal()" class="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold text-xs hover:border-emerald-400">
+                + Add Expense
+              </button>
+            </div>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = data.optimalTransactions.map((tx, idx) => {
+      // 1. Visual Flow Pipeline Overview
+      const flowPipelineHtml = `
+        <div class="p-3.5 rounded-2xl bg-gradient-to-br from-blue-500/5 via-indigo-500/5 to-purple-500/5 border border-indigo-200/80 dark:border-indigo-900/40 space-y-2 mb-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-1.5">
+              <span class="text-xs">⚡</span>
+              <span class="text-[11px] font-black uppercase text-indigo-700 dark:text-indigo-300 tracking-wider">Condensed Debt Graph Pipeline</span>
+            </div>
+            <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">Min-Cash-Flow Optimal</span>
+          </div>
+          <div class="space-y-1.5">
+            ${data.optimalTransactions.map(tx => {
+              const fromU = state.users.find(u => u.id === tx.fromUserId) || { name: tx.fromUserName || 'Payer' };
+              const toU = state.users.find(u => u.id === tx.toUserId) || { name: tx.toUserName || 'Payee' };
+              const amt = formatMoney(tx.amountCents || Math.round(tx.amount * 100));
+              return `
+                <div class="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs shadow-2xs">
+                  <span class="font-extrabold text-[11px] text-slate-800 dark:text-slate-200 shrink-0">${fromU.name}</span>
+                  <div class="flex-1 mx-2.5 flex items-center justify-center relative">
+                    <div class="h-0.5 w-full bg-gradient-to-r from-amber-400 via-blue-500 to-emerald-500 rounded-full"></div>
+                    <span class="absolute px-2 py-0.5 rounded-full bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 text-[10px] font-black shadow-xs">${amt}</span>
+                  </div>
+                  <span class="font-extrabold text-[11px] text-emerald-600 shrink-0">${toU.name}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+
+      // 2. Transaction Cards with PayPal Sandbox SDK Buttons
+      const cardsHtml = data.optimalTransactions.map((tx, idx) => {
         const fromUser = state.users.find(u => u.id === tx.fromUserId) || { name: tx.fromUserName || 'Payer' };
         const toUser = state.users.find(u => u.id === tx.toUserId) || { name: tx.toUserName || 'Payee' };
         const amountFormatted = formatMoney(tx.amountCents || Math.round(tx.amount * 100));
 
         return `
-          <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2.5">
+          <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2.5 mb-2">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2.5">
                 <div class="w-8 h-8 rounded-xl ${tx.isCurrentUserPayer ? 'bg-amber-100 dark:bg-amber-950 text-amber-600' : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600'} flex items-center justify-center font-bold text-xs">
@@ -1873,6 +1950,8 @@
           </div>
         `;
       }).join('');
+
+      container.innerHTML = flowPipelineHtml + cardsHtml;
 
       // Mount PayPal Smart Buttons for transactions where current user is the payer
       data.optimalTransactions.forEach((tx, idx) => {
@@ -3441,6 +3520,11 @@
 
       // Initialize SplitSmart Financial Persona
       renderFinancialPersona();
+
+      // Register PWA Service Worker
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
     });
   </script>
 </body>
