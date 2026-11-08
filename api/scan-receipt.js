@@ -207,4 +207,3 @@ function getVerifiedSampleReceipt(type) {
     };
   }
 }
-

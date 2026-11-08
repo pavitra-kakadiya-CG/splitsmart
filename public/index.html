@@ -2,7 +2,7 @@
 <html lang="en" class="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SplitSmart - Agentic Social Finance, 3D Bitmojis & PayPal Settlements</title>
   
   <!-- Tailwind CSS CDN -->
@@ -48,12 +48,21 @@
     .paypal-btn { background-color: #ffc439; color: #003087; transition: all 0.15s ease-in-out; }
     .paypal-btn:hover { background-color: #f6b728; transform: translateY(-1px); }
     .paypal-btn:active { transform: translateY(0); }
+    /* Mobile-first touch & drag optimizations */
+    #avatar3dCanvas, #canvas3dContainer {
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .safe-bottom {
+      padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .touch-scroll { -webkit-overflow-scrolling: touch; }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-24 md:pb-12 transition-colors">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-12 transition-colors">
 
   <!-- ==================== HEADER ==================== -->
   <header class="sticky top-0 z-40 glassmorphism border-b border-slate-200/80 dark:border-slate-800/80 px-2 sm:px-3.5 py-2 sm:py-2.5">
@@ -510,19 +519,26 @@
           <!-- Dropzone -->
           <div class="md:col-span-2 border-2 border-dashed border-purple-200 dark:border-purple-900 rounded-3xl p-6 text-center space-y-3 bg-purple-50/30 dark:bg-purple-950/10 flex flex-col items-center justify-center">
             <input type="file" id="receiptFileInput" accept="image/*" class="hidden" onchange="handleReceiptFileUpload(event)">
+            <input type="file" id="receiptCameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptFileUpload(event)">
             <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center text-2xl text-purple-600">
               🧾
             </div>
             <div>
-              <h3 class="text-sm font-black text-slate-800 dark:text-slate-100">Upload Receipt Photo</h3>
-              <p class="text-xs text-slate-500">Select any camera photo, screenshot, or receipt JPG/PNG</p>
+              <h3 class="text-sm font-black text-slate-800 dark:text-slate-100">Upload or Capture Receipt</h3>
+              <p class="text-xs text-slate-500">Snap a photo with your mobile camera or upload any bill screenshot</p>
             </div>
-            <div class="flex items-center space-x-2">
-              <button onclick="document.getElementById('receiptFileInput').click()" class="px-4 py-2 rounded-2xl bg-purple-600 text-white font-extrabold text-xs shadow-md hover:bg-purple-700 transition-all">
-                Browse Image
+            <div class="flex flex-wrap items-center justify-center gap-2">
+              <button onclick="document.getElementById('receiptCameraInput').click()" class="px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs shadow-md flex items-center space-x-1.5 transition-all">
+                <span>📸</span>
+                <span>Take Photo</span>
               </button>
-              <button onclick="loadSampleReceipt('izakaya')" class="px-3 py-2 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs hover:border-purple-400">
-                Sample: Tokyo Izakaya
+              <button onclick="document.getElementById('receiptFileInput').click()" class="px-3.5 py-2 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs hover:border-purple-400 transition-all flex items-center space-x-1.5">
+                <span>📁</span>
+                <span>Choose Image</span>
+              </button>
+              <button onclick="loadSampleReceipt('izakaya')" class="px-3.5 py-2 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 font-bold text-xs hover:bg-purple-100 transition-all flex items-center space-x-1">
+                <span>🍱</span>
+                <span>Try Sample</span>
               </button>
             </div>
           </div>
@@ -809,8 +825,9 @@
   </main>
 
   <!-- ==================== 2. PAYPAL SANDBOX WALLET MODAL ==================== -->
-  <div id="paypalWalletModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+  <div id="paypalWalletModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <div class="w-8 h-8 rounded-xl bg-[#0070ba] text-white flex items-center justify-center font-bold">
@@ -859,8 +876,9 @@
   </div>
 
   <!-- ==================== 3. SETTLEMENT OPTIMIZER & PAYPAL PAYOUT MODAL ==================== -->
-  <div id="settlementOptimizerModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+  <div id="settlementOptimizerModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-sm">
@@ -899,8 +917,9 @@
   </div>
 
   <!-- ==================== 4. PAYPAL WARDROBE CHECKOUT MODAL ==================== -->
-  <div id="paypalCheckoutModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5 text-center">
+  <div id="paypalCheckoutModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-sm w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5 text-center">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
       <div class="w-12 h-12 rounded-full bg-sky-100 dark:bg-sky-950 mx-auto flex items-center justify-center text-2xl text-[#0070ba]">
         🛍️
       </div>
@@ -927,8 +946,9 @@
   </div>
 
   <!-- ==================== 5. PAYPAL DEV SETTINGS MODAL ==================== -->
-  <div id="paypalDevSettingsModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+  <div id="paypalDevSettingsModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <span class="text-xl">⚙️</span>
@@ -968,8 +988,9 @@
   </div>
 
   <!-- ==================== 6. GEMINI AI SETTINGS MODAL ==================== -->
-  <div id="geminiSettingsModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+  <div id="geminiSettingsModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <span class="text-xl">✨</span>
@@ -1010,8 +1031,9 @@
   </div>
 
   <!-- ==================== 7. AI REMINDER MODAL (5 PERSONAS) ==================== -->
-  <div id="aiReminderModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+  <div id="aiReminderModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <span class="text-xl">🤖</span>
@@ -1052,11 +1074,14 @@
   </div>
 
   <!-- ==================== 8. ADD EXPENSE MODAL ==================== -->
-  <div id="addExpenseModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-center justify-center p-3 md:p-6">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[92vh]">
-      <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h3 class="text-sm font-black tracking-tight">Add Group Expense</h3>
-        <button onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+  <div id="addExpenseModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh]">
+      <div class="p-4 border-b border-slate-100 dark:border-slate-800">
+        <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-2 mb-2.5 sm:hidden"></div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-black tracking-tight">Add Group Expense</h3>
+          <button type="button" onclick="closeModal('addExpenseModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+        </div>
       </div>
 
       <form onsubmit="handleCreateExpense(event)" class="p-4 space-y-3.5 overflow-y-auto flex-1">
@@ -1150,8 +1175,9 @@
   </div>
 
   <!-- ==================== 10. CREATE SNAPSHOT MODAL ==================== -->
-  <div id="createSnapshotModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3">
-    <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4">
+  <div id="createSnapshotModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-sm w-full overflow-y-auto max-h-[90vh] shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
       <div class="flex items-center justify-between">
         <h3 class="text-sm font-black tracking-tight">Post Group Snapshot</h3>
         <button onclick="closeModal('createSnapshotModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
@@ -1171,7 +1197,7 @@
   <div id="toastContainer" class="fixed bottom-16 sm:bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none max-w-xs"></div>
 
   <!-- ==================== MOBILE BOTTOM NAVIGATION BAR (FIXED) ==================== -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 glassmorphism border-t border-slate-200/80 dark:border-slate-800/80 px-2 py-1.5 flex items-center justify-around bg-white/95 dark:bg-slate-950/95 backdrop-blur-lg shadow-lg shadow-slate-950/15">
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 glassmorphism border-t border-slate-200/80 dark:border-slate-800/80 px-2 pt-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] flex items-center justify-around bg-white/95 dark:bg-slate-950/95 backdrop-blur-lg shadow-lg shadow-slate-950/15">
     <button onclick="switchTab('dashboard')" id="mobileNavTabBtn-dashboard" class="flex flex-col items-center justify-center flex-1 py-1 text-emerald-600 dark:text-emerald-400 font-black transition-all scale-105">
       <span class="text-lg leading-none">📊</span>
       <span class="text-[10px] mt-1 font-bold leading-none">Ledger</span>
@@ -3507,19 +3533,45 @@
         prevMouseX = e.clientX;
       });
 
-      container.addEventListener('touchstart', (e) => {
-        isDragging = true;
-        prevMouseX = e.touches[0].clientX;
-      });
+      let initialPinchDistance = null;
 
-      window.addEventListener('touchend', () => { isDragging = false; });
+      container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          prevMouseX = e.touches[0].clientX;
+        } else if (e.touches.length === 2) {
+          isDragging = false;
+          initialPinchDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchend', () => {
+        isDragging = false;
+        initialPinchDistance = null;
+      });
 
       container.addEventListener('touchmove', (e) => {
-        if (!isDragging || !avatarGroup) return;
-        const deltaX = e.touches[0].clientX - prevMouseX;
-        avatarGroup.rotation.y += deltaX * 0.015;
-        prevMouseX = e.touches[0].clientX;
-      });
+        if (e.touches.length === 1 && isDragging && avatarGroup) {
+          if (e.cancelable) e.preventDefault();
+          const deltaX = e.touches[0].clientX - prevMouseX;
+          avatarGroup.rotation.y += deltaX * 0.015;
+          prevMouseX = e.touches[0].clientX;
+        } else if (e.touches.length === 2 && initialPinchDistance) {
+          if (e.cancelable) e.preventDefault();
+          const currentDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          const diff = currentDistance - initialPinchDistance;
+          if (Math.abs(diff) > 12) {
+            zoomAvatar(diff > 0 ? 0.35 : -0.35);
+            initialPinchDistance = currentDistance;
+          }
+        }
+      }, { passive: false });
 
       // Mouse wheel zoom
       container.addEventListener('wheel', (e) => {
