@@ -34,6 +34,7 @@ const PORT = process.env.PORT || 3000;
 
 // API Route Handlers
 const routes = {
+  '/api/config': require('./api/config'),
   '/api/create-order': require('./api/create-order'),
   '/api/capture-order': require('./api/capture-order'),
   '/api/payouts': require('./api/payouts'),

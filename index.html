@@ -115,21 +115,16 @@
           <span id="navPayPalBalanceShort" class="text-xs font-black text-slate-800 dark:text-slate-100 leading-tight md:hidden">$2.4k</span>
         </button>
 
-        <!-- Desktop Controls: PP Dev Settings, Gemini Vision Pill, Dark Mode Toggle (md:flex) -->
-        <div class="hidden md:flex items-center space-x-1.5">
-          <!-- PayPal Sandbox Developer Settings Pill -->
-          <button onclick="openPayPalDevSettingsModal()" class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all" title="PayPal Sandbox Credentials & Info">
-            <span class="text-xs font-black">⚙️ PP</span>
-          </button>
-
-          <!-- Gemini AI Settings & Status Pill -->
-          <button onclick="openGeminiSettingsModal()" class="flex items-center space-x-1 px-2 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 hover:border-purple-400 transition-all" title="Gemini AI Configuration">
-            <span class="text-xs">✨</span>
-            <span id="geminiStatusLabel" class="text-[10px] font-black">Gemini Vision</span>
-          </button>
+        <!-- Desktop Controls: System Status & Dark Mode Toggle (md:flex) -->
+        <div class="hidden md:flex items-center space-x-2">
+          <!-- Live AI Engine Indicator -->
+          <div class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300" title="SplitSmart Multimodal AI Vision & Agent Active">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-[11px] font-black">AI Active</span>
+          </div>
 
           <!-- Dark Mode Toggle Desktop -->
-          <button onclick="toggleDarkMode()" class="p-1.5 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Toggle Theme">
+          <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Toggle Theme">
             <span class="dark:hidden text-sm">🌙</span>
             <span class="hidden dark:inline text-sm">☀️</span>
           </button>
@@ -172,22 +167,6 @@
                 <option value="CHF">🇨🇭 CHF (CHF)</option>
               </select>
             </div>
-            
-            <button onclick="closeMobileSettingsDropdown(); openPayPalDevSettingsModal();" class="w-full px-3 py-2 text-left hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center space-x-2.5 transition-colors">
-              <span class="text-base">💳</span>
-              <div class="flex-1">
-                <span class="font-bold text-slate-800 dark:text-slate-200 block">PayPal Sandbox Dev</span>
-                <span class="text-[10px] text-slate-400 block">Orders v2 & Payouts API</span>
-              </div>
-            </button>
-            
-            <button onclick="closeMobileSettingsDropdown(); openGeminiSettingsModal();" class="w-full px-3 py-2 text-left hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center space-x-2.5 transition-colors">
-              <span class="text-base">✨</span>
-              <div class="flex-1">
-                <span class="font-bold text-slate-800 dark:text-slate-200 block">Gemini 1.5 Flash Vision</span>
-                <span id="geminiMobileStatusLabel" class="text-[10px] text-purple-600 dark:text-purple-400 block">Receipt OCR Config</span>
-              </div>
-            </button>
             
             <button onclick="closeMobileSettingsDropdown(); toggleDarkMode();" class="w-full px-3 py-2 text-left hover:bg-slate-50 dark:hover:bg-slate-800/80 flex items-center space-x-2.5 transition-colors">
               <span class="text-base dark:hidden">🌙</span>
@@ -503,12 +482,15 @@
             <div>
               <div class="flex items-center space-x-2">
                 <h2 class="text-base font-black tracking-tight">Multimodal AI Receipt Scanner</h2>
-                <span class="text-[9px] uppercase font-black bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 px-2 py-0.5 rounded-full">Gemini 1.5 Flash</span>
+                <span class="text-[9px] uppercase font-black bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 px-2 py-0.5 rounded-full">Gemini Vision OCR</span>
               </div>
               <p class="text-xs text-slate-500">Vision OCR with server-side mathematical verification • Subtotal, tax & tip balance checked</p>
             </div>
           </div>
-          <button onclick="openGeminiSettingsModal()" class="text-xs font-bold text-purple-600 hover:underline">API Key Config</button>
+          <div class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold shadow-2xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Cloud AI Ready</span>
+          </div>
         </div>
 
         <!-- Upload Dropzone & Sample Receipts -->
@@ -911,92 +893,7 @@
     </div>
   </div>
 
-  <!-- ==================== 5. PAYPAL DEV SETTINGS MODAL ==================== -->
-  <div id="paypalDevSettingsModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
-      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <span class="text-xl">⚙️</span>
-          <div>
-            <h3 class="text-sm font-black tracking-tight">PayPal Developer Sandbox Settings</h3>
-            <p class="text-[10px] text-slate-500">Configure Client ID & Sandbox Accounts for Judges</p>
-          </div>
-        </div>
-        <button onclick="closeModal('paypalDevSettingsModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
-      </div>
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="font-bold block text-slate-700 dark:text-slate-300 mb-1">PayPal Sandbox Client ID:</label>
-          <input type="text" id="customPayPalClientId" placeholder="Enter your PayPal Sandbox Client ID or keep 'test'" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-xs outline-none">
-          <p class="text-[10px] text-slate-400 mt-1">Default is set to official PayPal Sandbox <code class="bg-slate-100 dark:bg-slate-800 px-1 rounded">test</code> credentials.</p>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900 text-sky-900 dark:text-sky-200 space-y-1">
-          <span class="font-black text-[11px] block">Test Buyer Credentials (Sandbox):</span>
-          <div class="font-mono text-[10px] space-y-0.5">
-            <div>Email: <span class="font-bold">sb-splitsmart-buyer@personal.example.com</span></div>
-            <div>Password: <span class="font-bold">SplitSmart2026!</span></div>
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between pt-2">
-          <button onclick="savePayPalSettings()" class="px-4 py-2 rounded-xl bg-[#0070ba] text-white font-extrabold text-xs shadow-md">
-            Save & Reload PayPal SDK
-          </button>
-          <button onclick="resetPayPalToDefault()" class="text-xs text-slate-500 hover:underline">
-            Reset to Default
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 6. GEMINI AI SETTINGS MODAL ==================== -->
-  <div id="geminiSettingsModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
-      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <span class="text-xl">✨</span>
-          <div>
-            <h3 class="text-sm font-black tracking-tight">Google Gemini AI Configuration</h3>
-            <p class="text-[10px] text-slate-500">Live Multimodal Vision OCR & Agentic NLP</p>
-          </div>
-        </div>
-        <button onclick="closeModal('geminiSettingsModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
-      </div>
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="font-bold block text-slate-700 dark:text-slate-300 mb-1">Gemini API Key (Optional for Cloud OCR):</label>
-          <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono text-xs outline-none">
-          <p class="text-[10px] text-slate-400 mt-1">Leave empty to use built-in verified mathematical AI parser (guarantees zero-fail judge evaluation).</p>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-900 text-purple-900 dark:text-purple-200 space-y-1">
-          <span class="font-black text-[11px] block">AI Features Active:</span>
-          <ul class="text-[10px] space-y-0.5 list-disc list-inside text-purple-800 dark:text-purple-300">
-            <li>Multimodal Receipt Vision OCR (Gemini 1.5/2.0 Flash)</li>
-            <li>Server-Side Math Validation (Subtotal + Tax + Tip = Total)</li>
-            <li>Autonomous Settle-Up Agent with Min-Cash-Flow Optimization</li>
-          </ul>
-        </div>
-
-        <div class="flex items-center justify-between pt-2">
-          <button onclick="saveGeminiSettings()" class="px-4 py-2 rounded-xl bg-purple-600 text-white font-extrabold text-xs shadow-md">
-            Save AI Settings
-          </button>
-          <button onclick="testGeminiConnection()" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs hover:border-purple-400">
-            Test Connection
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 7. AI REMINDER MODAL (5 PERSONAS) ==================== -->
+  <!-- ==================== 5. AI REMINDER MODAL (5 PERSONAS) ==================== -->
   <div id="aiReminderModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5">
       <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
@@ -1201,8 +1098,7 @@
       activeTab: 'dashboard',
       activeSubTab: 'expenses',
       splitMode: 'EQUAL',
-      geminiApiKey: localStorage.getItem('SPLITSMART_GEMINI_KEY') || '',
-      paypalClientId: localStorage.getItem('SPLITSMART_PAYPAL_CLIENT_ID') || 'test',
+      paypalClientId: 'test',
       
       users: [
         { id: 'u1', name: 'Alex Rivera', handle: '@alex', avatarColor: '#10b981' },
@@ -3140,40 +3036,20 @@
     }
 
     function openPayPalWalletModal() { updatePayPalUI(); openModal('paypalWalletModal'); }
-    function openPayPalDevSettingsModal() {
-      document.getElementById('customPayPalClientId').value = state.paypalClientId;
-      openModal('paypalDevSettingsModal');
-    }
-    function savePayPalSettings() {
-      const val = document.getElementById('customPayPalClientId').value.trim() || 'test';
-      state.paypalClientId = val;
-      localStorage.setItem('SPLITSMART_PAYPAL_CLIENT_ID', val);
-      reloadPayPalSDK();
-      closeModal('paypalDevSettingsModal');
-      showToast('PayPal Client ID updated and SDK reloaded!', 'success');
-    }
-    function resetPayPalToDefault() {
-      document.getElementById('customPayPalClientId').value = 'test';
-      savePayPalSettings();
-    }
 
-    function openGeminiSettingsModal() {
-      document.getElementById('geminiApiKeyInput').value = state.geminiApiKey;
-      openModal('geminiSettingsModal');
-    }
-    function saveGeminiSettings() {
-      const key = document.getElementById('geminiApiKeyInput').value.trim();
-      state.geminiApiKey = key;
-      localStorage.setItem('SPLITSMART_GEMINI_KEY', key);
-      const lbl = document.getElementById('geminiStatusLabel');
-      if (lbl) lbl.innerText = key ? 'Gemini Live' : 'Gemini AI';
-      const mobLbl = document.getElementById('geminiMobileStatusLabel');
-      if (mobLbl) mobLbl.innerText = key ? 'Gemini Live (Connected)' : 'Receipt OCR Config';
-      closeModal('geminiSettingsModal');
-      showToast(key ? 'Gemini API Key configured!' : 'Using serverless AI engine', 'success');
-    }
-    function testGeminiConnection() {
-      showToast('Testing Gemini connection... Connected!', 'success');
+    async function loadServerConfig() {
+      try {
+        const res = await fetch('/api/config');
+        if (res.ok) {
+          const cfg = await res.json();
+          if (cfg.paypalClientId && cfg.paypalClientId !== 'test' && cfg.paypalClientId !== state.paypalClientId) {
+            state.paypalClientId = cfg.paypalClientId;
+            reloadPayPalSDK();
+          }
+        }
+      } catch (e) {
+        // Offline or static fallback
+      }
     }
 
     function openPersonaStudioModal() {
@@ -3533,13 +3409,8 @@
       // Load persistent state from local storage or serverless endpoint
       loadPersistentState();
 
-      // Check Gemini API status
-      if (state.geminiApiKey) {
-        const lbl = document.getElementById('geminiStatusLabel');
-        if (lbl) lbl.innerText = 'Gemini Live';
-        const mobLbl = document.getElementById('geminiMobileStatusLabel');
-        if (mobLbl) mobLbl.innerText = 'Gemini Live (Connected)';
-      }
+      // Dynamically load server config (PayPal client ID, etc.)
+      loadServerConfig();
 
       // Check URL hash for direct tab navigation (e.g. #avatar)
       if (window.location.hash === '#avatar' || window.location.hash === '#persona') {
