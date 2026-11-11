@@ -83,6 +83,139 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-12 transition-colors">
 
+  <!-- ==================== AUTHENTICATION CONTAINER (LOGIN & SIGN IN) ==================== -->
+  <div id="authContainer" class="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 text-slate-100 relative overflow-hidden">
+    <!-- Ambient Glowing Backdrop -->
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-md w-full rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-2xl p-6 sm:p-8 space-y-6 relative z-10">
+      <!-- App Brand Logo & Title -->
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-3xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-[#0070ba] flex items-center justify-center text-white text-3xl font-black shadow-lg shadow-blue-500/25 mx-auto">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center justify-center space-x-2">
+            <h1 class="text-2xl font-black tracking-tight text-white">SplitSmart</h1>
+            <span class="text-[9px] uppercase font-black bg-blue-600/30 text-sky-400 border border-blue-500/40 px-2 py-0.5 rounded-full">PayPal AI Sandbox</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Autonomous Agentic Social Finance & Settlements</p>
+        </div>
+      </div>
+
+      <!-- Auth Mode Switcher (Sign In vs Create Account) -->
+      <div class="grid grid-cols-2 p-1 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-bold">
+        <button id="authTabSignInBtn" type="button" onclick="setAuthMode('signin')" class="py-2.5 rounded-xl bg-[#0070ba] text-white shadow-sm transition-all font-black">
+          Sign In
+        </button>
+        <button id="authTabSignUpBtn" type="button" onclick="setAuthMode('signup')" class="py-2.5 rounded-xl text-slate-400 hover:text-white transition-all font-bold">
+          Create Account
+        </button>
+      </div>
+
+      <!-- Auth Form -->
+      <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+        <!-- Sign Up Only: Full Name -->
+        <div id="authNameFieldGroup" class="hidden space-y-1.5">
+          <label class="text-xs font-bold text-slate-300 block">Full Name</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">👤</span>
+            <input type="text" id="authNameInput" placeholder="Alex Rivera" class="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium">
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-300 block">Email Address</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">✉️</span>
+            <input type="email" id="authEmailInput" value="alex@splitsmart.io" placeholder="alex@splitsmart.io" required class="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-medium font-mono">
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-300 block">Password</label>
+            <span id="authForgotPwLink" onclick="showToast('Demo sandbox password is pre-filled: SplitSmart2026!', 'info')" class="text-[11px] text-sky-400 hover:underline cursor-pointer">Forgot?</span>
+          </div>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">🔒</span>
+            <input type="password" id="authPasswordInput" value="SplitSmart2026!" placeholder="••••••••" required class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono">
+            <button type="button" onclick="toggleAuthPasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white text-xs">
+              <span id="pwVisibilityIcon">👁️</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ==================== MANDATORY TERMS & CONDITIONS CHECKBOX ==================== -->
+        <div class="space-y-1.5 pt-1">
+          <div id="termsCheckboxContainer" class="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800 transition-all flex items-start space-x-3">
+            <input type="checkbox" id="authTermsCheckbox" onchange="handleTermsCheckboxChange()" class="mt-0.5 w-4 h-4 rounded text-blue-600 bg-slate-800 border-slate-700 focus:ring-blue-500 cursor-pointer shrink-0">
+            <label for="authTermsCheckbox" class="text-xs text-slate-300 cursor-pointer select-none leading-relaxed">
+              I have read and agree to the <button type="button" onclick="openTermsModal()" class="text-sky-400 font-bold underline hover:text-sky-300">Terms of Service</button> and <button type="button" onclick="openTermsModal()" class="text-sky-400 font-bold underline hover:text-sky-300">Sandbox Privacy Policy</button>.
+              <span class="text-rose-400 font-extrabold block text-[10px] mt-0.5">* Required to enter application</span>
+            </label>
+          </div>
+          <p id="termsWarningText" class="hidden text-[11px] font-bold text-rose-400 flex items-center space-x-1 pl-1">
+            <span>⚠️</span><span>You must check and agree to the Terms of Service to enter SplitSmart.</span>
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="authSubmitBtn" class="w-full py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center space-x-2">
+          <span id="authSubmitBtnText">Sign In to SplitSmart</span>
+          <span>→</span>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="relative flex py-1 items-center">
+        <div class="flex-grow border-t border-slate-800"></div>
+        <span class="flex-shrink mx-3 text-[10px] uppercase font-bold text-slate-500">Judge / Quick 1-Click Demo Profiles</span>
+        <div class="flex-grow border-t border-slate-800"></div>
+      </div>
+
+      <!-- Quick 1-Click Demo Profile Selectors for Hackathon Evaluators -->
+      <div class="space-y-2">
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button type="button" onclick="loginAsDemoUser('u1')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 hover:border-emerald-500/50 flex items-center space-x-2 transition-all text-left group">
+            <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">A</div>
+            <div class="min-w-0">
+              <span class="font-extrabold text-white block text-[11px] truncate group-hover:text-emerald-400">Alex Rivera</span>
+              <span class="text-[9px] text-emerald-400 block font-mono">+$43.00 Creditor</span>
+            </div>
+          </button>
+          <button type="button" onclick="loginAsDemoUser('u2')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 hover:border-amber-500/50 flex items-center space-x-2 transition-all text-left group">
+            <div class="w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">S</div>
+            <div class="min-w-0">
+              <span class="font-extrabold text-white block text-[11px] truncate group-hover:text-amber-400">Sarah Chen</span>
+              <span class="text-[9px] text-amber-400 block font-mono">+$7.00 Creditor</span>
+            </div>
+          </button>
+          <button type="button" onclick="loginAsDemoUser('u3')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 hover:border-blue-500/50 flex items-center space-x-2 transition-all text-left group">
+            <div class="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">K</div>
+            <div class="min-w-0">
+              <span class="font-extrabold text-white block text-[11px] truncate group-hover:text-sky-400">Kenji Sato</span>
+              <span class="text-[9px] text-rose-400 block font-mono">-$9.00 Debtor</span>
+            </div>
+          </button>
+          <button type="button" onclick="loginAsDemoUser('u4')" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 hover:border-pink-500/50 flex items-center space-x-2 transition-all text-left group">
+            <div class="w-7 h-7 rounded-full bg-pink-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">M</div>
+            <div class="min-w-0">
+              <span class="font-extrabold text-white block text-[11px] truncate group-hover:text-pink-400">Maria Gomez</span>
+              <span class="text-[9px] text-rose-400 block font-mono">-$41.00 Debtor</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN AUTHENTICATED APPLICATION ==================== -->
+  <div id="appContainer" class="hidden">
+
   <!-- ==================== HEADER ==================== -->
   <header class="sticky top-0 z-40 glassmorphism border-b border-slate-200/80 dark:border-slate-800/80 px-2 sm:px-3.5 py-2 sm:py-2.5">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-1.5 sm:gap-2">
@@ -160,6 +293,12 @@
           <span id="navAvatarMoodBadge" class="absolute -bottom-1 -right-1 text-[8px] bg-emerald-500 text-white font-black rounded-full px-1 shadow-2xs">✨</span>
         </button>
 
+        <!-- Log Out Button (Desktop) -->
+        <button onclick="handleLogout()" class="hidden md:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 dark:bg-slate-800 dark:hover:bg-rose-950/40 text-slate-600 hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-400 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 hover:border-rose-200 dark:hover:border-rose-800 shrink-0" title="Log Out of SplitSmart">
+          <span class="text-xs">🚪</span>
+          <span class="text-[11px]">Logout</span>
+        </button>
+
         <!-- Mobile Consolidated Settings & Tools Menu Trigger (md:hidden) -->
         <div class="relative md:hidden shrink-0">
           <button id="mobileSettingsToggleBtn" onclick="toggleMobileSettingsDropdown(event)" class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center justify-center" title="Settings & Tools">
@@ -198,6 +337,17 @@
                 <span class="text-[10px] text-slate-400 block">Toggle Light / Dark</span>
               </div>
             </button>
+
+            <!-- Mobile Log Out Button -->
+            <div class="pt-1 mt-1 border-t border-slate-100 dark:border-slate-800">
+              <button onclick="closeMobileSettingsDropdown(); handleLogout();" class="w-full px-3 py-2 text-left hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center space-x-2.5 transition-colors font-bold">
+                <span class="text-base">🚪</span>
+                <div class="flex-1">
+                  <span class="block">Log Out</span>
+                  <span class="text-[10px] text-slate-400 block font-normal">Sign out of SplitSmart session</span>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -704,6 +854,12 @@
               <span>🔄</span>
             </button>
 
+            <!-- Sign Out -->
+            <button onclick="handleLogout()" class="px-2.5 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-xs font-bold transition-all flex items-center space-x-1" title="Sign Out of SplitSmart">
+              <span>🚪</span>
+              <span class="hidden sm:inline">Sign Out</span>
+            </button>
+
             <!-- Save Button -->
             <button onclick="savePersonaProfile()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md flex items-center space-x-1 transition-all">
               <span>💾</span>
@@ -1078,6 +1234,70 @@
     </div>
   </div>
 
+  <!-- ==================== 11. TERMS OF SERVICE & PRIVACY MODAL ==================== -->
+  <div id="termsModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 p-5 sm:p-6 text-slate-800 dark:text-slate-200">
+      <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl">📜</span>
+          <div>
+            <h3 class="text-sm font-black tracking-tight">Terms of Service & Sandbox Agreement</h3>
+            <p class="text-[10px] text-slate-500">SplitSmart Social Finance Platform</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeModal('termsModal')" class="text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
+      </div>
+
+      <div class="space-y-3.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed max-h-[55vh] overflow-y-auto pr-1">
+        <div class="p-3.5 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 text-blue-900 dark:text-blue-200 space-y-1">
+          <span class="font-black text-xs block">⚡ PayPal AI Hackathon Sandbox Disclosure</span>
+          <p class="text-[11px] leading-relaxed">
+            SplitSmart operates strictly in PayPal Developer Sandbox mode. All payments, top-ups, orders, and payouts use simulated mock currency in developer sandbox environments. No actual financial debit, credit, or bank charges occur.
+          </p>
+        </div>
+
+        <div class="space-y-1">
+          <h4 class="font-extrabold text-slate-900 dark:text-white">1. Agentic Commerce & Graph Theory Optimization</h4>
+          <p class="text-[11px]">
+            You acknowledge and authorize the SplitSmart Autonomous Settle-Up Agent to calculate debt reductions using the Greedy Min-Cash-Flow graph condensation algorithm to minimize transactions between group members.
+          </p>
+        </div>
+
+        <div class="space-y-1">
+          <h4 class="font-extrabold text-slate-900 dark:text-white">2. Multimodal AI Receipt Parsing</h4>
+          <p class="text-[11px]">
+            Images uploaded via camera or dropzone are transmitted to Google Gemini Multimodal Vision solely for line-item extraction and arithmetic verification (<code class="bg-slate-100 dark:bg-slate-800 px-1 rounded">subtotal + tax + tip === total</code>). Receipts are not used to train public models.
+          </p>
+        </div>
+
+        <div class="space-y-1">
+          <h4 class="font-extrabold text-slate-900 dark:text-white">3. User Identity & Dynamic Financial Persona</h4>
+          <p class="text-[11px]">
+            Your avatar visuals, digital drip customizations, and financial mood states are rendered client-side using vector graphics and saved securely to your browser ledger session.
+          </p>
+        </div>
+
+        <div class="space-y-1">
+          <h4 class="font-extrabold text-slate-900 dark:text-white">4. Privacy & Data Security</h4>
+          <p class="text-[11px]">
+            SplitSmart isolates all credentials on secure serverless endpoints and does not sell or share user data, email addresses, or transaction records with third-party advertisers.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+        <button type="button" onclick="closeModal('termsModal')" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+          Close
+        </button>
+        <button type="button" onclick="acceptTermsFromModal()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xs shadow-md transition-all flex items-center justify-center space-x-1.5">
+          <span>✓</span>
+          <span>I Accept & Agree to Terms</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed bottom-16 sm:bottom-4 right-4 z-50 flex flex-col space-y-2 pointer-events-none max-w-xs"></div>
 
@@ -1108,11 +1328,14 @@
       <span class="text-[10px] mt-1 font-bold leading-none">Insights</span>
     </button>
   </nav>
+  </div> <!-- /#appContainer -->
 
   <!-- ==================== JAVASCRIPT CORE APPLICATION ENGINE ==================== -->
   <script>
     // ==================== STATE MANAGEMENT ====================
     const state = {
+      isAuthenticated: false,
+      authMode: 'signin',
       user: { id: 'u1', name: 'Alex Rivera', email: 'alex@splitsmart.io' },
       paypalBalance: 245000, // stored in integer cents ($2,450.00)
       selectedCurrency: 'USD',
@@ -1123,10 +1346,10 @@
       paypalClientId: 'test',
       
       users: [
-        { id: 'u1', name: 'Alex Rivera', handle: '@alex', avatarColor: '#10b981' },
-        { id: 'u2', name: 'Sarah Chen', handle: '@sarah', avatarColor: '#f59e0b' },
-        { id: 'u3', name: 'Kenji Sato', handle: '@kenji', avatarColor: '#3b82f6' },
-        { id: 'u4', name: 'Maria Gomez', handle: '@maria', avatarColor: '#ec4899' }
+        { id: 'u1', name: 'Alex Rivera', handle: '@alex', email: 'alex@splitsmart.io', avatarColor: '#10b981' },
+        { id: 'u2', name: 'Sarah Chen', handle: '@sarah', email: 'sarah@splitsmart.io', avatarColor: '#f59e0b' },
+        { id: 'u3', name: 'Kenji Sato', handle: '@kenji', email: 'kenji@splitsmart.io', avatarColor: '#3b82f6' },
+        { id: 'u4', name: 'Maria Gomez', handle: '@maria', email: 'maria@splitsmart.io', avatarColor: '#ec4899' }
       ],
 
       groups: [
@@ -1270,8 +1493,222 @@
       storyTimer: null
     };
 
+    // ==================== AUTHENTICATION & ACCESS CONTROL ENGINE ====================
+    function setAuthMode(mode) {
+      state.authMode = mode;
+      const signInBtn = document.getElementById('authTabSignInBtn');
+      const signUpBtn = document.getElementById('authTabSignUpBtn');
+      const nameField = document.getElementById('authNameFieldGroup');
+      const submitText = document.getElementById('authSubmitBtnText');
+      const forgotLink = document.getElementById('authForgotPwLink');
+
+      if (mode === 'signup') {
+        if (signInBtn) signInBtn.className = 'py-2.5 rounded-xl text-slate-400 hover:text-white transition-all font-bold';
+        if (signUpBtn) signUpBtn.className = 'py-2.5 rounded-xl bg-[#0070ba] text-white shadow-sm transition-all font-black';
+        if (nameField) nameField.classList.remove('hidden');
+        if (submitText) submitText.innerText = 'Create Account & Agree to Terms';
+        if (forgotLink) forgotLink.classList.add('hidden');
+      } else {
+        if (signInBtn) signInBtn.className = 'py-2.5 rounded-xl bg-[#0070ba] text-white shadow-sm transition-all font-black';
+        if (signUpBtn) signUpBtn.className = 'py-2.5 rounded-xl text-slate-400 hover:text-white transition-all font-bold';
+        if (nameField) nameField.classList.add('hidden');
+        if (submitText) submitText.innerText = 'Sign In to SplitSmart';
+        if (forgotLink) forgotLink.classList.remove('hidden');
+      }
+    }
+
+    function toggleAuthPasswordVisibility() {
+      const pwInput = document.getElementById('authPasswordInput');
+      const icon = document.getElementById('pwVisibilityIcon');
+      if (!pwInput) return;
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+        if (icon) icon.innerText = '🙈';
+      } else {
+        pwInput.type = 'password';
+        if (icon) icon.innerText = '👁️';
+      }
+    }
+
+    function handleTermsCheckboxChange() {
+      const checkbox = document.getElementById('authTermsCheckbox');
+      const container = document.getElementById('termsCheckboxContainer');
+      const warningText = document.getElementById('termsWarningText');
+
+      if (checkbox && checkbox.checked) {
+        if (container) {
+          container.classList.remove('border-rose-500', 'bg-rose-950/20', 'ring-2', 'ring-rose-500/50');
+          container.classList.add('border-emerald-500/50', 'bg-emerald-950/10');
+        }
+        if (warningText) warningText.classList.add('hidden');
+      } else {
+        if (container) {
+          container.classList.remove('border-emerald-500/50', 'bg-emerald-950/10');
+        }
+      }
+    }
+
+    function openTermsModal() {
+      openModal('termsModal');
+    }
+
+    function acceptTermsFromModal() {
+      const checkbox = document.getElementById('authTermsCheckbox');
+      if (checkbox) {
+        checkbox.checked = true;
+        handleTermsCheckboxChange();
+      }
+      closeModal('termsModal');
+      showToast('Terms of Service and Sandbox Agreement accepted! ✓', 'success');
+    }
+
+    function handleAuthSubmit(event) {
+      if (event) event.preventDefault();
+
+      const termsCheckbox = document.getElementById('authTermsCheckbox');
+      const termsContainer = document.getElementById('termsCheckboxContainer');
+      const warningText = document.getElementById('termsWarningText');
+
+      // STRICT VALIDATION: Terms and Conditions checkbox is mandatory to enter the app
+      if (!termsCheckbox || !termsCheckbox.checked) {
+        if (termsContainer) {
+          termsContainer.classList.add('border-rose-500', 'bg-rose-950/20', 'ring-2', 'ring-rose-500/50');
+          termsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (warningText) warningText.classList.remove('hidden');
+        showToast('⚠️ Required: You must agree to the Terms & Conditions to log in.', 'error');
+        return false;
+      }
+
+      const emailInput = document.getElementById('authEmailInput');
+      const nameInput = document.getElementById('authNameInput');
+
+      const email = (emailInput ? emailInput.value.trim() : '') || 'alex@splitsmart.io';
+      const name = (nameInput ? nameInput.value.trim() : '') || (email.split('@')[0]);
+
+      // Match existing user by email, name, or handle
+      let matchedUser = state.users.find(u => 
+        (u.email && u.email.toLowerCase() === email.toLowerCase()) || 
+        (u.name && u.name.toLowerCase() === name.toLowerCase()) ||
+        (u.handle && email.toLowerCase().includes(u.handle.replace('@', '').toLowerCase()))
+      );
+
+      if (!matchedUser) {
+        if (state.authMode === 'signup') {
+          const newId = 'u' + (state.users.length + 1);
+          const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
+          const avatarColor = colors[state.users.length % colors.length];
+          matchedUser = {
+            id: newId,
+            name: name || 'Explorer',
+            email: email,
+            handle: '@' + (name.toLowerCase().replace(/[^a-z0-9]/g, '') || 'explorer'),
+            avatarColor: avatarColor
+          };
+          state.users.push(matchedUser);
+          // Add to current group
+          const currentGroup = state.groups.find(g => g.id === state.currentGroupId);
+          if (currentGroup && !currentGroup.members.includes(newId)) {
+            currentGroup.members.push(newId);
+          }
+        } else {
+          matchedUser = state.users[0];
+        }
+      }
+
+      state.user = {
+        id: matchedUser.id,
+        name: matchedUser.name,
+        email: email,
+        handle: matchedUser.handle || ('@' + matchedUser.name.toLowerCase().replace(/[^a-z0-9]/g, ''))
+      };
+      state.isAuthenticated = true;
+
+      // Persist session to local storage
+      localStorage.setItem('SPLITSMART_AUTH_USER', JSON.stringify(state.user));
+
+      applyAuthStateUI();
+      showToast(`Welcome to SplitSmart, ${state.user.name}! 🚀`, 'success');
+      triggerPaymentCelebration();
+
+      renderApp();
+      renderFinancialPersona();
+      return true;
+    }
+
+    function loginAsDemoUser(userId) {
+      const targetUser = state.users.find(u => u.id === userId) || state.users[0];
+      const termsCheckbox = document.getElementById('authTermsCheckbox');
+      if (termsCheckbox) {
+        termsCheckbox.checked = true;
+        handleTermsCheckboxChange();
+      }
+
+      state.user = {
+        id: targetUser.id,
+        name: targetUser.name,
+        email: targetUser.email || (targetUser.handle.replace('@', '') + '@splitsmart.io'),
+        handle: targetUser.handle
+      };
+      state.isAuthenticated = true;
+
+      localStorage.setItem('SPLITSMART_AUTH_USER', JSON.stringify(state.user));
+      applyAuthStateUI();
+
+      showToast(`Logged in as ${targetUser.name} (${targetUser.handle}) ✓`, 'success');
+      triggerPaymentCelebration();
+
+      renderApp();
+      renderFinancialPersona();
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('SPLITSMART_AUTH_USER');
+      state.isAuthenticated = false;
+
+      // Reset terms checkbox so next sign-in enforces requirement
+      const termsCheckbox = document.getElementById('authTermsCheckbox');
+      if (termsCheckbox) {
+        termsCheckbox.checked = false;
+        handleTermsCheckboxChange();
+      }
+
+      applyAuthStateUI();
+      showToast('You have been logged out safely.', 'info');
+    }
+
+    function applyAuthStateUI() {
+      const authContainer = document.getElementById('authContainer');
+      const appContainer = document.getElementById('appContainer');
+
+      if (state.isAuthenticated) {
+        if (authContainer) authContainer.classList.add('hidden');
+        if (appContainer) appContainer.classList.remove('hidden');
+      } else {
+        if (authContainer) authContainer.classList.remove('hidden');
+        if (appContainer) appContainer.classList.add('hidden');
+      }
+    }
+
     // ==================== STATE PERSISTENCE ENGINE ====================
     async function loadPersistentState() {
+      // Check authentication session
+      const savedAuth = localStorage.getItem('SPLITSMART_AUTH_USER');
+      if (savedAuth) {
+        try {
+          const authUser = JSON.parse(savedAuth);
+          if (authUser && authUser.id) {
+            state.user = authUser;
+            state.isAuthenticated = true;
+          }
+        } catch (e) {
+          console.warn('Could not parse saved auth session:', e);
+          state.isAuthenticated = false;
+        }
+      } else {
+        state.isAuthenticated = false;
+      }
+      applyAuthStateUI();
       // 1. Try local storage first for zero-latency UI
       const local = localStorage.getItem('SPLITSMART_STATE_V2');
       if (local) {
@@ -3328,7 +3765,7 @@
       const expContainer = document.getElementById('expensesListContainer');
       if (expContainer) {
         expContainer.innerHTML = grpExpenses.map(e => {
-          const payer = state.users.find(u => u.id === e.payerId);
+          const payer = state.users.find(u => u.id === e.payerId) || { name: 'Member' };
           return `
             <div class="p-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
               <div class="flex items-center space-x-2.5">
@@ -3506,6 +3943,23 @@
       if (localStorage.getItem('SPLITSMART_THEME') === 'dark' || (!('SPLITSMART_THEME' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
       }
+
+      // Immediate authentication session check & UI gate
+      const savedAuth = localStorage.getItem('SPLITSMART_AUTH_USER');
+      if (savedAuth) {
+        try {
+          const authUser = JSON.parse(savedAuth);
+          if (authUser && authUser.id) {
+            state.user = authUser;
+            state.isAuthenticated = true;
+          }
+        } catch (e) {
+          state.isAuthenticated = false;
+        }
+      } else {
+        state.isAuthenticated = false;
+      }
+      applyAuthStateUI();
 
       // Load persistent state from local storage or serverless endpoint
       loadPersistentState();
