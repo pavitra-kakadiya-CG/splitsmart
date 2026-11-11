@@ -22,11 +22,21 @@ With the emergence of **Agentic Commerce** and the **PayPal Developer Platform**
 ### What It Does
 SplitSmart is an all-in-one agentic social finance application:
 
-1. **Real PayPal Sandbox Payments**: Zero mock balance tricks. Using the official PayPal JavaScript SDK and serverless API endpoints (`/api/create-order` and `/api/capture-order`), users settle debts through real PayPal Sandbox authentication windows. When a payment is captured, the debt immediately disappears from the group ledger and transaction IDs are recorded.
-2. **Multimodal AI Receipt Scanner**: Users take a photo of any restaurant bill or grocery receipt. Google Gemini extracts line items, quantities, subtotal, tax, and tip. An automated server-side verification engine checks that `subtotal + tax + tip === total` before showing it in the split matrix.
-3. **Autonomous Settle-Up Agent (Headline Feature)**: Users simply type or say: *"Settle everything from Tokyo"* (or *"Settle Goa trip"*). The AI agent analyzes the group's ledger, applies the **Min-Cash-Flow** graph reduction algorithm to eliminate redundant transfers (e.g. turning 6 pairwise debts into 2 optimal transfers), and provides direct PayPal Sandbox approval buttons.
-4. **Dynamic Financial Persona Studio**: An illustrated vector avatar that dynamically mirrors the user's financial standing in real time (Zero-Debt Legend, Chief Creditor, or In-Debt Stress), paired with a Gemini AI Persona Stylist and an in-app **PayPal Sandbox Digital Collectibles Store** where exclusive badges and vibes are unlocked with PayPal checkout.
-5. **Persistent Financial Ledger**: State persists across browser refreshes via serverless storage (`/api/state`) and local caching, maintaining integer precision (minor units) to eliminate floating-point rounding errors.
+1. **Authentication & Terms Agreement Gateway**: Secure entry gateway with mandatory agreement to the Terms of Service & PayPal Sandbox Agreement, full sign-in/account creation, and **1-Click Judge Profiles** (Alex Rivera, Sarah Chen, Kenji Sato, Maria Gomez) allowing judges to evaluate any member's financial perspective with zero friction.
+2. **Real PayPal Sandbox Payments**: Zero mock balance tricks. Using the official PayPal JavaScript SDK and serverless API endpoints (`/api/create-order` and `/api/capture-order`), users settle debts through real PayPal Sandbox authentication windows. When a payment is captured, the debt immediately disappears from the group ledger and transaction IDs are recorded.
+3. **Multimodal AI Receipt Scanner**: Users take a photo of any restaurant bill or grocery receipt. Google Gemini extracts line items, quantities, subtotal, tax, and tip. An automated server-side verification engine checks that `subtotal + tax + tip === total` before showing it in the split matrix.
+4. **Autonomous Settle-Up Agent (Headline Feature)**: Users simply type or say: *"Settle everything from Tokyo"* (or *"Settle Goa trip"*). The AI agent analyzes the group's ledger, applies the **Min-Cash-Flow** graph reduction algorithm to eliminate redundant transfers (e.g. turning 6 pairwise debts into 2 optimal transfers), and provides direct PayPal Sandbox approval buttons.
+5. **Dynamic Financial Persona Studio**: An illustrated vector avatar that dynamically mirrors the user's financial standing in real time (Zero-Debt Legend, Chief Creditor, or In-Debt Stress), paired with a Gemini AI Persona Stylist and an in-app **PayPal Sandbox Digital Collectibles Store** where exclusive badges and vibes are unlocked with PayPal checkout.
+6. **Persistent Financial Ledger**: State persists across browser refreshes via serverless storage (`/api/state`) and local caching, maintaining integer precision (minor units) to eliminate floating-point rounding errors.
+
+---
+
+### Built With
+- **PayPal Developer Platform**: PayPal JavaScript SDK v2 (Smart Payment Buttons), PayPal Orders v2 REST API (`/v2/checkout/orders`), PayPal Payouts API (`/v1/payments/payouts`), PayPal Sandbox Developer Accounts.
+- **Artificial Intelligence**: Google Gemini Multimodal Vision API (Gemini 1.5/2.0 Flash), Structured Output JSON Schemas, Natural Language Intent Agent, and Gemini AI Persona Stylist.
+- **Algorithm**: Greedy Min-Cash-Flow Graph Condensation Algorithm.
+- **Frontend & Identity Engine**: Native SVG Dynamic Vector Persona Engine, Tailwind CSS, HTML5 Canvas Confetti, and PWA Service Worker.
+- **Backend & Cloud**: Node.js Serverless Functions on Vercel (`/api/`), Zero-Dependency Node.js Server for local evaluation.
 
 ---
 

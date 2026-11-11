@@ -6,11 +6,12 @@
 
 ---
 
-### **Scene 1: Introduction & The Problem (0:00 – 0:30)**
-* **On Screen:** SplitSmart Dashboard on localhost or hosted URL, showing the Tokyo Trip 2026 group, member balances, and the dynamic financial avatar in the header.
+### **Scene 1: Introduction, Terms Agreement & 1-Click Judge Entry (0:00 – 0:35)**
+* **On Screen:** SplitSmart opens directly on the **Authentication & Terms Gateway**. Click the **"Terms of Service"** link to briefly pop open the Terms of Service & PayPal Sandbox Agreement modal, click **"✓ I Accept & Agree to Terms"**, then click **Alex Rivera** under **Judge 1-Click Demo Profiles**. Confetti bursts and the main ledger reveals with Alex's creditor balance (+$43.00).
 * **Voiceover:**  
   *"Hi everyone, this is SplitSmart—an autonomous agentic finance platform combining real-time dynamic financial avatars, multimodal AI receipt parsing, and real PayPal Sandbox settlements.*  
-  *We all know the pain of group trips: tracking expenses is messy, but settling up is even worse. Most apps just give you a static balance—they don't actually move money, leaving friends in an awkward web of circular debts.*  
+  *The app opens with our security and compliance gateway, where users agree to our Sandbox and Agentic terms. For hackathon judges, we built zero-friction 1-click evaluation profiles.*  
+  *We all know the pain of group trips: tracking expenses is messy, but settling up is even worse. Most apps just give you a passive tally—they don't actually move money, leaving friends trapped in circular debts.*  
   *With SplitSmart and the PayPal Developer Platform, group settlements become completely autonomous. Let's dive in!"*
 
 ---
